@@ -2,15 +2,19 @@ import logo from "./logo.svg";
 import "./App.css";
 import axios from "axios";
 import Login from "./components/Login";
+// import Join from "./components/Join";
+// import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-function App() {
+
+
+function App(props) {
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState({});
 
   const accessToken = () => {
     axios({
-      url: "http://localhost:8123/accesstoken",
+      url: "http://localhost:8080/accesstoken",
       method: "GET",
       withCredentials: true,
     });
@@ -18,7 +22,7 @@ function App() {
 
   const refreshToken = () => {
     axios({
-      url: "http://localhost:8123/refreshtoken",
+      url: "http://localhost:8080/refreshtoken",
       method: "GET",
       withCredentials: true,
     });
@@ -26,27 +30,34 @@ function App() {
 
   const logout = () => {
     axios({
-      url: "http://localhost:8123/logout",
+      url: "http://localhost:8080/logout",
       method: "POST",
       withCredentials: true,
-    }).then((result) => {
-      if (result.status === 200) {
+    }).then((res) => {
+      if (res.status === 200) {
         window.open("/", "_self");
       }
     });
   };
 
+
+  let token = localStorage.getItem('login-token') || '';
+
   useEffect(() => {
     try {
       axios({
-        url: "http://localhost:8123/login/success",
+        url: "http://localhost:8080/user/success",
         method: "GET",
         withCredentials: true,
+        headers:{
+          'Authorization' : token
+        }
       })
-        .then((result) => {
-          if (result.data) {
+        .then((res) => {
+          if (res.data) {
             setIsLogin(true);
-            setUser(result.data);
+            setUser(res.data);
+            console.log(res.data)
           }
         })
         .catch((error) => {
@@ -58,6 +69,13 @@ function App() {
   }, []);
 
   return (
+    // <Router>
+    //   <Routes>
+    //     <Route path="/" element={<Login />} />
+    //     <Route path="/join" element={<Join />} />
+    //     {/* <Login setUser={setUser} setIsLogin={setIsLogin} /> */}
+    //   </Routes>
+    // </Router>
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
