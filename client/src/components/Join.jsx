@@ -54,7 +54,7 @@ export default function Join({ setIsJoin, setUser }) {
           />
         </div>
         <button onClick={join} className="loginButton">Join</button>
-        <Link style={{ color: 'white', textDecoration: 'none' }} to="/">로그인 하러가기  </Link>
+        {/* <Link style={{ color: 'white', textDecoration: 'none' }} to="/">로그인 하러가기  </Link> */}
 {/*         <p>{props.data}</p> */}
       </div>
     </div>

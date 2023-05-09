@@ -71,7 +71,7 @@ export default function Login({ setIsLogin, setUser }) {
             value={password}
           />
         </div>
-        <button onClick={login} className="loginButton">Login</button>
+        <button onClick={login} className="loginButton" style={{cursor: 'pointer'}}>Login</button>
         {/* <Link style={{ color: 'white', textDecoration: 'none' }} to="/join">아직 아이디가 없으신가요?  </Link> */}
         {/* <p>{setUser}</p> */}
       </div>

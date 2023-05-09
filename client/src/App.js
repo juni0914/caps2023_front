@@ -3,12 +3,13 @@ import "./App.css";
 import axios from "axios";
 import Login from "./components/Login";
 // import Join from "./components/Join";
-// import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 
 
 function App(props) {
+
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState({});
 
@@ -29,15 +30,18 @@ function App(props) {
   };
 
   const logout = () => {
-    axios({
-      url: "http://localhost:8080/logout",
-      method: "POST",
-      withCredentials: true,
-    }).then((res) => {
-      if (res.status === 200) {
-        window.open("/", "_self");
-      }
-    });
+    // axios({
+    //   url: "http://localhost:8080/logout",
+    //   method: "POST",
+    //   withCredentials: true,
+    // }).then((res) => {
+    //   if (res.status === 200) {
+    //     window.open("/", "_self");
+    //   }
+    // });
+    console.log("로그아웃됨")
+    localStorage.clear()
+    window.location.replace('http://localhost:3000/')
   };
 
 
@@ -88,7 +92,7 @@ function App(props) {
         {isLogin ? (
           <>
             <h3>{user.username} 님이 로그인했습니다.</h3>
-            <button onClick={logout} className="loginButton">
+            <button onClick={logout} className="loginButton" style={{cursor: 'pointer'}}>
               Logout
             </button>
           </>
