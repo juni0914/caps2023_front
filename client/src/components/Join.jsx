@@ -2,26 +2,28 @@ import React from "react";
 import { useState } from "react";
 import "./login.css";
 import axios from "axios";
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 export default function Join({ setIsJoin, setUser }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const join = (props) => {
+  const join = () => {
     axios({
-      url: "http://localhost:8080/join",
+
+      url: "http://localhost:8080/join", 
       method: "POST",
       withCredentials: true,
-      data: {
+      headers: { 'Content-Type': 'application/json' },
+      data: JSON.stringify({
         username: username,
         password: password,
-      },
-    }).then((result) => {
-      if (result.status === 201) {
+      }),
+    }).then((res) => {
+      if (res.status === 201) {
 //         window.open('/', '_self')
         console.log("회원가입됨")
-        console.log(result)
+        console.log(res)
         console.log("username : ",username)
         console.log("password : ",password)
       }
@@ -53,7 +55,7 @@ export default function Join({ setIsJoin, setUser }) {
             value={password}
           />
         </div>
-        <button onClick={join} className="loginButton">Join</button>
+        <button onClick={join} className="loginButton" style={{cursor : "pointer"}}>Join</button>
         {/* <Link style={{ color: 'white', textDecoration: 'none' }} to="/">로그인 하러가기  </Link> */}
 {/*         <p>{props.data}</p> */}
       </div>
