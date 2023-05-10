@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import "./login.css";
 import axios from "axios";
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function Join({ setIsJoin, setUser }) {
   const [username, setUsername] = useState('');
@@ -56,7 +56,7 @@ export default function Join({ setIsJoin, setUser }) {
           />
         </div>
         <button onClick={join} className="loginButton" style={{cursor : "pointer"}}>Join</button>
-        {/* <Link style={{ color: 'white', textDecoration: 'none' }} to="/">로그인 하러가기  </Link> */}
+        <Link style={{ color: 'white', textDecoration: 'none' }} to="/login">로그인 하러가기  </Link>
 {/*         <p>{props.data}</p> */}
       </div>
     </div>

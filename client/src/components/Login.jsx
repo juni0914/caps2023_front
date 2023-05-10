@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import "./login.css";
 import axios from "axios";
+import { Link } from "react-router-dom";
 // import { cookies, setCookie, useCookies } from "react-cookie"
 // import { setCookie, getCookie,removeCookie } from "./cookie";
 
@@ -132,7 +133,7 @@ export default function Login() {
           />
         </div>
         <button onClick={login} className="loginButton" style={{cursor: 'pointer'}}>Login</button>
-        {/* <Link style={{ color: 'white', textDecoration: 'none' }} to="/join">아직 아이디가 없으신가요?  </Link> */}
+        <Link style={{ color: 'white', textDecoration: 'none' }} to="/join">아직 아이디가 없으신가요?  </Link>
         {/* <p>{setUser}</p> */}
       </div>
     </div>
