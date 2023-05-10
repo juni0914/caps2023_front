@@ -1,14 +1,16 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./login.css";
 import axios from "axios";
 // import { cookies, setCookie, useCookies } from "react-cookie"
 // import { setCookie, getCookie,removeCookie } from "./cookie";
 
 
-export default function Login({ setIsLogin, setUser }) {
+export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLogin, setIsLogin] = useState(false);
+  const [user, setUser] = useState({});
 
   const login = () => {
     axios({
@@ -19,7 +21,6 @@ export default function Login({ setIsLogin, setUser }) {
         username: username,
         password: password,
       }),
-
     }).then((res) => {
       
       if (res.status === 200) {
@@ -32,6 +33,65 @@ export default function Login({ setIsLogin, setUser }) {
       }
     });
   };
+
+  const accessToken = () => {
+    axios({
+      url: "http://localhost:8080/accesstoken",
+      method: "GET",
+      withCredentials: true,
+    });
+  };
+
+  const refreshToken = () => {
+    axios({
+      url: "http://localhost:8080/refreshtoken",
+      method: "GET",
+      withCredentials: true,
+    });
+  };
+
+  const logout = () => {
+    // axios({
+    //   url: "http://localhost:8080/logout",
+    //   method: "POST",
+    //   withCredentials: true,
+    // }).then((res) => {
+    //   if (res.status === 200) {
+    //     window.open("/", "_self");
+    //   }
+    // });
+    console.log("로그아웃됨")
+    localStorage.clear()
+    window.location.replace('http://localhost:3000/')
+  };
+
+
+  let token = localStorage.getItem('login-token') || '';
+
+  useEffect(() => {
+    try {
+      axios({
+        url: "http://localhost:8080/user/success",
+        method: "GET",
+        withCredentials: true,
+        headers:{
+          'Authorization' : token
+        }
+      })
+        .then((res) => {
+          if (res.data) {
+            setIsLogin(true);
+            setUser(res.data);
+            console.log(res.data)
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   
   // const accessToken = () => {
   //   axios({

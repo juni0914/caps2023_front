@@ -2,7 +2,7 @@ import "./login.css";
 import axios from "axios";
 import Login from "./Login";
 // import Join from "./components/Join";
-// import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 
@@ -92,6 +92,7 @@ function Main(props) {
             <button onClick={logout} className="loginButton" style={{cursor: 'pointer'}}>
               Logout
             </button>
+            <Link style={{color: "white"}}  to="/map">지도 사이트로 이동  </Link>
           </>
         ) : (
           <Login setUser={setUser} setIsLogin={setIsLogin} />
