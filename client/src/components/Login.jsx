@@ -110,32 +110,33 @@ export default function Login() {
   //   });
   // };
   return (
-    <div>
-      <div className="loginContainer">
-        <div className="inputGroup">
-          <label className="inputLabel" style={{ color: 'white', textDecoration: 'none' }}>email</label>
-          <input
-            type="email"
-            placeholder="email"
-            className="inputValue"
-            onChange={(e) => setUsername(e.target.value)}
-            value={username}
-          />
-        </div>
-        <div className="inputGroup">
-          <label className="inputLabel" style={{ color: 'white', textDecoration: 'none' }}>password</label>
-          <input
-            type="password"
-            placeholder="password"
-            className="inputValue"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-          />
-        </div>
-        <button onClick={login} className="loginButton" style={{cursor: 'pointer'}}>Login</button>
-        <Link style={{ color: 'white', textDecoration: 'none' }} to="/join">아직 아이디가 없으신가요?  </Link>
-        {/* <p>{setUser}</p> */}
-      </div>
+      <div className="auth-wrapper" style={{
+            background: 'linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%)'
+        }} >
+          <form>
+            <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#C4B4E1",textAlign: 'center'}}>LOGIN</h2>
+                  <label>Email</label>
+            <input
+              type="email"
+              placeholder="email"
+              className="inputValue"
+              onChange={(e) => setUsername(e.target.value)}
+              value={username}
+            />
+
+            <label className="inputLabel" style={{ color: 'white', textDecoration: 'none' }}>password</label>
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="password"
+              className="inputValue"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+            />
+
+          <button onClick={login} type="submit" style={{cursor: 'pointer'}}>Login</button>
+          <Link style={{ color: '#C4B4E1', textDecoration: 'none' }} to="/join">아직 아이디가 없으신가요?  </Link>
+        </form>
     </div>
 
 

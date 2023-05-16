@@ -92,7 +92,7 @@ function Main(props) {
             <button onClick={logout} className="loginButton" style={{cursor: 'pointer'}}>
               Logout
             </button>
-            <Link style={{color: "white"}}  to="/map">지도 사이트로 이동  </Link>
+            <Link style={{color: "black"}}  to="/map">지도 사이트로 이동  </Link>
           </>
         ) : (
           <Login setUser={setUser} setIsLogin={setIsLogin} />

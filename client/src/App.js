@@ -1,5 +1,5 @@
 import logo from "./logo.svg";
-import "./App.css";
+
 import axios from "axios";
 import Login from "./components/Login";
 import Main from "./components/Main";
@@ -7,14 +7,22 @@ import Join from "./components/Join";
 import Map from "./components/Map";
 import { BrowserRouter as Router, Routes, Route, useNavigate, Link } from "react-router-dom";
 import { NavermapsProvider } from 'react-naver-maps';
-// import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 
 
 function App() {
-  return (
-    <div className="App">
+  const [isLogin, setIsLogin] = useState(false);
+  const navigate = useNavigate();
 
+  useEffect(()=>{
+    {localStorage.getItem('login-token') ? (
+      navigate("/")) : (navigate("/login"))}
+  },[]);
+
+  return (
+
+    <div className="App">
       <NavermapsProvider 
       ncpClientId='ujwxyclvcs'
       // or finClientId, govClientId  

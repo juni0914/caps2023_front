@@ -26,6 +26,7 @@ export default function Join({ setIsJoin, setUser }) {
         console.log(res)
         console.log("username : ",username)
         console.log("password : ",password)
+        alert("회원가입되었습니다.")
       }
     });
   };
@@ -33,10 +34,12 @@ export default function Join({ setIsJoin, setUser }) {
   
 
   return (
-    <div>
-      <div className="loginContainer">
-        <div className="inputGroup">
-        <label className="inputLabel" style={{ color: 'white', textDecoration: 'none' }}>email</label>
+<div className="auth-wrapper" style={{
+            background: 'linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%)'
+        }} >
+          <form>
+            <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#C4B4E1",textAlign: 'center'}}>JOIN</h2>
+                  <label>Email</label>
           <input
             type="email"
             placeholder="email"
@@ -44,9 +47,10 @@ export default function Join({ setIsJoin, setUser }) {
             onChange={(e) => setUsername(e.target.value)}
             value={username}
           />
-        </div>
+
         <div className="inputGroup">
           <label className="inputLabel" style={{ color: 'white', textDecoration: 'none' }}>password</label>
+          <label>Password</label>
           <input
             type="password"
             placeholder="password"
@@ -55,10 +59,10 @@ export default function Join({ setIsJoin, setUser }) {
             value={password}
           />
         </div>
-        <button onClick={join} className="loginButton" style={{cursor : "pointer"}}>Join</button>
-        <Link style={{ color: 'white', textDecoration: 'none' }} to="/login">로그인 하러가기  </Link>
+        <button onClick={join} type="submit" style={{cursor : "pointer"}}>Join</button>
+        <Link style={{ color: '#C4B4E1', textDecoration: 'none' }} to="/login">로그인 하러가기  </Link>
 {/*         <p>{props.data}</p> */}
-      </div>
+          </form>
     </div>
 
 
