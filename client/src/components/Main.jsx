@@ -11,6 +11,23 @@ function Main(props) {
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState({});
 
+  const apimove = () => {
+    axios({
+      url: "http://localhost:8080/api/user/1", 
+      method: "POST",
+      withCredentials: true,
+      headers:{
+        'Authorization' : token
+      }
+    }).then((res) => {
+      if (res.status === 200) {
+         window.open('8080/api/user/1', '_self')
+
+      }
+    });
+  };
+
+
   const accessToken = () => {
     axios({
       url: "http://localhost:8080/accesstoken",
@@ -80,12 +97,15 @@ function Main(props) {
     <div className="App">
       <header className="App-header">
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
-        <a onClick={accessToken} className="App-link">
+        {/* <a onClick={accessToken} className="App-link">
           get Access Token
         </a>
         <a onClick={refreshToken} className="App-link">
           get Refresh Token
-        </a>
+        </a> */}
+        {/* <a onClick={apimove} className="App-link">
+          api사이트이동
+        </a> */}
         {isLogin ? (
           <>
             <h3>{user.username} 님이 로그인했습니다.</h3>
@@ -93,6 +113,7 @@ function Main(props) {
               Logout
             </button>
             <Link style={{color: "black"}}  to="/map">지도 사이트로 이동  </Link>
+
           </>
         ) : (
           <Login setUser={setUser} setIsLogin={setIsLogin} />

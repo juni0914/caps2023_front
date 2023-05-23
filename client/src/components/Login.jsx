@@ -13,6 +13,9 @@ export default function Login() {
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState({});
 
+  const token = localStorage.getItem('login-token') || '';
+
+
   const login = () => {
     axios({
       url: "http://localhost:8080/login", //login3에 post안되다가 login으로 바꾸니까 다시 되긴함
@@ -21,9 +24,9 @@ export default function Login() {
       data: JSON.stringify({
         username: username,
         password: password,
-      }),
+      })
+
     }).then((res) => {
-      
       if (res.status === 200) {
         window.open('/', '_self')
         localStorage.setItem('login-token',res.headers.authorization)
@@ -67,12 +70,12 @@ export default function Login() {
   };
 
 
-  let token = localStorage.getItem('login-token') || '';
+
 
   useEffect(() => {
     try {
       axios({
-        url: "http://localhost:8080/user/success",
+        url: "http://localhost:8080/api/user/1", // user/success 에서 변경했는데 되긴함. 수정 필요
         method: "GET",
         withCredentials: true,
         headers:{
@@ -84,6 +87,7 @@ export default function Login() {
             setIsLogin(true);
             setUser(res.data);
             console.log(res.data)
+            console.log(token);
           }
         })
         .catch((error) => {
