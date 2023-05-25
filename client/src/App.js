@@ -30,9 +30,9 @@ function App() {
       </NavermapsProvider>
       <Routes>
         <Route path="/login" element={<Login />}/>
-        <Route path="/" exact={true} element={<Main />}/>
+        {/* <Route path="/" exact={true} element={<Main />}/> */}
         <Route path="/join" exact={true} element={<Join />}/>
-        <Route path="/map" exact={true} element={<Map />}/>
+        <Route path="/" exact={true} element={<Map />}/>
       </Routes>
     </div>
 

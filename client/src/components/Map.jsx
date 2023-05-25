@@ -29,40 +29,56 @@ const maparray = [
   { "id": 18, "name": "통염캠테니스장", Lat : 34.838553, Lng: 128.398888, img : "https://cdn.crowdpic.net/detail-thumb/thumb_d_DA443B973B3CF36BDDE373E42ACC36E3.jpg"  }
 ]
 
+
 function Map() {
   const mapElement = useRef(null);
-  const navermaps = useNavermaps()
-
+  const navermaps = useNavermaps();
 
   let markers = [];
   let infoWindows = [];
 
-  const chilam = new navermaps.LatLng(35.180260, 128.092037);
-  const gajwa = new navermaps.LatLng(35.153308, 128.100350);
-  const tongyeong = new navermaps.LatLng(35.153308, 128.100350);
+  const chilam = new navermaps.LatLng(35.180722, 128.094018); // 초기위치 및 칠암캠퍼스 위치
+  const gajwa = new navermaps.LatLng(35.154299, 128.102384); // 가좌캠퍼스 위치
+  const tongyeong = new navermaps.LatLng(34.838744, 128.399730); // 통영캠퍼스 위치
 
-  const chilamgo=()=>{
-    console.log("칠암동 이동함수")
-  }
-  const gajwago=()=>{
-    console.log("칠암동 이동함수")
-  }
-  const tongyeonggo=()=>{
-    console.log("칠암동 이동함수")
-  }
-
+  
+ 
 
   useEffect(() => {
     const { naver } = window;
     if (!mapElement.current || !naver) return;
 
-    const location = new naver.maps.LatLng(35.180260, 128.092037); // 초기 위치
+
     const map = new naver.maps.Map(mapElement.current);
 
+    map.setCenter(chilam);
+    map.setZoom(17)
 
-    map.setCenter(location);
-    map.setZoom(15)
-    
+
+    // 특정 좌표로 이동하는 예시 (버튼 클릭 시 호출되도록 작성)
+    const handleButtonClick1 = () => {
+      map.setCenter((chilam));
+    };
+    // 버튼 클릭 시 특정 좌표로 이동하는 이벤트 핸들러를 연결합니다.
+    const button1 = document.getElementById('moveButton1');
+    button1.addEventListener('click', handleButtonClick1);
+
+    const handleButtonClick2 = () => {
+      map.setCenter((gajwa));
+    };
+    // 버튼 클릭 시 가좌캠으로 이동하는 이벤트 핸들러를 연결합니다.
+    const button2 = document.getElementById('moveButton2');
+    button2.addEventListener('click', handleButtonClick2);
+
+    const handleButtonClick3 = () => {
+      map.setCenter((tongyeong));
+    };
+    // 버튼 클릭 시 통영캠으로 이동하는 이벤트 핸들러를 연결합니다.
+    const button3 = document.getElementById('moveButton3');
+    button3.addEventListener('click', handleButtonClick3);
+
+
+
 
     for (let i = 0; i < maparray.length; i++) {    // 마커관련 함수
       const otherMarkers = new naver.maps.Marker({
@@ -76,6 +92,7 @@ function Map() {
 
       naver.maps.Event.addListener(otherMarkers, 'click', function(e){
         map.panTo(e.coord);
+        
         console.log(maparray[i].name);
         if (infoWindows[i].getMap()) {
           infoWindows[i].close();
@@ -94,7 +111,6 @@ function Map() {
             '</div>'
         ].join('')
     }));
-
     }
   }, []);
 
@@ -106,23 +122,28 @@ function Map() {
       <div style={{  width: '400px', height: '700px', float: 'left' }}>
         <SidePanel/>
        </div>
-
-      <div style={{
-          width: '1150px', height: '700px',
+      <div>
+        <div style={{
+          position: 'relative',
+          zIndex:'2',
+          width: 'auto', height: '700px',
           padding: '2rem',
           minHeight: '97%',
           color: 'white',
           minWidth: '100px',
           borderRadius: '20px',
           marginLeft: '-500px',
-          marginTop: '20px'}}  ref={mapElement} 
-        />
-        <button onClick={chilamgo} style={{cursor: 'pointer'}}>칠암캠퍼스로 이동하기</button> */
-        <button onClick={gajwago} style={{cursor: 'pointer'}}>가좌캠퍼스로 이동하기</button>
-        <button onClick={tongyeonggo} style={{cursor: 'pointer'}}>통영캠퍼스로 이동하기</button>
-       <div>
-       <Link  to="/">메인 사이트로 이동  </Link>
+          marginRight: "20px",
+          marginTop: '20px'}}  ref={mapElement}
+        >
+        <div class="btn1" style={{position: 'absolute', zIndex:'1'}}>
+          <button id="moveButton1" >칠암캠퍼스로 이동하기</button> 
+          <button id="moveButton2">가좌캠퍼스로 이동하기</button> 
+          <button id="moveButton3">통영캠퍼스로 이동하기</button> 
+        </div>
+        </div>
        </div>
+
     </>
   )
 }

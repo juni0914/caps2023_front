@@ -10,7 +10,6 @@ export default function Join({ setIsJoin, setUser }) {
 
   const join = () => {
     axios({
-
       url: "http://localhost:8080/join", 
       method: "POST",
       withCredentials: true,
@@ -21,12 +20,11 @@ export default function Join({ setIsJoin, setUser }) {
       }),
     }).then((res) => {
       if (res.status === 201) {
-//         window.open('/', '_self')
-        console.log("회원가입됨")
+        alert("회원가입되었습니다.")
         console.log(res)
         console.log("username : ",username)
         console.log("password : ",password)
-        alert("회원가입되었습니다.")
+
       }
     });
   };
@@ -41,7 +39,6 @@ export default function Join({ setIsJoin, setUser }) {
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#C4B4E1",textAlign: 'center'}}>JOIN</h2>
                   <label>Email</label>
           <input
-            type="email"
             placeholder="email"
             className="inputValue"
             onChange={(e) => setUsername(e.target.value)}

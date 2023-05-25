@@ -121,7 +121,6 @@ export default function Login() {
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#C4B4E1",textAlign: 'center'}}>LOGIN</h2>
                   <label>Email</label>
             <input
-              type="email"
               placeholder="email"
               className="inputValue"
               onChange={(e) => setUsername(e.target.value)}
