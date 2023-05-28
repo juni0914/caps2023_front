@@ -52,9 +52,7 @@ function Map() {
     map.setCenter(chilam);
     map.setZoom(17);
 
-    const Mapbtn = () => {
-      console.log(123);
-    }
+    
 
 
     // 특정 좌표로 이동하는 예시 (버튼 클릭 시 호출되도록 작성)
@@ -93,8 +91,10 @@ function Map() {
         title : maparray[i].name
       });
 
-
-
+      const Mapbtn = () => {
+        alert(maparray[i].name);
+      }
+      
       const content = (
         <div className="markerinfo_div" style={{ width: '300px', height: '250px', border: 'none' }}>
           <h3 className="markerinfo_h3" style={{cursor: 'pointer'}}>
@@ -104,6 +104,7 @@ function Map() {
           <img referrerPolicy="no-referrer" src={maparray[i].img} style={{ width: '300px', height: '180px' }} />
         </div>
       );
+      
       
 
       const infoWindow = new naver.maps.InfoWindow({
@@ -130,11 +131,15 @@ function Map() {
           infoWindows[i].close();
       } else {
         infoWindows[i].open(map, otherMarkers);
+        const button = document.querySelector('.markerinfo_div button'); //예약버튼 눌렀을 때 함수 작동하는 코드
+        if (button) {
+          button.addEventListener('click', Mapbtn);
+        }
       }
         });
       markers.push(otherMarkers);
     }
- 
+    
   }, []);
 
 
