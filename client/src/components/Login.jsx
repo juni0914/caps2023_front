@@ -12,8 +12,9 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState({});
-
+  
   const token = localStorage.getItem('login-token') || '';
+
 
 
   const login = () => {
@@ -28,31 +29,31 @@ export default function Login() {
 
     }).then((res) => {
       if (res.status === 200) {
-        window.open('/', '_self')
         localStorage.setItem('login-token',res.headers.authorization)
+        window.open('/', '_self')
         console.log("로그인됨")
         console.log(res)
-        // console.log("username : ",username,"\tpassword : ",password)
+        console.log("username : ",username,"\tpassword : ",password)
 
       }
     });
   };
 
-  const accessToken = () => {
-    axios({
-      url: "http://localhost:8080/accesstoken",
-      method: "GET",
-      withCredentials: true,
-    });
-  };
+  // const accessToken = () => {
+  //   axios({
+  //     url: "http://localhost:8080/accesstoken",
+  //     method: "GET",
+  //     withCredentials: true,
+  //   });
+  // };
 
-  const refreshToken = () => {
-    axios({
-      url: "http://localhost:8080/refreshtoken",
-      method: "GET",
-      withCredentials: true,
-    });
-  };
+  // const refreshToken = () => {
+  //   axios({
+  //     url: "http://localhost:8080/refreshtoken",
+  //     method: "GET",
+  //     withCredentials: true,
+  //   });
+  // };
 
   const logout = () => {
     // axios({
@@ -133,6 +134,7 @@ export default function Login() {
               type="password"
               placeholder="password"
               className="inputValue"
+              autoComplete="off"
               onChange={(e) => setPassword(e.target.value)}
               value={password}
             />

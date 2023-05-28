@@ -15,7 +15,7 @@
 .btn1 #moveButton1 {
     background-color: #b4fedb;
     border-radius: 20px;
-    border: none;
+    border-color : white;
     color: #5a635f;
     font-weight: 700;
     padding: 0.5rem;
@@ -24,7 +24,7 @@
 .btn1 #moveButton2 {
     background-color: #b4fedb;
     border-radius: 20px;
-    border: none;
+    border-color : white;
     color: #5a635f;
     font-weight: 700;
     padding: 0.5rem;
@@ -33,7 +33,7 @@
 .btn1 #moveButton3 {
     background-color: #b4fedb;
     border-radius: 20px;
-    border: none;
+    border-color : white;
     color: #5a635f;
     font-weight: 700;
     padding: 0.5rem;

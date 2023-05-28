@@ -52,6 +52,7 @@ export default function Join({ setIsJoin, setUser }) {
             type="password"
             placeholder="password"
             className="inputValue"
+            autoComplete="off"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
           />
