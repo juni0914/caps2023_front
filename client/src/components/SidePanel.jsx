@@ -57,24 +57,23 @@ function SidePanel() {
       <div
       style={{
           backgroundColor: "#b4fedb",
-          width: "25vw",
+          width: "22vw",
           padding: '2rem',
-          minHeight: '100%',
+          minHeight: '115%',
           color: '#5a635f',
-          minWidth: '100px',
+          minWidth: '100%',
           borderRadius: '20px',
           marginLeft: '10px',
       }}>
-        <h1>
-        경상국립대학교
-        </h1>
-        <h1>체육시설 예약 사이트</h1>
-        <h3>
+        <h2 id="sidepaneltitle" style={{fontWeight: '600'}}>
+        경상국립대학교<br/>체육시설 예약 사이트
+        </h2>
+        <h4 style={{marginTop: '20px'}}>
           😊 {user.username} 님  
            <button onClick={logout}  style={{backgroundColor: "white",borderRadius: '20px', 
-           border: 'none',color: '#5a635f', fontWeight: 700, float: 'right', marginRight:'100px',padding: '0.5rem',cursor: 'pointer'}}>Logout</button>
-        </h3>
-        <h3 style={{marginLeft : '10px'}}>✔ 예약현황</h3>
+           border: 'none',color: '#5a635f', float: 'right',padding: '0.7rem',cursor: 'pointer'}}>Logout</button>
+        </h4><br/>
+        <h4 style={{marginLeft : '10px'}}>✔ 예약현황</h4>
         {/* <Component1/> */}
       </div>
     )

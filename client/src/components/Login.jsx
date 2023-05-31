@@ -139,7 +139,8 @@ export default function Login() {
               value={password}
             />
 
-          <button onClick={login} type="submit" style={{cursor: 'pointer'}}>Login</button>
+          <button onClick={login} type="submit" style={{
+            width: '400px',cursor: 'pointer'}}>Login</button>
           <Link style={{ color: '#C4B4E1', textDecoration: 'none' }} to="/join">아직 아이디가 없으신가요?  </Link>
         </form>
     </div>

@@ -57,7 +57,7 @@ export default function Join({ setIsJoin, setUser }) {
             value={password}
           />
         </div>
-        <button onClick={join} type="submit" style={{cursor : "pointer"}}>Join</button>
+        <button onClick={join} type="submit" style={{cursor : "pointer", width: '400px'}}>Join</button>
         <Link style={{ color: '#C4B4E1', textDecoration: 'none' }} to="/login">로그인 하러가기  </Link>
 {/*         <p>{props.data}</p> */}
           </form>

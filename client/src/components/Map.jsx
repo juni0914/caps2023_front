@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Container as MapDiv, NaverMap, Marker, useNavermaps, mapOptions, } from 'react-naver-maps'
 import { Link } from "react-router-dom";
-import "./map.css";
 import SidePanel from './SidePanel';
 import axios from "axios";
 import ReactDOMServer from 'react-dom/server';
+import { Button, Modal, Form, Container } from 'react-bootstrap';
+import "./map.css";
+
 // import mapmarker from "../components/mapmarker";
 
 
@@ -42,7 +44,22 @@ function Map() {
   const chilam = new navermaps.LatLng(35.180722, 128.094018); // 초기위치 및 칠암캠퍼스 위치
   const gajwa = new navermaps.LatLng(35.154299, 128.102384); // 가좌캠퍼스 위치
   const tongyeong = new navermaps.LatLng(34.838744, 128.399730); // 통영캠퍼스 위치
-  const [isFormOpen, setIsFormOpen] = useState(false);
+
+
+    const [showModal, setShowModal] = useState(false);
+    const [selectedMarker, setSelectedMarker] = useState(null);
+
+    const handleButtonClick = () => {
+      setShowModal(true);
+    };
+  
+    const handleCloseModal = () => {
+      setShowModal(false);
+    };
+    // handleClose = () => this.setState({ show: false });
+    // handleShow = () => this.setState({ show: true });
+
+
 
   useEffect(() => {
     const { naver } = window;
@@ -53,7 +70,6 @@ function Map() {
     map.setCenter(chilam);
     map.setZoom(17);
 
-    
 
 
     // 특정 좌표로 이동하는 예시 (버튼 클릭 시 호출되도록 작성)
@@ -99,20 +115,26 @@ function Map() {
                 title : maparray[i].name
               });
         
-              const Mapbtn = () => {
-                // alert(maparray[i].name);
-                setIsFormOpen(!isFormOpen);
-              }
+              
               
               const content = (
-                <div className="markerinfo_div" style={{ width: '300px', height: '320px', border: 'none' }}>
-                  <h3 className="markerinfo_h3" style={{cursor: 'pointer'}}>
+                <div className="markerinfo_div" style={{ 
+                width: '320px', height: '300px', border: 'none',backgroundColor: '#fff',
+                borderRadius: '20px',
+                border: 'none',
+                boxShadow: '0 14px 28px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.22)',
+                margin: '0 auto',
+                padding: '10px 10px' }}>
+                  <h4 className="markerinfo_h4" style={{
+                    cursor: 'pointer',
+                    fontWeight: '550'}}>
                     {maparray[i].name}
-                    <button onClick={Mapbtn}>예약</button>
-                  </h3>                  
+                    <button onClick={handleButtonClick} style={{backgroundColor: "white",border: '0.3rm',borderRadius: '20px', 
+            borderColor:'#0068c3', color: '#5a635f', float: 'right', marginTop: '-3px',cursor: 'pointer'}}>예약</button>
+                  </h4>                  
                   <img referrerPolicy="no-referrer" src={maparray[i].imgUrl} style={{ width: '300px', height: '180px' }} />
-                  <p className="markerinfo_h3">주소 : {maparray[i].address}</p>
-                  <p className="markerinfo_h3">이용가격 : {maparray[i].price}원</p>
+                  <p className="markerinfo_h4">주소 : {maparray[i].address}</p>
+                  <p className="markerinfo_h4">이용가격 : {maparray[i].price}원</p>
                 </div>
               );
               
@@ -142,9 +164,10 @@ function Map() {
                   infoWindows[i].close();
               } else {
                 infoWindows[i].open(map, otherMarkers);
+                setSelectedMarker(maparray[i]);
                 const button = document.querySelector('.markerinfo_div button'); //예약버튼 눌렀을 때 함수 작동하는 코드
                 if (button) {
-                  button.addEventListener('click', Mapbtn);
+                  button.addEventListener('click', handleButtonClick);
                 }
               }
                 });
@@ -165,34 +188,65 @@ function Map() {
 
   return ( 
     <>  
-      <div style={{  width: '400px', height: '700px', float: 'left' }}>
+      <div style={{  width: "22vw", height: '700px', float: 'left' }}>
         <SidePanel/>
        </div>
       <div>
-        <div style={{
-          position: 'relative',
-          zIndex:'2',
-          width: 'auto', height: '700px',
-          padding: '2rem',
-          minHeight: '97%',
-          color: 'white',
-          minWidth: '100px',
-          borderRadius: '20px',
-          marginLeft: '-500px',
-          marginRight: "20px",
-          marginTop: '20px'}}  ref={mapElement}
-        >
-        <div className="btn1" style={{position: 'absolute', zIndex:'1'}}>
-          <button id="moveButton1" >칠암캠퍼스로 이동하기</button> 
-          <button id="moveButton2">가좌캠퍼스로 이동하기</button> 
-          <button id="moveButton3">통영캠퍼스로 이동하기</button> 
+          <div style={{
+            position: 'relative',
+            zIndex:'2',
+            width: 'auto', height: '805px',
+            padding: '2rem',
+            minHeight: '97%',
+            color: 'white',
+            minWidth: '100px',
+            borderRadius: '20px',
+            marginLeft: '-500px',
+            marginRight: "20px",
+            marginTop: '20px'}}  ref={mapElement}
+          >
+          <div className="btn1" style={{position: 'absolute', zIndex:'1',marginLeft: '-10px', marginTop: '-10px'}}>
+            <button id="moveButton1" >칠암캠퍼스로 이동하기</button> 
+            <button id="moveButton2">가좌캠퍼스로 이동하기</button> 
+            <button id="moveButton3">통영캠퍼스로 이동하기</button> 
+          </div>
         </div>
-        </div>
-        {isFormOpen && (
-        <modal>
-          asdd
-        </modal>
-      )}
+        <Container>
+          <Modal show={showModal} onHide={handleCloseModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>예약 창</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+                <Form>
+                  <Form.Group className="mb-3">
+                    <Form.Label>✔ 시설명 : {selectedMarker && selectedMarker.name}</Form.Label>
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>✔ 주소 : {selectedMarker && selectedMarker.address}</Form.Label>
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>✔ 이용가능시간 : {selectedMarker && selectedMarker.openTime} ~ {selectedMarker && selectedMarker.closeTime}
+                    
+                    </Form.Label>
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>✔ 가격 : {selectedMarker && selectedMarker.price}원</Form.Label>
+                  </Form.Group>
+                </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              닫기
+            </Button>
+            <Button variant="primary" onClick={handleCloseModal}>
+              예약하기
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </Container>
        </div>
 
     </>
