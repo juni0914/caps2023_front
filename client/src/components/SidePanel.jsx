@@ -63,15 +63,15 @@ function SidePanel() {
           color: '#5a635f',
           minWidth: '100%',
           borderRadius: '20px',
-          marginLeft: '10px',
+          marginLeft: '20px',
       }}>
         <h2 id="sidepaneltitle" style={{fontWeight: '600'}}>
         경상국립대학교<br/>체육시설 예약 사이트
         </h2>
         <h4 style={{marginTop: '20px'}}>
           😊 {user.username} 님  
-           <button onClick={logout}  style={{backgroundColor: "white",borderRadius: '20px', 
-           border: 'none',color: '#5a635f', float: 'right',padding: '0.7rem',cursor: 'pointer'}}>Logout</button>
+           <button onClick={logout}  style={{backgroundColor: "white",borderRadius: '20px', fontSize: '15px',
+           border: 'none',color: '#5a635f', float: 'right',padding: '0.5rem',cursor: 'pointer'}}>Logout</button>
         </h4><br/>
         <h4 style={{marginLeft : '10px'}}>✔ 예약현황</h4>
         {/* <Component1/> */}

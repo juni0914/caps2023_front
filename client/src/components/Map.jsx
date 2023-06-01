@@ -4,34 +4,10 @@ import { Link } from "react-router-dom";
 import SidePanel from './SidePanel';
 import axios from "axios";
 import ReactDOMServer from 'react-dom/server';
-import { Button, Modal, Form, Container } from 'react-bootstrap';
+import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
 import "./map.css";
 
 // import mapmarker from "../components/mapmarker";
-
-
-// const maparray = [
-//   { "id": 1, "name": "칠암캠운동장", "address": "진주시 동진로 33", Lat : 35.181368, Lng: 128.092885, img : "https://mblogthumb-phinf.pstatic.net/MjAyMTA2MTNfMTM4/MDAxNjIzNTc1MDA4NDI1.6o9PlI70Y9Cq9ecviMjCXdojIqBspio84OWobfx0avAg.24uRy6OE3_6lO-fLsCAtEEuTq3SsABzpSDlO3dgQ0usg.JPEG.scnn9/20210613%EF%BC%BF174933.jpg?type=w800"},
-//   { "id": 2, "name": "칠암캠체육관", "address": "진주시 동진로 33",Lat : 35.180550, Lng: 128.092695, img : "https://mblogthumb-phinf.pstatic.net/MjAyMTAxMTVfMjU2/MDAxNjEwNjcwMTEyMDM0.hxM1ihaUmNTbmEzbyB7h8-lXYNayyUcHjVdcHePDr94g.2TzU8z1HjWs-eFNw5Qf-Z2ZBfizGViJjTE0rpLYVlEwg.JPEG.bindustrycop/%25EA%25B2%25BD%25EB%2582%25A8_%25EC%25A7%2584%25EC%25A3%25BC_%25EA%25B2%25BD%25EB%2582%25A8%25EA%25B3%25BC%25ED%2595%2599%25EA%25B8%25B0%25EC%2588%25A0%25EB%258C%2580_%25EC%2595%2588%25EC%25A0%2584%25ED%258C%25A8%25EB%2594%25A9_(9).jpg?type=w800"  },
-//   { "id": 3, "name": "칠암캠농구장", "address": "진주시 동진로 33",Lat : 35.181707, Lng: 128.092445, img : "https://i.ytimg.com/vi/QD7UzaTO45c/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGGUgXihVMA8=&rs=AOn4CLAbo1UI7pIg4xk-YhXJJJIaMpaVmw"  },
-//   { "id": 4, "name": "칠암캠풋살장", "address": "진주시 동진로 33",Lat : 35.181853, Lng: 128.092303, img : "https://www.sisul.or.kr/open_content/skydome/images/photo_futsal01.jpg"  },
-//   { "id": 5, "name": "칠암캠테니스장", "address": "진주시 동진로 33",Lat : 35.181990, Lng: 128.093008, img : "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F1722EA4D5155AA2B14"  },
-//   { "id": 6, "name": "칠암캠족구장", "address": "진주시 동진로 33",Lat : 35.181878, Lng: 128.092629, img : "http://www.gndomin.com/news/photo/201906/209263_208618_4955.jpg" },
-
-//   { "id": 7, "name": "가좌캠풋살장", "address": "진주시 동진로 33",Lat : 35.154370, Lng: 128.103407, img : "https://www.gnunews.kr/news/photo/201911/8757_51_0000.jpg" },
-//   { "id": 8, "name": "가좌캠교직원테니스장", "address": "진주시 동진로 33",Lat : 35.156537, Lng: 128.102683, img : "https://www.gnu.ac.kr/upload//campus/img_44897945-9bf7-40b2-97c8-4238642e9d181675164473050.jpg"  },
-//   { "id": 9, "name": "가좌캠테니스장", "address": "진주시 동진로 33",Lat : 35.154181, Lng: 128.102844, img : "https://mblogthumb-phinf.pstatic.net/MjAyMjEyMDdfMTY1/MDAxNjcwMzc5ODIwMDY3.GqQchV3csJj3p57F0yE0B9roG_p4iMCJYDsEwCl7nQUg.T85b5phBAPTnU4SX-1G-kOcxemN_jYH6pe9lrdDPkxYg.PNG.capminjuni/image.png?type=w800" },
-//   { "id": 10, "name": "가좌캠족구장", "address": "진주시 동진로 33",Lat : 35.154658, Lng: 128.102755, img : "http://www.gndomin.com/news/photo/201906/209263_208618_4955.jpg"  },
-//   { "id": 11, "name": "가좌캠농구장", "address": "진주시 동진로 33",Lat : 35.154627, Lng: 128.102903, img : "https://i.ytimg.com/vi/QD7UzaTO45c/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGGUgXihVMA8=&rs=AOn4CLAbo1UI7pIg4xk-YhXJJJIaMpaVmw"  },
-//   { "id": 12, "name": "가좌캠대운동장", "address": "진주시 동진로 33",Lat : 35.154850, Lng: 128.104504, img : "https://www.gnu.ac.kr/upload//campus/img_98287e4a-5e67-4985-bde8-7ffde34728f01675164411173.jpg" },
-//   { "id": 13, "name": "가좌캠운동장", "address": "진주시 동진로 33",Lat : 35.151364, Lng: 128.100821, img : "https://www.gnu.ac.kr/upload//campus/img_a8e3b39a-e912-41e3-85ca-7a5d2346ff791667882330403.jpg" },
-//   { "id": 14, "name": "가좌캠체육관", "address": "진주시 동진로 33",Lat : 35.155414, Lng: 128.103060, img : "https://www.gnu.ac.kr/upload//campus/img_fd9559e2-5262-459f-a2e7-4edade9eaa0e1667881475043.jpg" },
-
-//   { "id": 15, "name": "통염캠운동장1", "address": "진주시 동진로 33",Lat : 34.838744, Lng: 128.399730, img : "https://mblogthumb-phinf.pstatic.net/MjAxODEwMjhfMTgy/MDAxNTQwNzIxNTQzNTYx.M1tQpUPK5dyoBIC9YPMAJB5wrYiAhqMDSj0T2UNouesg.2PKE05z16r8EdR1zxi5UM0E9PBkwXNXao7d8yrNGFXMg.JPEG.kmu2333/20180213_115841.jpg?type=w800"  },
-//   { "id": 16, "name": "통염캠운동장2", "address": "진주시 동진로 33",Lat : 34.836729, Lng: 128.400170, img : "https://mblogthumb-phinf.pstatic.net/MjAxODEwMjhfMjcg/MDAxNTQwNzIxNTQ0MzIy.ZYxmLmI0w64kSA0Gv6W2TU6BJAtifq2fYCChaZbLHLcg.9xkpIYwAlPYAw0uysZGWFOjovtJ8jN5vMvKGKoowe9gg.JPEG.kmu2333/20180213_115910.jpg?type=w800" },
-//   { "id": 17, "name": "통염캠체육관", "address": "진주시 동진로 33",Lat : 34.838022, Lng: 128.399127, img : "https://www.gnu.ac.kr/upload//campus/img_1efdf209-be0d-4ec6-8285-d732eaae2ad51673411867261.jpg"  },
-//   { "id": 18, "name": "통염캠테니스장", "address": "진주시 동진로 33",Lat : 34.838553, Lng: 128.398888, img : "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F1722EA4D5155AA2B14"  }
-// ]
 
 
 function Map() {
@@ -41,13 +17,14 @@ function Map() {
   let markers = [];
   let infoWindows = [];
 
-  const chilam = new navermaps.LatLng(35.180722, 128.094018); // 초기위치 및 칠암캠퍼스 위치
-  const gajwa = new navermaps.LatLng(35.154299, 128.102384); // 가좌캠퍼스 위치
-  const tongyeong = new navermaps.LatLng(34.838744, 128.399730); // 통영캠퍼스 위치
+    const chilam = new navermaps.LatLng(35.180722, 128.094018); // 초기위치 및 칠암캠퍼스 위치
+    const gajwa = new navermaps.LatLng(35.154299, 128.102384); // 가좌캠퍼스 위치
+    const tongyeong = new navermaps.LatLng(34.838744, 128.399730); // 통영캠퍼스 위치
 
 
     const [showModal, setShowModal] = useState(false);
     const [selectedMarker, setSelectedMarker] = useState(null);
+    const [reservationInfo, setReservationInfo] = useState(null); //선택된 마커의 예약 정보를 저장
 
     const handleButtonClick = () => {
       setShowModal(true);
@@ -61,7 +38,7 @@ function Map() {
 
 
 
-  useEffect(() => {
+  useEffect(() => { // 마커 데이터 지도에 표시하는 첫번째 useEffect
     const { naver } = window;
     if (!mapElement.current || !naver) return;
 
@@ -103,6 +80,7 @@ function Map() {
       })
         .then((res) => {
           if (res.data) {
+            // console.log(res.data);
             const maparray = res.data.content;
             for (let i = 0; i < maparray.length; i++) {    // 마커관련 함수
               naver.maps.Event.addListener(map, "click", ClickMap(i));
@@ -112,7 +90,7 @@ function Map() {
                   maparray[i].lnt
                 ),
                 map : map,
-                title : maparray[i].name
+                title : maparray[i].centerId
               });
         
               
@@ -130,7 +108,7 @@ function Map() {
                     fontWeight: '550'}}>
                     {maparray[i].name}
                     <button onClick={handleButtonClick} style={{backgroundColor: "white",border: '0.3rm',borderRadius: '20px', 
-            borderColor:'#0068c3', color: '#5a635f', float: 'right', marginTop: '-3px',cursor: 'pointer'}}>예약</button>
+                    borderColor:'#0068c3', color: '#5a635f', float: 'right', marginTop: '-3px',cursor: 'pointer'}}>예약</button>
                   </h4>                  
                   <img referrerPolicy="no-referrer" src={maparray[i].imgUrl} style={{ width: '300px', height: '180px' }} />
                   <p className="markerinfo_h4">주소 : {maparray[i].address}</p>
@@ -184,7 +162,52 @@ function Map() {
   }, []);
 
 
+  useEffect(() => { // selectMarker 상태가 변경될 때마다 실행, 선택된 마커의 centerId를 사용하여 예약 정보 가져옴
+    if (selectedMarker) {
+      try {
+        axios({
+          url: `http://localhost:8080/center/${selectedMarker.centerId}/reservation`,
+          method: "GET",
+          withCredentials: true,
+        })
+          .then((res) => {
+            if (res.data) {
+              setReservationInfo(res.data);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [selectedMarker]);
 
+  function generateReservationButtons() {
+    // 이용 가능 시간 추출
+    const { openTime, closeTime } = reservationInfo.center;
+    const startTime = parseInt(openTime.split(":")[0]); // 시작 시간 (ex: 9)
+    const endTime = parseInt(closeTime.split(":")[0]); // 종료 시간 (ex: 17)
+  
+    // 버튼 생성
+    const buttons = [];
+    for (let i = startTime; i < endTime; i++) {
+      const hour = i.toString().padStart(2, "0");
+      buttons.push(
+        <Button key={i} variant="outline-success" className="w-25">
+          {hour}:00
+        </Button>
+      );
+      buttons.push(
+        <Button key={i + 0.5} variant="outline-success" className="w-25">
+          {hour}:30
+        </Button>
+      );
+    }
+  
+    return buttons;
+  }
 
   return ( 
     <>  
@@ -216,27 +239,36 @@ function Map() {
           <Modal.Header closeButton>
             <Modal.Title>예약 창</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-                <Form>
-                  <Form.Group className="mb-3">
-                    <Form.Label>✔ 시설명 : {selectedMarker && selectedMarker.name}</Form.Label>
-                  </Form.Group>
+          
+              <Modal.Body>
+              {reservationInfo ? (
+                    <Form>
+                      <Form.Group className="mb-3">
+                        <Form.Label>✔ 시설명 : {reservationInfo && reservationInfo.center.name}</Form.Label>
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>✔ 주소 : {reservationInfo && reservationInfo.center.address}</Form.Label>
+                      </Form.Group>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>✔ 주소 : {selectedMarker && selectedMarker.address}</Form.Label>
-                  </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>✔ 이용가능시간 : {reservationInfo && reservationInfo.center.openTime} ~ {reservationInfo && reservationInfo.center.closeTime}
+                        </Form.Label>
+                      </Form.Group>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>✔ 이용가능시간 : {selectedMarker && selectedMarker.openTime} ~ {selectedMarker && selectedMarker.closeTime}
-                    
-                    </Form.Label>
-                  </Form.Group>
-
-                  <Form.Group className="mb-3">
-                    <Form.Label>✔ 가격 : {selectedMarker && selectedMarker.price}원</Form.Label>
-                  </Form.Group>
-                </Form>
-          </Modal.Body>
+                      <Form.Group className="mb-3">
+                        <Form.Label>✔ 가격 : {reservationInfo && reservationInfo.center.price}원</Form.Label>
+                      </Form.Group>
+                      
+                    <Form.Group className="mb-3">
+                      <Form.Label>✔ 예약 시간:</Form.Label><br/>
+                      {generateReservationButtons()}
+                    </Form.Group>
+                    </Form>
+                    ) : (
+                    <p>Loading reservation information...</p>
+                  )}
+          
+              </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseModal}>
               닫기
