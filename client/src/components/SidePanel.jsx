@@ -66,7 +66,7 @@ function SidePanel() {
           marginLeft: '20px',
       }}>
         <h2 id="sidepaneltitle" style={{fontWeight: '600'}}>
-        경상국립대학교<br/>체육시설 예약 사이트
+        🏫 경상국립대학교<br/>체육시설 예약 사이트
         </h2>
         <h4 style={{marginTop: '20px'}}>
           😊 {user.username} 님  

@@ -13,24 +13,27 @@ import "./map.css";
 function Map() {
   const mapElement = useRef(null);
   const navermaps = useNavermaps();
+  const token = localStorage.getItem('login-token') || ''; 
 
-  let markers = [];
-  let infoWindows = [];
+    let markers = [];
+    let infoWindows = [];
 
     const chilam = new navermaps.LatLng(35.180722, 128.094018); // 초기위치 및 칠암캠퍼스 위치
     const gajwa = new navermaps.LatLng(35.154299, 128.102384); // 가좌캠퍼스 위치
     const tongyeong = new navermaps.LatLng(34.838744, 128.399730); // 통영캠퍼스 위치
 
 
-    const [showModal, setShowModal] = useState(false);
-    const [selectedMarker, setSelectedMarker] = useState(null);
+    const [showModal, setShowModal] = useState(false);  //모달 열고 닫는 정보를 저장
+    const [selectedMarker, setSelectedMarker] = useState(null); // 마커 정보 저장
     const [reservationInfo, setReservationInfo] = useState(null); //선택된 마커의 예약 정보를 저장
+    const [selectedReservationTime, setSelectedReservationTime] = useState(null); // 선택한 예약시간을 저장
+    const [selectedButton, setSelectedButton] = useState(null); //시간 중복 선택정보 저장
 
-    const handleButtonClick = () => {
+    const handleButtonClick = () => { //예약모달창 열기 버튼함수
       setShowModal(true);
     };
   
-    const handleCloseModal = () => {
+    const handleCloseModal = () => { //예약모달창 닫기 버튼함수
       setShowModal(false);
     };
     // handleClose = () => this.setState({ show: false });
@@ -44,7 +47,7 @@ function Map() {
 
     const map = new naver.maps.Map(mapElement.current);
     
-    map.setCenter(chilam);
+    map.setCenter(chilam); 
     map.setZoom(17);
 
 
@@ -95,7 +98,7 @@ function Map() {
         
               
               
-              const content = (
+              const content = (  // 마커 클릭시 infoWindow 내용
                 <div className="markerinfo_div" style={{ 
                 width: '320px', height: '300px', border: 'none',backgroundColor: '#fff',
                 borderRadius: '20px',
@@ -135,7 +138,7 @@ function Map() {
               }
         
         
-              naver.maps.Event.addListener(otherMarkers, 'click', function(e){
+              naver.maps.Event.addListener(otherMarkers, 'click', function(e){ //마커 클릭시 동작하는 함수
                 map.panTo(e.coord);
                 console.log(maparray[i].name);
                 if (infoWindows[i].getMap()) {
@@ -143,7 +146,7 @@ function Map() {
               } else {
                 infoWindows[i].open(map, otherMarkers);
                 setSelectedMarker(maparray[i]);
-                const button = document.querySelector('.markerinfo_div button'); //예약버튼 눌렀을 때 함수 작동하는 코드
+                const button = document.querySelector('.markerinfo_div button'); 
                 if (button) {
                   button.addEventListener('click', handleButtonClick);
                 }
@@ -173,6 +176,8 @@ function Map() {
           .then((res) => {
             if (res.data) {
               setReservationInfo(res.data);
+              // console.log(res.data)
+              // console.log(res.data.reservedTimes)
             }
           })
           .catch((error) => {
@@ -184,30 +189,111 @@ function Map() {
     }
   }, [selectedMarker]);
 
-  function generateReservationButtons() {
+
+
+  function generateReservationButtons() {  //예약시간 버튼 생성 함수
     // 이용 가능 시간 추출
     const { openTime, closeTime } = reservationInfo.center;
-    const startTime = parseInt(openTime.split(":")[0]); // 시작 시간 (ex: 9)
+    const startTime = parseInt(openTime.split(":")[0]).toString().padStart(2, "0");; // 시작 시간 (ex: 09)
     const endTime = parseInt(closeTime.split(":")[0]); // 종료 시간 (ex: 17)
-  
-    // 버튼 생성
-    const buttons = [];
-    for (let i = startTime; i < endTime; i++) {
+    const reservedTimes = reservationInfo.reservedTimes || []; // 이미 예약된 시간
+
+    
+    const buttons = [];  // 버튼 배열
+
+    for (let i = startTime; i < endTime; i++) {  
       const hour = i.toString().padStart(2, "0");
+      const buttonId = i;
+      const isReserved = reservedTimes.includes(`${buttonId}:00`) || reservedTimes.includes(`${buttonId}:30`);  //예약된 버튼 저장
+
       buttons.push(
-        <Button key={i} variant="outline-success" className="w-25">
-          {hour}:00
-        </Button>
+        <Button
+        key={`${buttonId}:00`}
+        variant={isSelected(`${buttonId}:00`) ? "success" : (isReserved ? "light" : "outline-success")}
+        className={`w-25 ${isSelected(`${buttonId}:00`) ? "selected" : ""}`}
+        onClick={() => handleReservationTimeSelect(`${buttonId}:00`)}
+        disabled={isReserved}>
+        {hour}:00
+      </Button>
       );
       buttons.push(
-        <Button key={i + 0.5} variant="outline-success" className="w-25">
-          {hour}:30
-        </Button>
+        <Button
+        key={`${buttonId}:30`}
+        variant={isSelected(`${buttonId}:30`) ? "success" : (isReserved ? "light" : "outline-success")}
+        className={`w-25 ${isSelected(`${buttonId}:30`) ? "selected" : ""}`}
+        onClick={() => handleReservationTimeSelect(`${buttonId}:30`)}
+        disabled={isReserved}>
+        {hour}:30
+      </Button>
       );
     }
   
     return buttons;
   }
+
+  function isSelected(buttonId) {
+    if (selectedReservationTime === null) { // 선택된 예약 시간이 없는 경우 false를 반환
+      return false;
+    }
+    return selectedReservationTime.includes(buttonId); // 선택된 예약 시간 배열에 버튼 ID가 포함되어 있는지 확인하여 결과를 반환
+  }
+  
+  function handleReservationTimeSelect(buttonId) {  // 예약된 시간 버튼 정보 함수
+    let updatedSelectedTime = [];
+  
+    if (selectedReservationTime !== null) { // 선택된 예약 시간이 이미 있는 경우, 새로운 배열에 기존 선택된 시간들을 복사합니다.
+      updatedSelectedTime = [...selectedReservationTime];
+    }
+  
+    if (updatedSelectedTime.includes(buttonId)) {
+      // 이미 선택된 버튼인 경우 선택 해제
+      updatedSelectedTime = updatedSelectedTime.filter((time) => time !== buttonId);
+    } else {
+      // 새로운 버튼을 선택한 경우 추가
+      updatedSelectedTime.push(buttonId);
+    }
+  
+    setSelectedReservationTime(updatedSelectedTime); // 업데이트된 선택된 예약 시간 배열을 설정
+    console.log("선택한 시간대:", updatedSelectedTime);
+ 
+  }
+
+
+
+  function handleReservation() {  //모달창 예약하기 버튼
+    if (!selectedReservationTime || selectedReservationTime.length === 0) {
+      // 예약 시간을 선택하지 않은 경우 처리
+      return;
+    }
+  
+    // 서버로 예약정보 POST 요청 보내기
+    try {
+      axios({
+        url: `http://localhost:8080/center/${selectedMarker.centerId}/reservation`,
+        method: "POST",
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`
+        },
+        data: JSON.stringify({
+          reservingTimes: selectedReservationTime
+        })
+      })
+        .then((res) => {
+          console.log(res.data);
+          setSelectedReservationTime([]);
+          alert(`시설 이름 : ${selectedMarker.name}이\n예약 시간: ${selectedReservationTime}에 예약되었습니다.`)
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
 
   return ( 
     <>  
@@ -273,7 +359,7 @@ function Map() {
             <Button variant="secondary" onClick={handleCloseModal}>
               닫기
             </Button>
-            <Button variant="primary" onClick={handleCloseModal}>
+            <Button variant="primary" onClick={handleReservation} >
               예약하기
             </Button>
           </Modal.Footer>
