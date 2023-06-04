@@ -116,7 +116,7 @@ export default function Login() {
   // };
   return (
       <div className="auth-wrapper" style={{
-            background: 'linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%)'
+            background: 'linear-gradient(30deg, #b4fedb 0%, #FFE6FA 70%)'
         }} >
           <form>
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#C4B4E1",textAlign: 'center'}}>LOGIN</h2>

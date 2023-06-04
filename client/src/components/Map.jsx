@@ -199,42 +199,51 @@ function Map() {
     const reservedTimes = reservationInfo.reservedTimes || []; // 이미 예약된 시간
 
     
-    const buttons = [];  // 버튼 배열
+    const buttons = [];
 
-    for (let i = startTime; i < endTime; i++) {  
-      const hour = i.toString().padStart(2, "0");
-      const buttonId = i;
-      const isReserved = reservedTimes.includes(`${buttonId}:00`) || reservedTimes.includes(`${buttonId}:30`);  //예약된 버튼 저장
+  for (let i = startTime; i < endTime; i++) {
+    const hour = i.toString().padStart(2, "0");
+    const buttonId1 = `${hour}:00`;
+    const buttonId2 = `${hour}:30`;
 
-      buttons.push(
-        <Button
-        key={`${buttonId}:00`}
-        variant={isSelected(`${buttonId}:00`) ? "success" : (isReserved ? "light" : "outline-success")}
-        className={`w-25 ${isSelected(`${buttonId}:00`) ? "selected" : ""}`}
-        onClick={() => handleReservationTimeSelect(`${buttonId}:00`)}
-        disabled={isReserved}>
-        {hour}:00
+    const isReserved1 = reservedTimes.includes(buttonId1);
+    const isReserved2 = reservedTimes.includes(buttonId2);
+    const isDisabled1 = isReserved1; // 09:00 또는 09:30이 예약되었으면 09:00 버튼 비활성화
+    const isDisabled2 = isReserved2; // 09:00 또는 09:30이 예약되었으면 09:30 버튼 비활성화
+
+    buttons.push(
+      <Button
+        key={buttonId1}
+        variant={isSelected(buttonId1) ? "success" : isDisabled1 ? "light" : "outline-success"}
+        className={`w-25 ${isSelected(buttonId1) ? "selected" : ""}`}
+        onClick={() => handleReservationTimeSelect(buttonId1)}
+        disabled={isDisabled1}
+      >
+        {buttonId1}
       </Button>
-      );
-      buttons.push(
-        <Button
-        key={`${buttonId}:30`}
-        variant={isSelected(`${buttonId}:30`) ? "success" : (isReserved ? "light" : "outline-success")}
-        className={`w-25 ${isSelected(`${buttonId}:30`) ? "selected" : ""}`}
-        onClick={() => handleReservationTimeSelect(`${buttonId}:30`)}
-        disabled={isReserved}>
-        {hour}:30
+    );
+
+    buttons.push(
+      <Button
+        key={buttonId2}
+        variant={isSelected(buttonId2) ? "success" : isDisabled2 ? "light" : "outline-success"}
+        className={`w-25 ${isSelected(buttonId2) ? "selected" : ""}`}
+        onClick={() => handleReservationTimeSelect(buttonId2)}
+        disabled={isDisabled2}
+      >
+        {buttonId2}
       </Button>
-      );
-    }
-  
-    return buttons;
+    );
   }
+
+  return buttons;
+}
 
   function isSelected(buttonId) {
     if (selectedReservationTime === null) { // 선택된 예약 시간이 없는 경우 false를 반환
       return false;
     }
+    
     return selectedReservationTime.includes(buttonId); // 선택된 예약 시간 배열에 버튼 ID가 포함되어 있는지 확인하여 결과를 반환
   }
   
@@ -263,6 +272,7 @@ function Map() {
   function handleReservation() {  //모달창 예약하기 버튼
     if (!selectedReservationTime || selectedReservationTime.length === 0) {
       // 예약 시간을 선택하지 않은 경우 처리
+      alert("예약 시간을 선택해주세요.");
       return;
     }
   
@@ -283,7 +293,7 @@ function Map() {
         .then((res) => {
           console.log(res.data);
           setSelectedReservationTime([]);
-          alert(`시설 이름 : ${selectedMarker.name}이\n예약 시간: ${selectedReservationTime}에 예약되었습니다.`)
+          alert(`시설 이름 : ${selectedMarker.name}\n예약 시간: ${selectedReservationTime}에 예약되었습니다.`)
           window.location.reload();
         })
         .catch((error) => {
@@ -346,7 +356,8 @@ function Map() {
                       </Form.Group>
                       
                     <Form.Group className="mb-3">
-                      <Form.Label>✔ 예약 시간:</Form.Label><br/>
+                      <Form.Label>✔ 예약 시간</Form.Label><br/>
+                      <Form.Label style={{fontSize:'13px'}}>ex) 09:00 ~ 10:00 1시간 예약을 희망할 경우 09:00과 09:30클릭</Form.Label><br/>
                       {generateReservationButtons()}
                     </Form.Group>
                     </Form>
