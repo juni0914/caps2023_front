@@ -7,7 +7,10 @@ import ReactDOMServer from 'react-dom/server';
 import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
 import "./map.css";
 import DatePicker from 'react-datepicker';
+import subDays from 'date-fns/subDays';
 import 'react-datepicker/dist/react-datepicker.css';
+
+import { DateTime } from 'luxon';
 
 // import mapmarker from "../components/mapmarker";
 
@@ -16,6 +19,7 @@ function Map() {
   const mapElement = useRef(null);
   const navermaps = useNavermaps();
   const token = localStorage.getItem('login-token') || ''; 
+  const today = new Date();
 
     let markers = [];
     let infoWindows = [];
@@ -175,9 +179,14 @@ function Map() {
 
   useEffect(() => { // selectMarker 상태가 변경될 때마다 실행, 선택된 마커의 centerId를 사용하여 예약 정보 가져옴
     if (selectedMarker) {
+      let selectedDateString = DateTime.now().toFormat('yyyy-MM-dd');
+  
+      if (selectedDate) {
+        selectedDateString = DateTime.fromJSDate(selectedDate).toFormat('yyyy-MM-dd');
+      }
       try {
         axios({
-          url: `http://localhost:8080/center/${selectedMarker.centerId}/reservation`,
+          url: `http://localhost:8080/center/${selectedMarker.centerId}/reservation?date=${selectedDateString}`,
           method: "GET",
           withCredentials: true,
         })
@@ -185,7 +194,7 @@ function Map() {
             if (res.data) {
               setReservationInfo(res.data);
               console.log(res.data)
-              // console.log(res.data.reservedTimes)
+              console.log(res.data.date)
             }
           })
           .catch((error) => {
@@ -195,7 +204,7 @@ function Map() {
         console.log(error);
       }
     }
-  }, [selectedMarker]);
+  }, [selectedMarker, selectedDate]);
 
 
 
@@ -279,43 +288,44 @@ function Map() {
 
 
   function handleReservation() {  //모달창 예약하기 버튼
-    const selectedDateString  = selectedDate.toISOString().split('T')[0] // Format selectedDate as "YYYY-MM-DD"
+    const selectedDateString = selectedDate
+      ? DateTime.fromJSDate(selectedDate).toFormat('yyyy-MM-dd')   // 06-06으로 보내면 06-06로 보내져서 수정완료
+      : null; 
 
-    if (!selectedReservationTime || selectedReservationTime.length === 0 ) {
+    if (!selectedReservationTime || selectedReservationTime.length === 0 || !selectedDateString || selectedDateString.length === 0) {
       // 예약 시간을 선택하지 않은 경우 처리
-      alert("예약 시간을 선택해주세요.");
-      return;
-    }
-
-    if (!selectedDateString || selectedDateString.length === 0) {
-      alert("날짜를 선택해주세요!");
+      alert("예약 시간과 날짜를 선택해주세요.");
       return;
     }
     
     // 서버로 예약정보 POST 요청 보내기
     try {
-      axios({
-        url: `http://localhost:8080/center/${selectedMarker.centerId}/reservation`,
-        method: "POST",
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${token}`
-        },
-        data: JSON.stringify({
-          reservingTimes: selectedReservationTime,
-          reservingDate: selectedDateString
+      if (window.confirm("선택한 예약 정보로 예약을 진행하시겠습니까?")) {
+        axios({
+          url: `http://localhost:8080/center/${selectedMarker.centerId}/reservation`,
+          method: "POST",
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`
+          },
+          data: JSON.stringify({
+            reservingTimes: selectedReservationTime,
+            reservingDate: selectedDateString
+          })
         })
-      })
-        .then((res) => {
-          console.log(res.data);
-          setSelectedReservationTime([]);
-          alert(`시설 이름 : ${selectedMarker.name}\n예약 시간: ${selectedReservationTime}에 예약되었습니다.`)
-          window.location.reload();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+          .then((res) => {
+            console.log(res.data);
+            setSelectedReservationTime([]);
+            alert(`시설 이름 : ${selectedMarker.name}\n예약 시간: ${selectedReservationTime}에 예약되었습니다.`);
+            window.location.reload();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        console.log('예약이 취소되었습니다.');
+      }
     } catch (error) {
       console.log(error);
     }
@@ -361,25 +371,29 @@ function Map() {
                       </Form.Group>
                       
                       <Form.Group className="mb-3">
-                        <Form.Label>✔ 주소 : {reservationInfo && reservationInfo.center.address}</Form.Label>
+                        <Form.Label>📌 주소 : {reservationInfo && reservationInfo.center.address}</Form.Label>
                       </Form.Group>
 
                       <Form.Group className="mb-3">
-                        <Form.Label>✔ 이용가능시간 : {reservationInfo && reservationInfo.center.openTime} ~ {reservationInfo && reservationInfo.center.closeTime}
+                        <Form.Label>⏰ 이용가능시간 : {reservationInfo && reservationInfo.center.openTime} ~ {reservationInfo && reservationInfo.center.closeTime}
                         </Form.Label>
                       </Form.Group>
 
                       <Form.Group className="mb-3">
-                        <Form.Label>✔ 가격 : {reservationInfo && reservationInfo.center.price}원</Form.Label>
+                        <Form.Label>💰 가격 : {reservationInfo && reservationInfo.center.price}원</Form.Label>
                       </Form.Group>
 
                       <Form.Group className="mb-3">
-                        <Form.Label>✔ 날짜 선택</Form.Label><br/>
-                        <DatePicker selected={selectedDate} onChange={handleDateChange} dateFormat="yyyy-MM-dd" />
+                        <Form.Label>📅 날짜 선택</Form.Label><br/>
+                        <DatePicker 
+                          selected={selectedDate}
+                          onChange={handleDateChange} 
+                          minDate={subDays(today, 0)}
+                          dateFormat="yyyy-MM-dd" />
                       </Form.Group>
 
                     <Form.Group className="mb-3">
-                      <Form.Label>✔ 예약 시간</Form.Label><br/>
+                      <Form.Label>⌚ 예약 시간</Form.Label><br/>
                       <Form.Label style={{fontSize:'13px'}}>ex) 09:00 ~ 10:00 1시간 예약을 희망할 경우 09:00과 09:30클릭</Form.Label><br/>
                       {generateReservationButtons()}
                     </Form.Group>

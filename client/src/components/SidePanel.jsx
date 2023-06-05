@@ -145,10 +145,11 @@ const updateReservationData = (centerId, reservationId) => {
     }
   }
 
-  const handleDelete = () => {   //삭제버튼 함수
+  const handleDelete = () => {
     setLoading(true);
     const { centerId, reservationId } = reservationInfo;
-
+  
+    if (window.confirm("정말로 예약을 삭제하시겠습니까?")) {
       axios({
         url: `http://localhost:8080/center/${centerId}/reservation/${reservationId}`,
         method: "DELETE",
@@ -157,23 +158,27 @@ const updateReservationData = (centerId, reservationId) => {
           'Authorization': token
         }
       })
-      .then((res) => {
-        console.log(res.data);
-        updateReservationData(centerId, reservationId);
-        // window.location.reload();
-        // 성공적으로 삭제되었을 때 추가적인 작업 수행
-        // 예를 들어, 삭제된 예약 정보를 갱신하거나 목록을 새로고침하는 등의 동작을 수행할 수 있다.
-      })
-      .catch((error) => {
-        console.log(error);
+        .then((res) => {
+          console.log(res.data);
+          updateReservationData(centerId, reservationId);
+          window.location.reload();
+          // 성공적으로 삭제되었을 때 추가적인 작업 수행
+          // 예를 들어, 삭제된 예약 정보를 갱신하거나 목록을 새로고침하는 등의 동작을 수행할 수 있다.
+        })
+        .catch((error) => {
+          console.log(error);
+  
+          // 삭제 실패 시 에러 처리 로직 추가
+        })
+        .finally(() => {
+          setLoading(false);
+          setShowModal(false); // 모달 창 닫기
+        });
+    } else {
+      setLoading(false);
 
-        // 삭제 실패 시 에러 처리 로직 추가
-      })
-      .finally(() => {
-        setLoading(false);
-        setShowModal(false); // 모달 창 닫기
-      });
     }
+  };
 
     const isReservationDeleted = (centerId, reservationId) => {
       // reservecenterId와 reserveId 배열에서 주어진 centerId와 reservationId를 가진 예약의 인덱스를 찾습니다.
@@ -240,15 +245,14 @@ const updateReservationData = (centerId, reservationId) => {
                         <Form.Label>✔ 시설명 : {reservationInfo && reservationInfo.name}</Form.Label>
                       </Form.Group>
                       <Form.Group className="mb-3">
-                        <Form.Label>✔ 내가 예약한 날짜 : {reservationInfo && reservationInfo.reservingDate}</Form.Label> 
+                        <Form.Label>📅 내가 예약한 날짜 : {reservationInfo && reservationInfo.reservingDate}</Form.Label> 
                       </Form.Group>
-                      //성진이 api에서 null로 뿌려주는 중이라서 아무 값도 안나오는거 맞음
                       <Form.Group className="mb-3">
-                        <Form.Label>✔ 내가 예약한 시간 : {(reservationInfo && reservationInfo.reservingTime).join(", ")}
+                        <Form.Label>⌚ 내가 예약한 시간 : {(reservationInfo && reservationInfo.reservingTime).join(", ")}
                         </Form.Label>
                       </Form.Group>
                       <Form.Group className="mb-3">
-                        <Form.Label>✔ 가격 : {reservationInfo && reservationInfo.price}원</Form.Label>
+                        <Form.Label>💰 가격 : {reservationInfo && reservationInfo.price}원</Form.Label>
                       </Form.Group>
                     </Form>
                     ) : (
@@ -260,8 +264,8 @@ const updateReservationData = (centerId, reservationId) => {
             <Button variant="secondary" onClick={handleCloseModal}>
               닫기
             </Button>
-            <Button variant="danger" onClick={handleDelete} disabled={loading}>
-              {loading ? '삭제 중...' : '삭제하기'}
+            <Button variant="danger" onClick={handleDelete} >
+              취소하기
             </Button>
           </Modal.Footer>
         </Modal>
