@@ -6,6 +6,8 @@ import axios from "axios";
 import ReactDOMServer from 'react-dom/server';
 import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
 import "./map.css";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 // import mapmarker from "../components/mapmarker";
 
@@ -28,6 +30,7 @@ function Map() {
     const [reservationInfo, setReservationInfo] = useState(null); //선택된 마커의 예약 정보를 저장
     const [selectedReservationTime, setSelectedReservationTime] = useState(null); // 선택한 예약시간을 저장
     const [selectedButton, setSelectedButton] = useState(null); //시간 중복 선택정보 저장
+    const [selectedDate, setSelectedDate] = useState(null); //날짜 정보 저장
 
     const handleButtonClick = () => { //예약모달창 열기 버튼함수
       setShowModal(true);
@@ -38,6 +41,11 @@ function Map() {
     };
     // handleClose = () => this.setState({ show: false });
     // handleShow = () => this.setState({ show: true });
+
+    const handleDateChange = (date) => {
+      setSelectedDate(date);
+      console.log(date)
+    };
 
 
 
@@ -176,7 +184,7 @@ function Map() {
           .then((res) => {
             if (res.data) {
               setReservationInfo(res.data);
-              // console.log(res.data)
+              console.log(res.data)
               // console.log(res.data.reservedTimes)
             }
           })
@@ -247,6 +255,7 @@ function Map() {
     return selectedReservationTime.includes(buttonId); // 선택된 예약 시간 배열에 버튼 ID가 포함되어 있는지 확인하여 결과를 반환
   }
   
+  
   function handleReservationTimeSelect(buttonId) {  // 예약된 시간 버튼 정보 함수
     let updatedSelectedTime = [];
   
@@ -270,12 +279,19 @@ function Map() {
 
 
   function handleReservation() {  //모달창 예약하기 버튼
-    if (!selectedReservationTime || selectedReservationTime.length === 0) {
+    const selectedDateString  = selectedDate.toISOString().split('T')[0] // Format selectedDate as "YYYY-MM-DD"
+
+    if (!selectedReservationTime || selectedReservationTime.length === 0 ) {
       // 예약 시간을 선택하지 않은 경우 처리
       alert("예약 시간을 선택해주세요.");
       return;
     }
-  
+
+    if (!selectedDateString || selectedDateString.length === 0) {
+      alert("날짜를 선택해주세요!");
+      return;
+    }
+    
     // 서버로 예약정보 POST 요청 보내기
     try {
       axios({
@@ -287,7 +303,8 @@ function Map() {
           Authorization: `${token}`
         },
         data: JSON.stringify({
-          reservingTimes: selectedReservationTime
+          reservingTimes: selectedReservationTime,
+          reservingDate: selectedDateString
         })
       })
         .then((res) => {
@@ -342,6 +359,7 @@ function Map() {
                       <Form.Group className="mb-3">
                         <Form.Label>✔ 시설명 : {reservationInfo && reservationInfo.center.name}</Form.Label>
                       </Form.Group>
+                      
                       <Form.Group className="mb-3">
                         <Form.Label>✔ 주소 : {reservationInfo && reservationInfo.center.address}</Form.Label>
                       </Form.Group>
@@ -354,7 +372,12 @@ function Map() {
                       <Form.Group className="mb-3">
                         <Form.Label>✔ 가격 : {reservationInfo && reservationInfo.center.price}원</Form.Label>
                       </Form.Group>
-                      
+
+                      <Form.Group className="mb-3">
+                        <Form.Label>✔ 날짜 선택</Form.Label><br/>
+                        <DatePicker selected={selectedDate} onChange={handleDateChange} dateFormat="yyyy-MM-dd" />
+                      </Form.Group>
+
                     <Form.Group className="mb-3">
                       <Form.Label>✔ 예약 시간</Form.Label><br/>
                       <Form.Label style={{fontSize:'13px'}}>ex) 09:00 ~ 10:00 1시간 예약을 희망할 경우 09:00과 09:30클릭</Form.Label><br/>

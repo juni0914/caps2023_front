@@ -15,7 +15,8 @@ function SidePanel() {
   const [reservationInfo, setReservationInfo] = useState(null);
   const [showModal, setShowModal] = useState(false);  //모달 열고 닫는 정보를 저장
   const [loading, setLoading] = useState(false);
-
+  const [deletedReservations, setDeletedReservations] = useState([]);
+  
   const handleButtonClick = () => { //예약모달창 열기 버튼함수
     setShowModal(true);
   };
@@ -25,6 +26,24 @@ function SidePanel() {
   };
 
   let token = localStorage.getItem('login-token') || '';
+
+
+const updateReservationData = (centerId, reservationId) => {
+  // 기존 예약 내역에서 삭제된 예약을 제외하고 업데이트된 예약 내역을 생성합니다.
+  const updatedReserveData = reserveData.filter((name, index) => reservecenterId[index] !== centerId || reserveId[index] !== reservationId);
+  const updatedReserveIds = reserveId.filter((id, index) => reservecenterId[index] !== centerId || id !== reservationId);
+  const updatedCenterIds = reservecenterId.filter((id, index) => id !== centerId || reserveId[index] !== reservationId);
+  
+  // 예약 내역 상태를 업데이트합니다.
+  setReserveData(updatedReserveData);
+  setReserveId(updatedReserveIds);
+  setReservecenterId(updatedCenterIds);
+
+  // 삭제된 예약 내역을 업데이트합니다.
+  const updatedDeletedReservations = reserveData.filter((name, index) => reservecenterId[index] !== centerId || reserveId[index] !== reservationId);
+  setDeletedReservations(updatedDeletedReservations);
+};
+  
 
   const logout = () => {
     // axios({
@@ -78,6 +97,7 @@ function SidePanel() {
       })
         .then((res) => {
           if (res.data && res.data.content) {   
+            console.log(res.data)
             const reserveNames = res.data.content.map((item) => item.name); //예약된 체육시설을 이름 배열로 저장
             const ReserveIds = res.data.content.map((item) => item.reservationId); //예약된 ID를 배열로 저장
             const CenterIds = res.data.content.map((item) => item.centerId); //예약된 센터ID를 배열로 저장
@@ -93,6 +113,9 @@ function SidePanel() {
       console.log(error);
     }
   }, []);
+
+
+
 
   function handleReservationClick(index) {    //사이드패널 예약목록 h6태그 클릭시 함수
     //예약된 체육시설 센터ID랑 예약ID 추출
@@ -112,6 +135,7 @@ function SidePanel() {
         .then((res) => {
           setReservationInfo(res.data);
           console.log(res.data);
+          // console.log(reservationInfo.reservingDate)
         })
         .catch((error) => {
           console.log(error);
@@ -135,9 +159,10 @@ function SidePanel() {
       })
       .then((res) => {
         console.log(res.data);
-        window.location.reload();
+        updateReservationData(centerId, reservationId);
+        // window.location.reload();
         // 성공적으로 삭제되었을 때 추가적인 작업 수행
-        // 예를 들어, 삭제된 예약 정보를 갱신하거나 목록을 새로고침하는 등의 동작을 수행할 수 있습니다.
+        // 예를 들어, 삭제된 예약 정보를 갱신하거나 목록을 새로고침하는 등의 동작을 수행할 수 있다.
       })
       .catch((error) => {
         console.log(error);
@@ -149,6 +174,19 @@ function SidePanel() {
         setShowModal(false); // 모달 창 닫기
       });
     }
+
+    const isReservationDeleted = (centerId, reservationId) => {
+      // reservecenterId와 reserveId 배열에서 주어진 centerId와 reservationId를 가진 예약의 인덱스를 찾습니다.
+      const index = reservecenterId.findIndex((id, idx) => id === centerId && reserveId[idx] === reservationId);
+      
+      // 예약을 찾지 못했거나 해당 예약의 인덱스가 -1인 경우 예약이 삭제된 것으로 간주합니다.
+      if (index === -1) {
+        return true; // 예약이 삭제되었음
+      } else {
+        return false; // 예약이 유효함
+      }
+    };
+
 
   return (
     <div
@@ -170,9 +208,20 @@ function SidePanel() {
         <button onClick={logout} style={{ backgroundColor: "white", borderRadius: '20px', fontSize: '15px', border: 'none', color: '#5a635f', float: 'right', padding: '0.5rem', cursor: 'pointer' }}>Logout</button>
       </h4><br />
       <h4>⚽ 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '25px' }}>(최대 20개까지만 표시)</p></h4>
-      {reserveData.map((name, index) => (
-        <h6 key={index} style={{ marginLeft: '30px', cursor: "pointer" }} onClick={() => handleReservationClick(index)}>{index + 1}. {name}</h6>
-      ))}
+        {reserveData.map((name, index) => {
+          const centerId = reservecenterId[index];
+          const reservationId = reserveId[index];
+          if (isReservationDeleted(centerId, reservationId)) {
+            return null; // 삭제된 예약이라면 출력하지 않음
+          }
+          return (
+            <h6 key={index} style={{ marginLeft: '30px', cursor: "pointer" }} onClick={() => handleReservationClick(index)}>
+              {index + 1}. {name}
+            </h6>
+          );
+        })}
+
+
       <Container>
           <Modal show={showModal} onHide={handleCloseModal}>
           <Modal.Header closeButton>
@@ -191,6 +240,10 @@ function SidePanel() {
                         <Form.Label>✔ 시설명 : {reservationInfo && reservationInfo.name}</Form.Label>
                       </Form.Group>
                       <Form.Group className="mb-3">
+                        <Form.Label>✔ 내가 예약한 날짜 : {reservationInfo && reservationInfo.reservingDate}</Form.Label> 
+                      </Form.Group>
+                      //성진이 api에서 null로 뿌려주는 중이라서 아무 값도 안나오는거 맞음
+                      <Form.Group className="mb-3">
                         <Form.Label>✔ 내가 예약한 시간 : {(reservationInfo && reservationInfo.reservingTime).join(", ")}
                         </Form.Label>
                       </Form.Group>
@@ -204,13 +257,12 @@ function SidePanel() {
           
               </Modal.Body>
           <Modal.Footer>
-            <Button variant="danger" onClick={handleDelete} disabled={loading}>
-              {loading ? '삭제 중...' : '삭제하기'}
-            </Button>
             <Button variant="secondary" onClick={handleCloseModal}>
               닫기
             </Button>
-
+            <Button variant="danger" onClick={handleDelete} disabled={loading}>
+              {loading ? '삭제 중...' : '삭제하기'}
+            </Button>
           </Modal.Footer>
         </Modal>
       </Container>
