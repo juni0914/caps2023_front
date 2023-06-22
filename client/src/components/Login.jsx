@@ -10,33 +10,41 @@ import { Link } from "react-router-dom";
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isLogin, setIsLogin] = useState(false);
-  const [user, setUser] = useState({});
+  // const [isLogin, setIsLogin] = useState(false);
+  // const [user, setUser] = useState({});
   
   const token = localStorage.getItem('login-token') || '';
 
-
-
-  const login = () => {
-    axios({
-      url: "http://localhost:8080/login", //login3에 post안되다가 login으로 바꾸니까 다시 되긴함
-      method: "POST",
-      withCredentials: true,
-      data: JSON.stringify({
-        username: username,
-        password: password,
-      })
-
-    }).then((res) => {
-      if (res.status === 200) {
-        localStorage.setItem('login-token',res.headers.authorization)
-        window.open('/', '_self')
-        console.log("로그인됨")
-        console.log(res)
-        console.log("username : ",username,"\tpassword : ",password)
-
+  const setLoginToken = (token) => {
+    return new Promise((resolve, reject) => {
+      try {
+        localStorage.setItem('login-token', token);
+        resolve();
+      } catch (error) {
+        reject(error);
       }
     });
+  };
+  
+  const login = async () => {
+    try {
+      const response = await axios({
+        url: "http://localhost:8080/login",
+        method: "POST",
+        withCredentials: true,
+        data: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+      });
+  
+      if (response.status === 200) {
+        localStorage.setItem('login-token', response.headers.authorization);
+        window.open('/', '_self');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // const accessToken = () => {
@@ -79,14 +87,14 @@ export default function Login() {
         url: "http://localhost:8080/api/user/1", // user/success 에서 변경했는데 되긴함. 수정 필요
         method: "GET",
         withCredentials: true,
-        headers:{
-          'Authorization' : token
+        headers: {
+          'Authorization': token
         }
       })
         .then((res) => {
           if (res.data) {
-            setIsLogin(true);
-            setUser(res.data);
+            // setIsLogin(true);
+            // setUser(res.data);
             console.log(res.data)
             console.log(token);
           }

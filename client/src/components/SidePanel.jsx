@@ -192,27 +192,68 @@ const updateReservationData = (centerId, reservationId) => {
       }
     };
 
-
+    const darkModeStyles = {
+      backgroundColor: "#1f1f1f",
+      color: "#ffffff",
+    };
+    
+    const lightModeStyles = {
+      backgroundColor: "#b4fedb",
+      color: "#5a635f",
+    };
+    
+    const HomePage = ({ isDarkMode }) => {
+      const containerStyles = isDarkMode ? darkModeStyles : lightModeStyles;
+    
+      return (
+        <div style={{ ...containerStyles, padding: '2rem', minHeight: "95vh", borderRadius: '20px', marginLeft: '20px', marginTop: "20px" }}>
+          <h2 id="sidepaneltitle" style={{ fontWeight: '600' }}>
+            🏫 경상국립대학교<br />체육시설 예약 사이트
+          </h2>
+          <h4 style={{ marginTop: '20px' }}>
+            ⛹️‍♂️ {user.username} 님
+            <button onClick={logout} style={{ backgroundColor: "white", borderRadius: '20px', fontSize: '15px', border: 'none', color: '#5a635f', float: 'right', padding: '0.5rem', cursor: 'pointer' }}>Logout</button>
+          </h4><br />
+          <h4 style={{ marginLeft: '-5px' }}>📌 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '45px' }}>(최대 20개까지만 표시)</p></h4>
+          {reserveData.map((name, index) => {
+            const centerId = reservecenterId[index];
+            const reservationId = reserveId[index];
+            if (isReservationDeleted(centerId, reservationId)) {
+              return null; // 삭제된 예약이라면 출력하지 않음
+            }
+            return (
+              <h6 key={index} style={{ marginLeft: '20px', cursor: "pointer" }}>
+                <span style={{ marginRight: '5px' }}>{isDarkMode ? '✅' : '✔'}</span>
+                {index + 1}. {name}
+              </h6>
+            );
+          })}
+        </div>
+      );
+    };
+    
   return (
     <div
       style={{
         backgroundColor: "#b4fedb",
-        width: "22vw",
+        // width: "22vw",
         padding: '2rem',
-        minHeight: '115%',
+        // minHeight: '115%',
+        minHeight: "95vh",
         color: '#5a635f',
-        minWidth: '100%',
+        // minWidth: '100%',
         borderRadius: '20px',
         marginLeft: '20px',
+        marginTop: "20px"
       }}>
       <h2 id="sidepaneltitle" style={{ fontWeight: '600' }}>
         🏫 경상국립대학교<br />체육시설 예약 사이트
       </h2>
-      <h4 style={{ marginTop: '20px' }}>
+      <h4 style={{ marginTop: '20px'}}>
         ⛹️‍♂️ {user.username} 님
         <button onClick={logout} style={{ backgroundColor: "white", borderRadius: '20px', fontSize: '15px', border: 'none', color: '#5a635f', float: 'right', padding: '0.5rem', cursor: 'pointer' }}>Logout</button>
       </h4><br />
-      <h4>⚽ 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '25px' }}>(최대 20개까지만 표시)</p></h4>
+      <h4 style={{marginLeft: '-5px' }}>📌 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '45px' }}>(최대 20개까지만 표시)</p></h4>
         {reserveData.map((name, index) => {
           const centerId = reservecenterId[index];
           const reservationId = reserveId[index];
@@ -220,8 +261,8 @@ const updateReservationData = (centerId, reservationId) => {
             return null; // 삭제된 예약이라면 출력하지 않음
           }
           return (
-            <h6 key={index} style={{ marginLeft: '30px', cursor: "pointer" }} onClick={() => handleReservationClick(index)}>
-              {index + 1}. {name}
+            <h6 key={index} style={{ marginLeft: '20px', cursor: "pointer" }} onClick={() => handleReservationClick(index)}>
+             ✔ {index + 1}. {name}
             </h6>
           );
         })}

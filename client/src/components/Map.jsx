@@ -333,23 +333,25 @@ function Map() {
   
 
   return ( 
-    <>  
-      <div style={{  width: "22vw", height: '700px', float: 'left' }}>
+    <>
+    <div style={{ width: "100%", height: "100%", display: "flex" }}>
+      <div style={{  width: "22vw", height: "100%", float: "left" }}>
         <SidePanel/>
        </div>
-      <div>
+      <div style={{ flex: "1", position: "relative", marginLeft: "20px" }}>
           <div style={{
-            position: 'relative',
-            zIndex:'2',
-            width: 'auto', height: '805px',
-            padding: '2rem',
-            minHeight: '97%',
-            color: 'white',
-            minWidth: '100px',
-            borderRadius: '20px',
-            marginLeft: '-500px',
-            marginRight: "20px",
-            marginTop: '20px'}}  ref={mapElement}
+        position: "relative",
+        zIndex: "2",
+        minHeight: "95vh",
+        width: "auto",
+        height: "97.6%",
+        padding: "2rem",
+        color: "white",
+        minWidth: "100px",
+        borderRadius: "20px",
+        marginRight: "20px",
+        marginTop: "20px"
+      }}  ref={mapElement}
           >
           <div className="btn1" style={{position: 'absolute', zIndex:'1',marginLeft: '-10px', marginTop: '-10px'}}>
             <button id="moveButton1" >칠암캠퍼스로 이동하기</button> 
@@ -414,7 +416,7 @@ function Map() {
         </Modal>
       </Container>
        </div>
-
+    </div>
     </>
   )
 }
