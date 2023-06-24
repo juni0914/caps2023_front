@@ -35,11 +35,28 @@ function Map() {
     const [selectedReservationTime, setSelectedReservationTime] = useState(null); // 선택한 예약시간을 저장
     const [selectedButton, setSelectedButton] = useState(null); //시간 중복 선택정보 저장
     const [selectedDate, setSelectedDate] = useState(null); //날짜 정보 저장
+    const [headCount, setHeadCount] = useState(1); //헤드카운트 인원 정보 저장
 
+    function GuestCountForm() {
+    const decreaseHeadCount = () => { //헤드카운트 감소 
+      if (headCount > 1) {
+        setHeadCount(headCount - 1);
+      }
+    };
+  
+    const increaseHeadCount = () => { //헤드카운트 증가 
+      setHeadCount(headCount + 1);
+    };
+
+    return {
+      decreaseHeadCount,
+      increaseHeadCount
+    };
+  }
     const handleButtonClick = () => { //예약모달창 열기 버튼함수
       setShowModal(true);
     };
-  
+
     const handleCloseModal = () => { //예약모달창 닫기 버튼함수
       setShowModal(false);
     };
@@ -311,7 +328,8 @@ function Map() {
           },
           data: JSON.stringify({
             reservingTimes: selectedReservationTime,
-            reservingDate: selectedDateString
+            reservingDate: selectedDateString,
+            headCount: headCount,
           })
         })
           .then((res) => {
@@ -394,11 +412,22 @@ function Map() {
                           dateFormat="yyyy-MM-dd" />
                       </Form.Group>
 
+                      <Form.Group className="mb-3">
+                      <Form.Label>👥 인원 수</Form.Label>
+                      <div className="d-flex align-items-center">
+                        <Button variant="outline-secondary" size="sm" onClick={GuestCountForm().decreaseHeadCount}>-</Button>
+                        <Form.Control type="text" value={headCount} readOnly className="text-center mx-2" style={{ width: '50px' }} />
+                        <Button variant="outline-secondary" size="sm" onClick={GuestCountForm().increaseHeadCount}>+</Button>
+                      </div>
+                    </Form.Group>
+
                     <Form.Group className="mb-3">
                       <Form.Label>⌚ 예약 시간</Form.Label><br/>
                       <Form.Label style={{fontSize:'13px'}}>ex) 09:00 ~ 10:00 1시간 예약을 희망할 경우 09:00과 09:30클릭</Form.Label><br/>
                       {generateReservationButtons()}
                     </Form.Group>
+
+
                     </Form>
                     ) : (
                     <p>Loading reservation information...</p>

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import "./login.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import gnu from '../images/gnulogo.png'
+import gnulogo from '../images/gnulogo.png';
 // import { cookies, setCookie, useCookies } from "react-cookie"
 // import { setCookie, getCookie,removeCookie } from "./cookie";
 
@@ -123,12 +125,21 @@ export default function Login() {
   //   });
   // };
   return (
-      <div className="auth-wrapper" style={{
-            background: 'linear-gradient(30deg, #b4fedb 0%, #FFE6FA 70%)'
-        }} >
+    <div className="auth-wrapper-container" style={{ display: 'flex' }}>
+      <div className="second-auth">
+            <form style={{ textAlign: 'center' }}> 
+            <p style={{fontSize: '20px', textAlign: 'left'}}>"Effortlessly book your favorite sports facilities"</p>
+              <img src={gnulogo} alt="GNU 로고" />
+              <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'left', marginTop: '20px'}}>GNU</h2>
+              <h2 style={{fontSize: '35px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'left'}}>Sports Facility</h2>
+              <h2 style={{fontSize: '35px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'left'}}>Reservation </h2>
+            </form>
+      </div>
+
+      <div className="auth-wrapper"  >
           <form>
-            <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#C4B4E1",textAlign: 'center'}}>LOGIN</h2>
-                  <label>Email</label>
+            <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'center'}}>LOGIN</h2>
+                  <label>✉ Email</label>
             <input
               placeholder="email"
               className="inputValue"
@@ -137,7 +148,7 @@ export default function Login() {
             />
 
             <label className="inputLabel" style={{ color: 'white', textDecoration: 'none' }}>password</label>
-            <label>Password</label>
+            <label>🔒 Password</label>
             <input
               type="password"
               placeholder="password"
@@ -149,10 +160,13 @@ export default function Login() {
 
           <button onClick={login} type="submit" style={{
             width: '400px',cursor: 'pointer'}}>Login</button>
-          <Link style={{ color: '#C4B4E1', textDecoration: 'none' }} to="/join">아직 아이디가 없으신가요?  </Link>
+          <Link style={{ color: '#50BDCF', textDecoration: 'none', fontWeight: '800' }} to="/join">아직 아이디가 없으신가요?  </Link>
         </form>
-    </div>
+      </div>
 
+
+
+    </div>
 
   );
 }

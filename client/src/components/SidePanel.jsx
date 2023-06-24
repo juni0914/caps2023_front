@@ -293,6 +293,10 @@ const updateReservationData = (centerId, reservationId) => {
                         </Form.Label>
                       </Form.Group>
                       <Form.Group className="mb-3">
+                        <Form.Label>👥 예약 인원 수 : {(reservationInfo && reservationInfo.headCount)}명
+                        </Form.Label>
+                      </Form.Group>
+                      <Form.Group className="mb-3">
                         <Form.Label>💰 가격 : {reservationInfo && reservationInfo.price}원</Form.Label>
                       </Form.Group>
                     </Form>

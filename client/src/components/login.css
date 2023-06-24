@@ -61,24 +61,55 @@ body {
     font-family: 'SUIT-Medium';
   }
   
+  .auth-wrapper-container {
+    background: linear-gradient(30deg, #b4fedb 0%, #FFE6FA 70%);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+  }
   
   .auth-wrapper  {
-    
+    flex-basis: 50%;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     justify-content: center;
-  
+    margin: 0;
+    padding: 0;
   }
-  
-  
   
   .auth-wrapper form {
     width: 500px;
+    height: 600px;
     margin: 0 auto;
-    padding: 80px 50px;
+    margin-left: 0;
+    padding: 120px 50px;
     background-color: #FFFFFF;
-    border-radius: 10px;
+    /* border-radius: 10px; */
+        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
+              0 10px 10px rgba(0,0,0,0.22);
+  }
+
+  .second-auth{
+    flex-basis: 50%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  .second-auth form{
+    width: 500px;
+    height: 600px;
+    margin: 0 auto;
+    margin-right: 0;
+    padding: 50px 30px;
+    background-color: #FFFFFF;
+    /* border-radius: 10px; */
         box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
               0 10px 10px rgba(0,0,0,0.22);
   }
@@ -115,6 +146,7 @@ body {
     padding: 10px 15px;
     margin-bottom: 10px;
     font-size: 14px;
+    /* text-indent: 5px; */
   }
   
   .auth-wrapper label {
@@ -129,7 +161,7 @@ body {
   
   .auth-wrapper button[type="submit"],
   .auth-wrapper input[type="submit"] {
-    background: #7A84EB;
+    background: #50BDCF;
     color: white;
     text-transform: uppercase;
     border: none;
@@ -172,7 +204,7 @@ body {
   }
   .auth-wrapper button[type="submit"]:hover,
   .auth-wrapper input[type="submit"]:hover {
-    background: #636ee6;
+    background: #99CCFF;
   }
   
   .auth-wrapper button[type="submit"]:active,

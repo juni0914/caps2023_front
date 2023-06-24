@@ -3,6 +3,7 @@ import { useState } from "react";
 import "./login.css";
 import axios from "axios";
 import { Link } from 'react-router-dom';
+import gnulogo from '../images/gnulogo.png';
 
 export default function Join({ setIsJoin, setUser }) {
   const [username, setUsername] = useState('');
@@ -32,12 +33,20 @@ export default function Join({ setIsJoin, setUser }) {
   
 
   return (
-<div className="auth-wrapper" style={{
-            background: 'linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%)'
-        }} >
+    <div className="auth-wrapper-container" style={{ display: 'flex' }}>
+    <div className="second-auth" style={{ flex: '1' }}>
+          <form style={{ textAlign: 'center' }}> 
+          <p style={{fontSize: '20px', textAlign: 'left'}}>"Effortlessly book your favorite sports facilities"</p>
+            <img src={gnulogo} alt="GNU 로고" />
+            <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'left', marginTop: '20px'}}>GNU</h2>
+            <h2 style={{fontSize: '35px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'left'}}>Sports Facility</h2>
+            <h2 style={{fontSize: '35px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'left'}}>Reservation </h2>
+          </form>
+    </div>
+        <div className="auth-wrapper" >
           <form>
-            <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#C4B4E1",textAlign: 'center'}}>JOIN</h2>
-                  <label>Email</label>
+            <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'center'}}>JOIN</h2>
+                  <label>✉ Email</label>
           <input
             placeholder="email"
             className="inputValue"
@@ -47,7 +56,7 @@ export default function Join({ setIsJoin, setUser }) {
 
         <div className="inputGroup">
           <label className="inputLabel" style={{ color: 'white', textDecoration: 'none' }}>password</label>
-          <label>Password</label>
+          <label>🔒 Password</label>
           <input
             type="password"
             placeholder="password"
@@ -58,11 +67,11 @@ export default function Join({ setIsJoin, setUser }) {
           />
         </div>
         <button onClick={join} type="submit" style={{cursor : "pointer", width: '400px'}}>Join</button>
-        <Link style={{ color: '#C4B4E1', textDecoration: 'none' }} to="/login">로그인 하러가기  </Link>
+        <Link style={{ color: '#50BDCF', textDecoration: 'none', fontWeight: '800'}} to="/login">로그인 하러가기  </Link>
 {/*         <p>{props.data}</p> */}
           </form>
     </div>
-
+</div>
 
   );
 }
