@@ -1,0 +1,59 @@
+.sidebar {
+    background-color: #99CCFF;
+    padding: 2rem;
+    min-height: 95vh;
+    border-radius: 20px;
+    margin-left: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  #sidepaneltitle {
+    font-weight: 600;
+    color: #333;
+  }
+  
+
+  .sidebar button {
+    background-color: #99CCFF;
+    border-radius: 20px;
+    font-size: 15px;
+    border: none;
+    color: #5a635f;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+
+.board {
+    max-width: 800px;
+    margin: 0 ;
+    padding: 20px;
+  }
+  
+  .board-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .post {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .post-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .post-info {
+    color: #888;
+    margin-bottom: 10px;
+  }
+  
+  .post-content {
+    line-height: 1.5;
+  }

@@ -142,7 +142,7 @@ function Map() {
                     <button onClick={handleButtonClick} style={{backgroundColor: "white",border: '0.3rm',borderRadius: '20px', 
                     borderColor:'#0068c3', color: '#5a635f', float: 'right', marginTop: '-3px',cursor: 'pointer'}}>예약</button>
                   </h4>                  
-                  <img referrerPolicy="no-referrer" src={maparray[i].imgUrl} style={{ width: '300px', height: '180px' }} />
+                  <img referrerPolicy="no-referrer" src={maparray[i].imgUrl} style={{ width: '300px', height: '180px', borderRadius: '10px' }} />
                   <p className="markerinfo_h4">주소 : {maparray[i].address}</p>
                   <p className="markerinfo_h4">이용가격 : {maparray[i].price}원</p>
                 </div>

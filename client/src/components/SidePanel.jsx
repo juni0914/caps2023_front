@@ -1,5 +1,5 @@
 import Main from "./Main";
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Map from "./Map";
@@ -252,7 +252,9 @@ const updateReservationData = (centerId, reservationId) => {
       <h4 style={{ marginTop: '20px'}}>
         ⛹️‍♂️ {user.username} 님
         <button onClick={logout} style={{ backgroundColor: "white", borderRadius: '20px', fontSize: '15px', border: 'none', color: '#5a635f', float: 'right', padding: '0.5rem', cursor: 'pointer' }}>Logout</button>
-      </h4><br />
+      </h4>
+      <h4><Link style={{  textDecoration: 'none', fontWeight: '800' }} to="/community">체육시설 커뮤니티 바로가기  </Link></h4>
+
       <h4 style={{marginLeft: '-5px' }}>📌 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '45px' }}>(최대 20개까지만 표시)</p></h4>
         {reserveData.map((name, index) => {
           const centerId = reservecenterId[index];
