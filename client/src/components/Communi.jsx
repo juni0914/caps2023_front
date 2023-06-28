@@ -6,16 +6,18 @@ import Component1 from "./Map";
 import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
 import "./communi.css";
 
-
 function Communi() {
   const [isLogin, setIsLogin] = useState(false); //로그인 정보 저장
   const [user, setUser] = useState({});         // user 정보 저장
   const [title, setTitle] = useState("");       // 내가 작성하는 게시글 정보 저장
-  const [content, setContent] = useState("");   // 내가 작성하는 내용 정보 저장
-  const [posts, setPosts] = useState([])
-  // const [alltitle, setAlltitle] = useState([]);       // 전체 게시글 제목 정보 저장 
-  // const [allcontent, setAllcontent] = useState([]);   // 전체 게시글 내용 정보 저장 
+  const [content, setContent] = useState("");   // 내가 작성하는 내용 정보 저장setTitle
+  const [posts, setPosts] = useState([])                //전체 게시글의 글 전체 정보 저장
+  // const [alltitle, setAlltitle] = useState([]);       // 전체 게시글 글 제목 정보 저장 
+  // const [allcontent, setAllcontent] = useState([]);   // 전체 게시글 글 내용 정보 저장 
   const [isOpen, setIsOpen] = useState(false); // 모달 창 열림 여부
+  const [secondOpen, setsecondOpen] = useState(false); // 특정 글 모달 창 열림 여부
+  const [post, setPost] = useState(null);       //클릭하는 특정 게시글의 정보 저장
+
 
   let token = localStorage.getItem('login-token') || '';
 
@@ -72,7 +74,7 @@ function Communi() {
         .then((res) => {
           if (res.data && res.data.content) {
             setPosts(res.data.content);
-            console.log(res.data.content)
+            console.log(res.data.content);
           }
         })
         .catch((error) => {
@@ -105,7 +107,6 @@ function Communi() {
             setTitle('');
             setContent('');
             window.location.reload();
-            // window.location.href = 'http://localhost:3000/community';
             console.log("게시글이 성공적으로 생성되었습니다:", res.data);
           })
         
@@ -116,6 +117,45 @@ function Communi() {
           console.log('작성이 취소되었습니다.');
         }
         
+  };
+
+  // useEffect(() => {
+  //   const fetchPostDetails = async () => {
+  //     try {
+  //       const res = await axios.get(`http://localhost:8080/post/read/${post.id}`);
+  //       const postData = res.data;
+  //       setPost(postData);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   fetchPostDetails();
+  // }, []);
+
+  const handleClick = (index) => {
+      try {
+        axios({
+          url: `http://localhost:8080/post/read/${posts.length - index}`,
+          method: "GET",
+          withCredentials: true,
+          headers: {
+            'Authorization': token
+          }
+        })
+          .then((res) => {
+            if (res.data) {
+              setPost(res.data)
+              setsecondOpen(true)
+              console.log(post.user.username)
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } catch (error) {
+        console.log(error);
+      }
   };
 
     
@@ -143,9 +183,9 @@ function Communi() {
                 </div>
                 <div className="post-list">
                   {posts.map((post, index) => (
-                    <div key={index} className="post">
+                    <div key={index} className="post" onClick={() => handleClick(index)} style={{cursor: 'pointer'}}>
                       <h3 className="post-title">제목: {posts[posts.length - index - 1].title}</h3>
-                      <p className="post-content">내용: {posts[posts.length - index - 1].content}</p>
+                      {/* <p className="post-content">내용: {posts[posts.length - index - 1].content}</p> */}
                       <p className="post-author">작성자: {posts[posts.length - index - 1].user.username}</p>
                     </div>
                   ))}
@@ -183,6 +223,25 @@ function Communi() {
                 <Modal.Footer>
                   <Button variant="secondary" onClick={() => setIsOpen(false)}>닫기</Button>
                   <Button variant="primary" onClick={handleCreatePost}>게시글 생성</Button>
+                </Modal.Footer>
+              </Modal>
+
+
+              <Modal show={secondOpen} onHide={() => setsecondOpen(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>{post && post.user && post.user.username}님의 게시글</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+              {post && (
+                  <>
+                    <h2>제목 : {post.title}</h2><br/>
+                    <h4 style={{ wordWrap: 'break-word', maxWidth: '100%' }}>{post.content}</h4>
+                  </>
+                )}
+              </Modal.Body>
+              <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setsecondOpen(false)}>닫기</Button>
+
                 </Modal.Footer>
               </Modal>
             </div>
