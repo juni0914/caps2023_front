@@ -400,7 +400,7 @@ function Map() {
                       </Form.Group>
 
                       <Form.Group className="mb-3">
-                        <Form.Label>💰 가격 : {reservationInfo && reservationInfo.center.price}원</Form.Label>
+                        <Form.Label>💰 가격 : 30분당 {reservationInfo && reservationInfo.center.price}원</Form.Label>
                       </Form.Group>
 
                       <Form.Group className="mb-3">

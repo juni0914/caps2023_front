@@ -1,7 +1,8 @@
 .sidebar {
     background-color: #99CCFF;
     padding: 2rem;
-    min-height: 95vh;
+    min-height: 90vh;
+    max-height: 95vh;;
     border-radius: 20px;
     margin-left: 20px;
     margin-top: 20px;
@@ -26,7 +27,8 @@
 
 /* 게시판 스타일 */
 .board {
-  width: 1300px; /* 원하는 고정 넓이로 설정 */
+  width: 75vw; /* 원하는 고정 넓이로 설정 */
+  height: 95vh;
   margin: 20px;
   padding: 20px;
   border: 1px solid #ccc;
@@ -52,9 +54,9 @@
 }
 
 .post {
-  background-color: #f8f8f8;
+  background-color: #CAE1FF;
   padding: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   border-radius: 5px;
 }
 
@@ -73,3 +75,17 @@
   font-size: 12px;
   color: #888;
 }
+
+.pagination-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px; /* 필요에 따라 여백을 조정하세요 */
+}
+
+.pagination-buttons button {
+  margin-right: 2px; /* 버튼 사이의 간격을 조정하세요 */
+}
+
+
+

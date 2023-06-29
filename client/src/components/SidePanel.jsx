@@ -145,11 +145,11 @@ const updateReservationData = (centerId, reservationId) => {
     }
   }
 
-  const handleDelete = () => {
+  const handleDelete = () => {      //예약 취소하기
     setLoading(true);
     const { centerId, reservationId } = reservationInfo;
   
-    if (window.confirm("정말로 예약을 삭제하시겠습니까?")) {
+    if (window.confirm("정말로 예약을 취소하시겠습니까?")) {
       axios({
         url: `http://localhost:8080/center/${centerId}/reservation/${reservationId}`,
         method: "DELETE",

@@ -17,6 +17,10 @@ function Communi() {
   const [isOpen, setIsOpen] = useState(false); // 모달 창 열림 여부
   const [secondOpen, setsecondOpen] = useState(false); // 특정 글 모달 창 열림 여부
   const [post, setPost] = useState(null);       //클릭하는 특정 게시글의 정보 저장
+  const [size, setSize] = useState(7); // 페이지당 게시물 수
+  const [page, setPage] = useState(0); // 페이지 번호
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
 
 
   let token = localStorage.getItem('login-token') || '';
@@ -61,82 +65,93 @@ function Communi() {
     }
   }, []);
 
-  useEffect(() => { // 모든 게시글 가져오기
+
+  const fetchPosts = async () => {        //모든 게시물 불러오기
     try {
-      axios({
-        url: "http://localhost:8080/post/readAll",
-        method: "GET",
+      const response = await axios.get(`http://localhost:8080/post/readAll?page=${page}&size=${size}`, {
         withCredentials: true,
         headers: {
-          'Authorization': token
-        }
-      })
-        .then((res) => {
-          if (res.data && res.data.content) {
-            setPosts(res.data.content);
-            console.log(res.data.content);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+          Authorization: token,
+        },
+      });
+      if (response.data && response.data.content) {
+        setPosts(response.data.content);
+        setTotalPages(response.data.totalPages);
+        setCurrentPage(response.data.number);
+        console.log(response.data.content);
+        // console.log(response.data.content[1].id)
+      }
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  };
+  
+  useEffect(() => {
+    fetchPosts();
+  }, [page, size]);
 
+  const maxPageButtons = 5; // 페이지 이동 버튼의 최대 개수
 
-  const handleCreatePost = () => {    //게시글 생성 함수
+  // 실제 렌더링할 페이지 이동 버튼 개수 계산
+  const displayedPageButtons = Math.min(totalPages, maxPageButtons);
 
-      if (window.confirm("게시글을 작성하시겠습니까?")) {
-        axios({
-          url: "http://localhost:8080/post/create",
-          method: "POST",
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${token}`,
-          },
-          data: JSON.stringify({
-            title: title,
-            content: content,
-          }),
-        })
-          .then((res) => {
-            setIsOpen(false);
-            setTitle('');
-            setContent('');
-            window.location.reload();
-            console.log("게시글이 성공적으로 생성되었습니다:", res.data);
-          })
-        
-          .catch((error) => {
-              console.error("게시글 생성 중 오류가 발생했습니다:", error);
-            });
-      }else {
-          console.log('작성이 취소되었습니다.');
-        }
-        
+  const goToPage = (pageNumber) => {    //특정 페이지 버튼
+    setPage(pageNumber);
   };
 
-  // useEffect(() => {
-  //   const fetchPostDetails = async () => {
-  //     try {
-  //       const res = await axios.get(`http://localhost:8080/post/read/${post.id}`);
-  //       const postData = res.data;
-  //       setPost(postData);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
+  const goToPreviousPage = () => {    //이전 페이지 버튼
+    if (page > 0) {
+      setPage(page - 1);
+    }
+  };
+  
+  const goToNextPage = () => {        //다음 페이지 버튼
+    if (page < totalPages - 1) {
+      setPage(page + 1);
+    }
+  };
 
-  //   fetchPostDetails();
-  // }, []);
 
-  const handleClick = (index) => {
+
+  const handleCreatePost = () => {        //게시글 생성하기
+    if (window.confirm("게시글을 작성하시겠습니까?")) {
+      axios({
+        url: "http://localhost:8080/post/create",
+        method: "POST",
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        data: JSON.stringify({
+          title: title,
+          content: content,
+        }),
+      })
+        .then((res) => {
+          setIsOpen(false);
+          setTitle('');
+          setContent('');
+          console.log("게시글이 성공적으로 생성되었습니다:", res.data);
+          
+          // 게시글 생성 후 게시글 리스트 업데이트
+          fetchPosts();
+        })
+        .catch((error) => {
+          alert("글 내용은 최대 255자까지만 허용됩니다.")
+          console.error("게시글 생성 중 오류가 발생했습니다:", error);
+        });
+    } else {
+      console.log('작성이 취소되었습니다.');
+    }
+  };
+  
+
+
+  const handleClick = (postId) => {        //클릭한 특정 게시물 상세 정보 가져오기
       try {
         axios({
-          url: `http://localhost:8080/post/read/${posts.length - index}`,
+          url: `http://localhost:8080/post/read/${postId}`,
           method: "GET",
           withCredentials: true,
           headers: {
@@ -147,7 +162,7 @@ function Communi() {
             if (res.data) {
               setPost(res.data)
               setsecondOpen(true)
-              console.log(post.user.username)
+              console.log(post)
             }
           })
           .catch((error) => {
@@ -157,6 +172,36 @@ function Communi() {
         console.log(error);
       }
   };
+
+  const handlePostDelete = (postId) => {        //클릭한 특정 게시물 삭제하기
+    if (window.confirm("게시글을 삭제하시겠습니까?")) {
+      try {
+        axios({
+          url: `http://localhost:8080/post/delete/${postId}`,
+          method: "DELETE",
+          withCredentials: true,
+          headers: {
+            'Authorization': token
+          }
+        })
+          .then((res) => {
+            if (res.data) {
+              fetchPosts();
+              setPost(res.data)
+              setsecondOpen(false)
+              // console.log(postId)
+            }
+          })
+          .catch((error) => {
+            alert("자신이 작성한 게시글만 삭제할 수 있습니다.")
+            console.log(error);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+};
+
 
     
       return (
@@ -182,13 +227,41 @@ function Communi() {
                   <Button variant="primary" onClick={() => setIsOpen(true)}>글쓰기</Button>
                 </div>
                 <div className="post-list">
-                  {posts.map((post, index) => (
-                    <div key={index} className="post" onClick={() => handleClick(index)} style={{cursor: 'pointer'}}>
-                      <h3 className="post-title">제목: {posts[posts.length - index - 1].title}</h3>
-                      {/* <p className="post-content">내용: {posts[posts.length - index - 1].content}</p> */}
-                      <p className="post-author">작성자: {posts[posts.length - index - 1].user.username}</p>
+                  {posts.reverse().map((post) => (
+                    <div key={post.id} className="post" onClick={() => handleClick(post.id)} style={{cursor: 'pointer'}}>
+                      <h3 className="post-title">◾ 제목: {post.title}</h3>
+                      {/* <p className="post-content">내용: {post.id}</p> */}
+                      <h4 className="post-author">▫ 작성자: {post.user.username}</h4>
                     </div>
                   ))}
+                </div><br/>
+                <div className="pagination-buttons">
+                  <Button
+                    variant="secondary"
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 0}
+                  >
+                    &lt; 이전
+                  </Button>
+                  <span className="pagination-button-gap" style={{ width: '10px' }} />
+                  {Array.from({ length: displayedPageButtons  }, (_, index) => (
+                    <Button
+                      key={index}
+                      variant="secondary"
+                      onClick={() => goToPage(index)}
+                      disabled={currentPage === index}
+                    >
+                      {index + 1}
+                    </Button>
+                  ))}
+                  <span className="pagination-button-gap" style={{ width: '10px' }} />
+                  <Button
+                    variant="secondary"
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages - 1}
+                  >
+                    &gt; 다음
+                  </Button>
                 </div>
               </div>
 
@@ -206,6 +279,7 @@ function Communi() {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="제목을 입력하세요"
+                        maxLength={20}
                       />
                     </Form.Group><br/>
                     <Form.Group>
@@ -216,6 +290,7 @@ function Communi() {
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="내용을 입력하세요"
+                        maxLength={255}
                       />
                     </Form.Group>
                   </Form>
@@ -234,12 +309,13 @@ function Communi() {
               <Modal.Body>
               {post && (
                   <>
-                    <h2>제목 : {post.title}</h2><br/>
-                    <h4 style={{ wordWrap: 'break-word', maxWidth: '100%' }}>{post.content}</h4>
+                    <h4>제목 : {post.title}</h4><br/>
+                    <p style={{ wordWrap: 'break-word', maxWidth: '100%' }}>{post.content}</p>
                   </>
                 )}
               </Modal.Body>
               <Modal.Footer>
+                  <Button variant="danger" onClick={() => handlePostDelete(post.id)}>글 삭제</Button>
                   <Button variant="secondary" onClick={() => setsecondOpen(false)}>닫기</Button>
 
                 </Modal.Footer>
