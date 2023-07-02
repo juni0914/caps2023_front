@@ -14,8 +14,9 @@ function Communi() {
   const [posts, setPosts] = useState([])                //전체 게시글의 글 전체 정보 저장
   // const [alltitle, setAlltitle] = useState([]);       // 전체 게시글 글 제목 정보 저장 
   // const [allcontent, setAllcontent] = useState([]);   // 전체 게시글 글 내용 정보 저장 
-  const [isOpen, setIsOpen] = useState(false); // 모달 창 열림 여부
-  const [secondOpen, setsecondOpen] = useState(false); // 특정 글 모달 창 열림 여부
+  const [isOpen, setIsOpen] = useState(false); // 글쓰기 모달 창 열림 여부
+  const [secondOpen, setsecondOpen] = useState(false); // 특정 글 조회 모달 창 열림 여부
+  const [updateOpen, setUpdateOpen] = useState(false); // 글수정 모달 창 열림 여부
   const [post, setPost] = useState(null);       //클릭하는 특정 게시글의 정보 저장
   const [size, setSize] = useState(7); // 페이지당 게시물 수
   const [page, setPage] = useState(0); // 페이지 번호
@@ -26,15 +27,6 @@ function Communi() {
   let token = localStorage.getItem('login-token') || '';
 
   const logout = () => {
-    // axios({
-    //   url: "http://localhost:8080/logout",
-    //   method: "POST",
-    //   withCredentials: true,
-    // }).then((res) => {
-    //   if (res.status === 200) {
-    //     window.open("/", "_self");
-    //   }
-    // });
     alert("로그아웃 되었습니다.")
     localStorage.clear()
     window.location.replace('http://localhost:3000/login')
@@ -64,6 +56,12 @@ function Communi() {
       console.log(error);
     }
   }, []);
+
+  const setIsClose = () => {    // 글 수정창을 닫을 시 제목과 내용  state 초기화
+    setTitle("");
+    setContent("");
+    setUpdateOpen(false);
+  };
 
 
   const fetchPosts = async () => {        //모든 게시물 불러오기
@@ -132,6 +130,7 @@ function Communi() {
           setIsOpen(false);
           setTitle('');
           setContent('');
+          alert("게시글이 성공적으로 생성되었습니다")
           console.log("게시글이 성공적으로 생성되었습니다:", res.data);
           
           // 게시글 생성 후 게시글 리스트 업데이트
@@ -173,12 +172,48 @@ function Communi() {
       }
   };
 
-  const handlePostDelete = (postId) => {        //클릭한 특정 게시물 삭제하기
-    if (window.confirm("게시글을 삭제하시겠습니까?")) {
+
+  const handleUpdatePost = (postId) => {        //게시글 수정하기
+
+    if (window.confirm("게시글을 수정하시겠습니까?")) {
+      axios({
+        url: `http://localhost:8080/post/update/${postId}`,
+        method: "PATCH",
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        data: {
+          postId: postId,
+          title: title,
+          content: content,
+        },
+      })
+        .then((res) => {
+          alert("게시글이 수정되었습니다")
+          console.log("게시글이 수정되었습니다:", res.data); 
+          // 게시글 수정 후 게시글 리스트 업데이트
+          fetchPosts();
+          setTitle('');
+          setContent('');
+          setUpdateOpen(false);
+        })
+        .catch((error) => {
+          alert("글 내용은 최대 255자까지만 허용됩니다.")
+          console.error("게시글 수정 중 오류가 발생했습니다:", error);
+        });
+    } else {
+      console.log('수정이 취소되었습니다.');
+    }
+  };
+
+  const openUpdateModal = (postId) => {         //글 수정하기 버튼 눌렀을 때 모달창이 등장하는 함수
+    if (post.user.username === user.username) { 
       try {
         axios({
-          url: `http://localhost:8080/post/delete/${postId}`,
-          method: "DELETE",
+          url: `http://localhost:8080/post/read/${postId}`,
+          method: "GET",
           withCredentials: true,
           headers: {
             'Authorization': token
@@ -186,20 +221,58 @@ function Communi() {
         })
           .then((res) => {
             if (res.data) {
-              fetchPosts();
-              setPost(res.data)
-              setsecondOpen(false)
-              // console.log(postId)
+              setPost(res.data);
+              setTitle(res.data.title);
+              setContent(res.data.content);
+              setsecondOpen(false);
+              setUpdateOpen(true);
+              console.log(post);
             }
           })
           .catch((error) => {
-            alert("자신이 작성한 게시글만 삭제할 수 있습니다.")
             console.log(error);
           });
       } catch (error) {
         console.log(error);
       }
+    }else{
+      alert('자신의 게시글만 수정이 가능합니다')
     }
+  };
+
+
+  const handlePostDelete = (postId) => {        //클릭한 특정 게시물 삭제하기
+    if(post.user.username === user.username){
+      if (window.confirm("게시글을 삭제하시겠습니까?")) {
+        try {
+          axios({
+            url: `http://localhost:8080/post/delete/${postId}`,
+            method: "DELETE",
+            withCredentials: true,
+            headers: {
+              'Authorization': token
+            }
+          })
+            .then((res) => {
+              if (res.data) {
+                alert("게시글이 삭제되었습니다")
+                fetchPosts();
+                setPost(res.data)
+                setsecondOpen(false)
+                // console.log(postId)
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }else{
+      alert('자신의 게시글만 삭제할 수 있습니다.')
+    }
+    
 };
 
 
@@ -228,10 +301,10 @@ function Communi() {
                 </div>
                 <div className="post-list">
                   {posts.reverse().map((post) => (
-                    <div key={post.id} className="post" onClick={() => handleClick(post.id)} style={{cursor: 'pointer'}}>
-                      <h3 className="post-title">◾ 제목: {post.title}</h3>
-                      {/* <p className="post-content">내용: {post.id}</p> */}
-                      <h4 className="post-author">▫ 작성자: {post.user.username}</h4>
+                    <div key={post.id} className="post" onClick={() => handleClick(post.id)}>
+                      <h3 className="post-title">◾ 제목 : {post.title}</h3>
+                      {/* <p className="post-content">{post.id}</p> */}
+                      <h4 className="post-author">▫ 작성자 : {post.user.username}</h4>
                     </div>
                   ))}
                 </div><br/>
@@ -265,7 +338,7 @@ function Communi() {
                 </div>
               </div>
 
-              {/* 모달 창 */}
+              {/* 글쓰기 모달 창 */}
               <Modal show={isOpen} onHide={() => setIsOpen(false)}>
                 <Modal.Header closeButton>
                   <Modal.Title>게시글 작성</Modal.Title>
@@ -301,6 +374,42 @@ function Communi() {
                 </Modal.Footer>
               </Modal>
 
+               {/* 글수정 모달 창 */} 
+              <Modal show={updateOpen} onHide={() => setIsClose(false)}>
+                <Modal.Header closeButton>
+                  <Modal.Title>게시글 수정</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Form>
+                    <Form.Group>
+                      <Form.Label>제목</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="제목을 입력하세요"
+                        maxLength={20}
+                      />
+                    </Form.Group><br/>
+                    <Form.Group>
+                      <Form.Label>내용</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={10}
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="내용을 입력하세요"
+                        maxLength={255}
+                      />
+                    </Form.Group>
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setIsClose(false)}>닫기</Button>
+                  <Button variant="primary" onClick={()=> handleUpdatePost(post.id)}>게시글 수정</Button>
+                </Modal.Footer>
+              </Modal>
+
 
               <Modal show={secondOpen} onHide={() => setsecondOpen(false)}>
               <Modal.Header closeButton>
@@ -314,11 +423,17 @@ function Communi() {
                   </>
                 )}
               </Modal.Body>
-              <Modal.Footer>
-                  <Button variant="danger" onClick={() => handlePostDelete(post.id)}>글 삭제</Button>
-                  <Button variant="secondary" onClick={() => setsecondOpen(false)}>닫기</Button>
-
-                </Modal.Footer>
+              <Modal.Footer style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div>
+                  {post && post.user && user && post.user.username === user.username && (
+                    <>
+                      <Button variant="outline-danger" onClick={() => handlePostDelete(post.id)} style={{marginRight: '5px'}}>글 삭제</Button>
+                      <Button variant="outline-success" onClick={() => openUpdateModal(post.id)} >수정하기</Button>
+                    </>
+                  )}
+                </div>
+                    <Button variant="secondary" onClick={() => setsecondOpen(false)}>닫기</Button>
+              </Modal.Footer>
               </Modal>
             </div>
         </div>  

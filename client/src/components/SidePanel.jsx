@@ -5,6 +5,7 @@ import axios from "axios";
 import Map from "./Map";
 import Component1 from "./Map";
 import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
+import gnuhan from "../images/gnuhan.png";
 
 function SidePanel() {
   const [isLogin, setIsLogin] = useState(false); //로그인 정보 저장
@@ -160,6 +161,7 @@ const updateReservationData = (centerId, reservationId) => {
       })
         .then((res) => {
           console.log(res.data);
+          alert('예약이 취소되었습니다.')
           updateReservationData(centerId, reservationId);
           window.location.reload();
           // 성공적으로 삭제되었을 때 추가적인 작업 수행
@@ -210,7 +212,7 @@ const updateReservationData = (centerId, reservationId) => {
         marginTop: "20px"
       }}>
       <h2 id="sidepaneltitle" style={{ fontWeight: '600' }}>
-        🏫 경상국립대학교<br />체육시설 예약 사이트
+      <img src={gnuhan} alt="GNU 로고" /> 경상국립대학교<br />체육시설 예약 사이트
       </h2>
       <h4 style={{ marginTop: '20px'}}>
         ⛹️‍♂️ {user.username} 님
@@ -270,13 +272,16 @@ const updateReservationData = (centerId, reservationId) => {
                   )}
           
               </Modal.Body>
-          <Modal.Footer>
+          <Modal.Footer style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div>
+              <Button variant="danger" onClick={handleDelete} >
+                취소하기
+              </Button>
+            </div>
             <Button variant="secondary" onClick={handleCloseModal}>
               닫기
             </Button>
-            <Button variant="danger" onClick={handleDelete} >
-              취소하기
-            </Button>
+
           </Modal.Footer>
         </Modal>
       </Container>

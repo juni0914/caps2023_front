@@ -9,6 +9,7 @@ import "./map.css";
 import DatePicker from 'react-datepicker';
 import subDays from 'date-fns/subDays';
 import 'react-datepicker/dist/react-datepicker.css';
+import Spinner from 'react-bootstrap/Spinner';
 
 import { DateTime } from 'luxon';
 
@@ -139,8 +140,8 @@ function Map() {
                     cursor: 'pointer',
                     fontWeight: '550'}}>
                     {maparray[i].name}
-                    <button onClick={handleButtonClick} style={{backgroundColor: "white",border: '0.3rm',borderRadius: '20px', 
-                    borderColor:'#0068c3', color: '#5a635f', float: 'right', marginTop: '-3px',cursor: 'pointer'}}>예약</button>
+                    <Button variant="outline-primary" onClick={handleButtonClick} style={{
+                      float: 'right', borderRadius: '10px',marginBottom: '7px'}} >예약</Button>
                   </h4>                  
                   <img referrerPolicy="no-referrer" src={maparray[i].imgUrl} style={{ width: '300px', height: '180px', borderRadius: '10px' }} />
                   <p className="markerinfo_h4">주소 : {maparray[i].address}</p>
@@ -430,7 +431,7 @@ function Map() {
 
                     </Form>
                     ) : (
-                    <p>Loading reservation information...</p>
+                      <Spinner animation="border" />
                   )}
           
               </Modal.Body>

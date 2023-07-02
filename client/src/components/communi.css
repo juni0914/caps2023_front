@@ -51,6 +51,7 @@
 .post-list {
   display: flex;
   flex-direction: column;
+
 }
 
 .post {
@@ -58,6 +59,11 @@
   padding: 10px;
   margin-bottom: 15px;
   border-radius: 5px;
+  cursor: pointer;
+}
+
+.post:hover {
+  background-color: #A4C8FF;
 }
 
 .post-title {
