@@ -5,7 +5,8 @@ import axios from "axios";
 import Map from "./Map";
 import Component1 from "./Map";
 import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
-import gnuhan from "../images/gnuhan.png";
+import Spinner from 'react-bootstrap/Spinner';
+import gnuhan from "../images/gnuhan.png"
 
 function SidePanel() {
   const [isLogin, setIsLogin] = useState(false); //로그인 정보 저장
@@ -203,21 +204,20 @@ const updateReservationData = (centerId, reservationId) => {
         backgroundColor: "#b4fedb",
         // width: "22vw",
         padding: '2rem',
-        // minHeight: '115%',
         minHeight: "95vh",
         color: '#5a635f',
-        // minWidth: '100%',
         borderRadius: '20px',
         marginLeft: '20px',
-        marginTop: "20px"
+        marginTop: "20px",
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)'
       }}>
       <h2 id="sidepaneltitle" style={{ fontWeight: '600' }}>
-      <img src={gnuhan} alt="GNU 로고" /> 경상국립대학교<br />체육시설 예약 사이트
+      <img src={gnuhan} style={{ width: '300px', height: '60px', marginBottom: '10px'}}alt="GNU 로고" /> 경상국립대학교<br />체육시설 예약 사이트
       </h2>
       <h4 style={{ marginTop: '20px'}}>
         ⛹️‍♂️ {user.username} 님
         <button onClick={logout} style={{ backgroundColor: "white", borderRadius: '20px', fontSize: '15px', border: 'none', color: '#5a635f', float: 'right', padding: '0.5rem', cursor: 'pointer' }}>Logout</button>
-      </h4>
+      </h4><br />
       <h4><Link style={{  textDecoration: 'none', fontWeight: '800' }} to="/community">체육시설 커뮤니티 바로가기  </Link></h4>
 
       <h4 style={{marginLeft: '-5px' }}>📌 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '45px' }}>(최대 20개까지만 표시)</p></h4>
@@ -268,7 +268,7 @@ const updateReservationData = (centerId, reservationId) => {
                       </Form.Group>
                     </Form>
                     ) : (
-                    <p>Loading reservation information...</p>
+                      <Spinner animation="border" />
                   )}
           
               </Modal.Body>

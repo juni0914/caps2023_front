@@ -11,6 +11,7 @@ import subDays from 'date-fns/subDays';
 import 'react-datepicker/dist/react-datepicker.css';
 import Spinner from 'react-bootstrap/Spinner';
 
+
 import { DateTime } from 'luxon';
 
 // import mapmarker from "../components/mapmarker";
@@ -354,22 +355,22 @@ function Map() {
   return ( 
     <>
     <div style={{ width: "100%", height: "100%", display: "flex" }}>
-      <div style={{  width: "22vw", height: "100%", float: "left" }}>
+      <div style={{  width: "90vw", height: "100%", float: "left" }}>
         <SidePanel/>
        </div>
       <div style={{ flex: "1", position: "relative", marginLeft: "20px" }}>
           <div style={{
         position: "relative",
         zIndex: "2",
-        minHeight: "95vh",
-        width: "auto",
-        height: "97.6%",
+        width: "75vw", /* 원하는 고정 넓이로 설정 */
+        height: "95vh",
         padding: "2rem",
         color: "white",
-        minWidth: "100px",
+        minHeight: "95vh",
+        minWidth: "50vw",
         borderRadius: "20px",
-        marginRight: "20px",
-        marginTop: "20px"
+        marginTop: "20px",
+        marginRight: "20px"
       }}  ref={mapElement}
           >
           <div className="btn1" style={{position: 'absolute', zIndex:'1',marginLeft: '-10px', marginTop: '-10px'}}>

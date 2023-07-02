@@ -1,4 +1,4 @@
-body {
+ body {
 
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
       "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -34,14 +34,7 @@ body {
     font-family: 'twayair';
   }
   
-  label{
-    font-family: 'SUIT-Medium';
-    letter-spacing: '10px';
-  }
-  
-  li{
-    font-family: 'SUIT-Medium';
-  }
+ 
   
   div{
     font-family: 'SUIT-Medium';
@@ -53,9 +46,10 @@ body {
     background-position: center;
     display: flex;
     flex-direction: row;
-    height: 100vh;
+
   }
   
+
   .auth-wrapper  {
     flex-basis: 50%;
     display: flex;
@@ -160,61 +154,20 @@ body {
     width: 500px;
   }
   
-  /* .auth-wrapper #joinbtn{
-    background: #7A84EB;
-    color: white;
-    text-transform: uppercase;
-    border: none;
-    border-radius: 30px;
-    margin-top: 40px;
-    padding: 20px;
-    font-size: 16px;
-    font-weight: 100;
-    letter-spacing: 10px;
-    width: 500px;
-  } */
-  
- 
+
   .auth-wrapper button[type="submit"]:hover,
   .auth-wrapper input[type="submit"]:hover {
     background: #99CCFF;
   }
-  
-  .auth-wrapper button[type="submit"]:active,
-  .auth-wrapper input[type="button"]:active,
-  .auth-wrapper input[type="submit"]:active {
-    transition: 0.3s all;
-    transform: translateY(3px);
-    border: 1px solid transparent;
-    opacity: 0.8;
-  }
-  
-  .auth-wrapper input:disabled {
-    opacity: 0.4;
-  }
-  
+
+
   .auth-wrapper input[type="button"]:hover {
     transition: 0.3s all;
   }
   
-  .auth-wrapper button[type="submit"],
-  .auth-wrapper input[type="button"],
-  .auth-wrapper input[type="submit"] {
-    -webkit-appearance: none;
-  }
+
   
-  
-  
-  .auth-wrapper button[type="button"] {
-    display: block;
-    appearance: none;
-    background: #333;
-    color: white;
-    border: none;
-    text-transform: uppercase;
-    padding: 10px 20px;
-    border-radius: 4px;
-  }
+ 
   
   .auth-wrapper hr {
     margin-top: 30px;

@@ -4,6 +4,7 @@ import axios from "axios";
 import Map from "./Map";
 import Component1 from "./Map";
 import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
+import gnuhan from "../images/gnuhan.png"
 import "./communi.css";
 
 function Communi() {
@@ -281,12 +282,14 @@ function Communi() {
         <>
           <div style={{ display: 'flex' }}>
             <div className="sidebar">
-                <h2 id="sidepaneltitle">🏫 경상국립대학교<br />체육시설 예약 사이트</h2>
+                <h2 id="sidepaneltitle">
+                <img src={gnuhan} style={{ width: '300px', height: '60px', marginBottom: '10px'}}alt="GNU 로고" />
+                 경상국립대학교<br />체육시설 커뮤니티</h2><br />
                 <h4>
                 ⛹️‍♂️ {user.username} 님
                 <button  onClick={logout} style={{float: 'right', backgroundColor: 'white'}}>Logout</button>
-                </h4>
-                <h4><Link style={{ textDecoration: 'none', fontWeight: '800' }} to="/">홈화면으로 이동  </Link></h4><br/>
+                </h4><br />
+                <h4><Link style={{ textDecoration: 'none', fontWeight: '800' }} to="/">홈 화면으로 이동하기  </Link></h4><br/>
             </div>
 
             <div>
