@@ -39,48 +39,16 @@ export default function Login() {
           password: password,
         }),
       });
-  
       if (response.status === 200) {
+        alert('로그인 되었습니다.')
         localStorage.setItem('login-token', response.headers.authorization);
         window.open('/', '_self');
       }
     } catch (error) {
-      console.error(error);
+      alert('로그인에 실패했습니다.')
+      console.log(error);
     }
   };
-
-  // const accessToken = () => {
-  //   axios({
-  //     url: "http://localhost:8080/accesstoken",
-  //     method: "GET",
-  //     withCredentials: true,
-  //   });
-  // };
-
-  // const refreshToken = () => {
-  //   axios({
-  //     url: "http://localhost:8080/refreshtoken",
-  //     method: "GET",
-  //     withCredentials: true,
-  //   });
-  // };
-
-  const logout = () => {
-    // axios({
-    //   url: "http://localhost:8080/logout",
-    //   method: "POST",
-    //   withCredentials: true,
-    // }).then((res) => {
-    //   if (res.status === 200) {
-    //     window.open("/", "_self");
-    //   }
-    // });
-    console.log("로그아웃됨")
-    localStorage.clear()
-    window.location.replace('http://localhost:3000/')
-  };
-
-
 
 
   useEffect(() => {
@@ -158,7 +126,7 @@ export default function Login() {
               value={password}
             />
 
-          <button onClick={login} type="submit" style={{
+          <button onClick={login} type="button" style={{
             width: '400px',cursor: 'pointer'}}>Login</button>
           <Link style={{ color: '#50BDCF', textDecoration: 'none', fontWeight: '800' }} to="/join">아직 아이디가 없으신가요?  </Link>
         </form>

@@ -139,8 +139,8 @@
     font-weight: 200;
   }
   
-  .auth-wrapper button[type="submit"],
-  .auth-wrapper input[type="submit"] {
+  .auth-wrapper button[type="button"],
+  .auth-wrapper input[type="button"] {
     background: #50BDCF;
     color: white;
     text-transform: uppercase;
@@ -155,8 +155,8 @@
   }
   
 
-  .auth-wrapper button[type="submit"]:hover,
-  .auth-wrapper input[type="submit"]:hover {
+  .auth-wrapper button[type="button"]:hover,
+  .auth-wrapper input[type="button"]:hover {
     background: #99CCFF;
   }
 

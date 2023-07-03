@@ -2,12 +2,13 @@ import React from "react";
 import { useState } from "react";
 import "./login.css";
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import gnulogo from '../images/gnulogo.png';
 
 export default function Join({ setIsJoin, setUser }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const join = () => {
     axios({
@@ -22,6 +23,7 @@ export default function Join({ setIsJoin, setUser }) {
     }).then((res) => {
       if (res.status === 201) {
         alert("회원가입되었습니다.")
+        navigate('/login');
         console.log(res)
         console.log("username : ",username)
         console.log("password : ",password)
@@ -66,7 +68,7 @@ export default function Join({ setIsJoin, setUser }) {
             value={password}
           />
         </div>
-        <button onClick={join} type="submit" style={{cursor : "pointer", width: '400px'}}>Join</button>
+        <button onClick={join} type="button" style={{cursor : "pointer", width: '400px'}}>Join</button>
         <Link style={{ color: '#50BDCF', textDecoration: 'none', fontWeight: '800'}} to="/login">로그인 하러가기  </Link>
 {/*         <p>{props.data}</p> */}
           </form>

@@ -15,10 +15,15 @@ function App() {
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(()=>{
-    {localStorage.getItem('login-token') ? (
-      navigate("/")) : (navigate("/login"))}
-  },[]);
+  useEffect(() => {
+    const token = localStorage.getItem('login-token');
+    if (token) {
+      navigate('/');
+    } else {
+      navigate('/login');
+    }
+  }, []);
+
 
   return (
 
