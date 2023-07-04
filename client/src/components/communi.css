@@ -63,6 +63,14 @@
   cursor: pointer;
 }
 
+.comment {
+  background-color: #F4FAFF ;
+
+  margin-bottom: 20px;
+  border-radius: 5px;
+
+}
+
 .post:hover {
   background-color: #A4C8FF;
 }
