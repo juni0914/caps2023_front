@@ -94,6 +94,23 @@ function Communi() {
       console.log(error);
     }
   };
+
+  const fetchComments = async (postId, token) => {      //게시물 댓글 불러오기
+    try {
+      const commentRes = await axios.get(`http://localhost:8080/comment/readAll/${postId}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: token,
+        },
+      });
+      if (commentRes.data) {
+        setPostComment(commentRes.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
   
   useEffect(() => {
     fetchPosts();
