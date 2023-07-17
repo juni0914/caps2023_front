@@ -71,6 +71,10 @@
 
 }
 
+.updated {
+  background-color: #ffddff;
+}
+
 .post:hover {
   background-color: #A4C8FF;
 }

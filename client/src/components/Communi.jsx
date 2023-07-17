@@ -2,30 +2,31 @@ import { Route, Routes, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Map from "./Map";
-import Component1 from "./Map";
 import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
 import gnuhan from "../images/gnuhan.png"
 import "./communi.css";
 import {GoCommentDiscussion} from 'react-icons/go'
-import {SlPencil} from 'react-icons/sl'
 
 function Communi() {
-  const [isLogin, setIsLogin] = useState(false); //로그인 정보 저장
-  const [user, setUser] = useState({});         // user 정보 저장
-  const [title, setTitle] = useState("");       // 내가 작성하는 게시글 정보 저장
-  const [content, setContent] = useState("");   // 내가 작성하는 내용 정보 저장
-  const [posts, setPosts] = useState([])                //전체 게시글의 글 전체 정보 저장
-  const [comment, setComment] = useState([])            //댓글 정보 저장
-  const [isOpen, setIsOpen] = useState(false); // 글쓰기 모달 창 열림 여부
-  const [secondOpen, setsecondOpen] = useState(false); // 특정 글 조회 모달 창 열림 여부
-  const [updateOpen, setUpdateOpen] = useState(false); // 글수정 모달 창 열림 여부
-  const [commentOpen, setCommentOpen] = useState(false); // 댓글달기 모달 창 열림 여부
-  const [post, setPost] = useState(null);       //클릭하는 특정 게시글의 정보 저장
-  const [postComment, setPostComment] = useState(null);       //클릭하는 특정 게시글의 댓글 정보 저장
+  const [isLogin, setIsLogin] = useState(false);     //로그인 정보 저장
+  const [user, setUser] = useState({});               // user 정보 저장
+  const [title, setTitle] = useState("");            // 내가 작성하는 게시글 정보 저장
+  const [content, setContent] = useState("");        // 내가 작성하는 내용 정보 저장
+  const [posts, setPosts] = useState([])                 //전체 게시글의 글 전체 정보 저장
+  const [comment, setComment] = useState([])             //댓글 정보 저장
+  const [isOpen, setIsOpen] = useState(false);           // 글쓰기 모달 창 열림 여부
+  const [secondOpen, setsecondOpen] = useState(false);     // 특정 글 조회 모달 창 열림 여부
+  const [updateOpen, setUpdateOpen] = useState(false);      // 글수정 모달 창 열림 여부
+  const [commentOpen, setCommentOpen] = useState(false);  // 댓글달기 모달 창 열림 여부
+  const [post, setPost] = useState(null);                  //클릭하는 특정 게시글의 정보 저장
+  const [postComment, setPostComment] = useState(null);            //클릭하는 특정 게시글의 댓글 정보 저장
+  const [postUpdateComment, setUpdateComment] = useState(null);       //댓글수정 모달 창 열림 여부
+  const [commentId, setCommentId] = useState(null);       //commentId 정보 저장
   const [size, setSize] = useState(7); // 페이지당 게시물 수
   const [page, setPage] = useState(0); // 페이지 번호
-  const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);      // 게시물 페이지 수 정보 저장
+  const [currentPage, setCurrentPage] = useState(0);    // 게시물 현재 페이지 정보 저장
+  const [updatedCommentIdColor, setUpdatedCommentIdColor] = useState(null); // 댓글 수정되면 수정된 댓글 색상으로 표시
 
 
   let token = localStorage.getItem('login-token') || '';
@@ -65,6 +66,13 @@ function Communi() {
     setTitle("");
     setContent("");
     setUpdateOpen(false);
+  };
+
+
+  const setCommentUpdateClose = () => {       // 댓글 수정창을 닫을 시 댓글 내용  state 초기화
+    setComment("");
+    setUpdateComment(false);
+    setCommentOpen(true);
   };
 
   const setCommentClose = () => {       // 댓글 작성 창을 닫을 시 제목과 내용  state 초기화
@@ -121,6 +129,7 @@ function Communi() {
   // 실제 렌더링할 페이지 이동 버튼 개수 계산
   const displayedPageButtons = Math.min(totalPages, maxPageButtons);
 
+  
   const goToPage = (pageNumber) => {    //특정 페이지 버튼
     setPage(pageNumber);
   };
@@ -270,54 +279,38 @@ function Communi() {
 
 
   const handleCreateComment = (postId) => {                 //게시글에 댓글달기
-
-    if (window.confirm("작성하신 댓글을 작성하시겠습니까?")) {
-      axios({
-        url: `http://localhost:8080/comment/create/${postId}`,
-        method: "POST",
-        withCredentials: true,
-        headers: {
-          Authorization: `${token}`,
-        },
-        data: {
-          content: comment
-        },
-      })
-        .then((res) => {
-          alert("게시글이 작성되었습니다")
-          console.log("게시글이 작성되었습니다:", res.data); 
-          // 게시글 수정 후 게시글 리스트 업데이트
-          fetchPosts();
-          fetchComments(postId);
-          setComment('');
-          // setCommentOpen(false);
+    if (comment.trim().length >= 2) {
+      if (window.confirm("작성하신 댓글을 작성하시겠습니까?")) {
+        axios({
+          url: `http://localhost:8080/comment/create/${postId}`,
+          method: "POST",
+          withCredentials: true,
+          headers: {
+            Authorization: `${token}`,
+          },
+          data: {
+            content: comment
+          },
         })
-        .catch((error) => {
-          alert("댓글은 최대 100자까지만 허용됩니다.")
-          console.error("댓글 작성 중 오류가 발생했습니다:", error);
-        });
+          .then((res) => {
+            alert("게시글이 작성되었습니다")
+            console.log("게시글이 작성되었습니다:", res.data); 
+            // 게시글 수정 후 게시글 리스트 업데이트
+            fetchPosts();
+            fetchComments(postId);
+            setComment('');
+            // setCommentOpen(false);
+          })
+          .catch((error) => {
+            alert("댓글은 최대 100자까지만 허용됩니다.")
+            console.error("댓글 작성 중 오류가 발생했습니다:", error);
+          });
+      } else {
+        console.log('댓글 작성이 취소되었습니다.');
+      }
     } else {
-      console.log('댓글 작성이 취소되었습니다.');
-    }
-
-    const fetchComments = (postId) => {                       // 댓글작성하면 댓글정보 다시 GET
-      axios({
-        url: `http://localhost:8080/comment/readAll/${postId}`,
-        method: "GET",
-        withCredentials: true,
-        headers: {
-          Authorization: token,
-        },
-      })
-        .then((commentRes) => {
-          if (commentRes.data) {
-            setPostComment(commentRes.data);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+      alert('댓글은 최소 2글자 이상 입력해야 합니다.');
+    } 
   };
 
 
@@ -357,6 +350,7 @@ function Communi() {
         })
           .then((commentRes) => {
             if (commentRes.data) {
+              console.log(commentRes.data)
               setPostComment(commentRes.data);
             }
           })
@@ -427,31 +421,86 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
           .catch((error) => {
             console.log(error);
           });
-
-          const fetchComments = (postId) => {                       // 댓글삭제하면 댓글정보 다시 GET
-            axios({
-              url: `http://localhost:8080/comment/readAll/${postId}`,
-              method: "GET",
-              withCredentials: true,
-              headers: {
-                Authorization: token,
-              },
-            })
-              .then((commentRes) => {
-                if (commentRes.data) {
-                  setPostComment(commentRes.data);
-                }
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }
       } catch (error) {
         console.log(error);
       }
     }
+};
 
-  
+
+
+const handleUpdateComment = (commentId,postId) => {                  //댓글 수정하기
+
+  if (window.confirm("댓글을 수정하시겠습니까?")) {
+    axios({
+      url: `http://localhost:8080/comment/update/${commentId}`,
+      method: "PATCH",
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+      },
+      data: {
+        content: comment
+      },
+    })
+      .then((res) => {
+        alert("댓글이 수정되었습니다")
+        console.log("댓글이 수정되었습니다:", res.data); 
+        setCommentOpen(true);
+        // 댓글이 수정되었을 때 색상 표시
+        setUpdatedCommentIdColor(commentId);
+        setTimeout(() => {
+          setUpdatedCommentIdColor(null);
+        }, 2000); // 3초 후에 원래 색상으로 되돌림
+
+        // 게시글 수정 후 게시글 리스트 업데이트
+        fetchComments(postId);
+        setComment('');
+        setUpdateComment(false);
+      })
+      .catch((error) => {
+        alert("댓글 내용은 최대 255자까지만 허용됩니다.")
+        console.error("댓글 수정 중 오류가 발생했습니다:", error);
+      });
+  } else {
+    console.log('댓글 수정이 취소되었습니다.');
+  }
+};
+
+
+const openCommentUpdateModal = (commentId,postId) => {               //댓글 수정하기 버튼 눌렀을 때 모달창이 등장하는 함수
+
+    try {
+      axios({
+        url: `http://localhost:8080/comment/readAll/${postId}`,
+        method: "GET",
+        withCredentials: true,
+        headers: {
+          'Authorization': token
+        }
+      })
+        .then((res) => {
+          if (res.data) {
+            const targetComment = res.data.find(comment => comment.id === commentId);
+            if (targetComment) {
+              setCommentOpen(false);
+              console.log(targetComment.content);
+              setComment(targetComment.content);
+              setCommentId(commentId);
+              setUpdateComment(true);
+              console.log(commentId);
+            }
+
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+ 
 };
 
 
@@ -610,15 +659,17 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
                       </div>
                       <div>
                         {postComment && postComment.map((comment) => (
-                          <div key={comment.id} className='comment'>
+                          <div key={comment.id} 
+                          className={`comment ${updatedCommentIdColor === comment.id ? 'updated' : ''}`}>
                             <p>🙋‍♂️ {comment.user.username}님의 댓글 : {comment.content}</p>
                             {/* 댓글의 내용과 작성자를 출력하거나 필요한 형식으로 표시 */}
                             {postComment && comment.user && user && comment.user.username === user.username && (
                               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-40px' }}>
+                                <Button variant="outline-success" onClick={()=> openCommentUpdateModal(comment.id,post.id)} 
+                                size="sm" style={{marginRight: '5px'}}>수정하기</Button>
                                 <Button variant="outline-danger" onClick={()=> handleCommentDelete(comment.id,post.id)} 
-                                size="sm" style={{marginRight: '5px'}}>댓글 삭제</Button>
-                                <Button variant="outline-success" onClick={()=> console.log(comment.id)} 
-                                size="sm">수정하기</Button>
+                                size="sm" >댓글 삭제</Button>
+
                               </div>
                             )}
                           </div>
@@ -637,7 +688,7 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         placeholder="댓글을 입력하세요"
-                        maxLength={100}
+                        maxLength={10}
                       />
                     </Form.Group>
                   </Form>
@@ -647,6 +698,37 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
                   <Button variant="primary" onClick={()=> handleCreateComment(post.id)}>작성하기</Button>
                 </Modal.Footer>
               </Modal>
+
+
+
+              {/* 댓글수정 모달 창 */} 
+              <Modal show={postUpdateComment} onHide={() => {setUpdateComment(false); setCommentOpen(true);}}>   {/* 댓글수정 모달 창 */} 
+                <Modal.Header closeButton>
+                  <Modal.Title>댓글 수정</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                <Form>
+                    <Form.Group>
+                      <Form.Label>댓글</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="댓글을 입력하세요"
+                        maxLength={10}
+                      />
+                    </Form.Group>
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setCommentUpdateClose(false)}>닫기</Button>
+                  <Button variant="primary" onClick={()=> handleUpdateComment(commentId,post.id)}>댓글 수정</Button>
+                </Modal.Footer>
+              </Modal>
+
+
+
 
 
               {/* 특정 글 조회 모달 창 */} 
