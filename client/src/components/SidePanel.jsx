@@ -2,8 +2,6 @@ import Main from "./Main";
 import { Route, Routes, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Map from "./Map";
-import Component1 from "./Map";
 import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
 import Spinner from 'react-bootstrap/Spinner';
 import gnuhan from "../images/gnuhan.png"
@@ -19,9 +17,7 @@ function SidePanel() {
   const [loading, setLoading] = useState(false);
   const [deletedReservations, setDeletedReservations] = useState([]);
   
-  const handleButtonClick = () => { //예약모달창 열기 버튼함수
-    setShowModal(true);
-  };
+
 
   const handleCloseModal = () => { //예약모달창 닫기 버튼함수
     setShowModal(false);
@@ -87,7 +83,7 @@ const updateReservationData = (centerId, reservationId) => {
     }
   }, []);
 
-  useEffect(() => {  // 예약 데이터 가져오기
+   useEffect(() => {  // 예약 데이터 가져오기
     try {
       axios({
         url: "http://localhost:8080/center/reservations",
@@ -115,8 +111,6 @@ const updateReservationData = (centerId, reservationId) => {
       console.log(error);
     }
   }, []);
-
-
 
 
   function handleReservationClick(index) {    //사이드패널 예약목록 h6태그 클릭시 함수
@@ -164,7 +158,7 @@ const updateReservationData = (centerId, reservationId) => {
           console.log(res.data);
           alert('예약이 취소되었습니다.')
           updateReservationData(centerId, reservationId);
-          window.location.reload();
+          // fetchReservations();
           // 성공적으로 삭제되었을 때 추가적인 작업 수행
           // 예를 들어, 삭제된 예약 정보를 갱신하거나 목록을 새로고침하는 등의 동작을 수행할 수 있다.
         })
@@ -218,9 +212,9 @@ const updateReservationData = (centerId, reservationId) => {
         ⛹️‍♂️ {user.username} 님
         <button onClick={logout} style={{ backgroundColor: "white", borderRadius: '20px', fontSize: '15px', border: 'none', color: '#5a635f', float: 'right', padding: '0.5rem', cursor: 'pointer' }}>Logout</button>
       </h4><br />
-      <h4><Link style={{  textDecoration: 'none', fontWeight: '800' }} to="/community">체육시설 커뮤니티 바로가기  </Link></h4>
+      <h4><Link style={{  textDecoration: 'none', fontWeight: '800', fontSize: '20px' }} to="/community">👨‍👨‍👧‍👧 체육시설 커뮤니티 바로가기  </Link></h4>
 
-      <h4 style={{marginLeft: '-5px' }}>📌 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '45px' }}>(최대 20개까지만 표시)</p></h4>
+      <h4 style={{marginLeft: '-5px', marginTop: '20px' }}>📌 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '45px' }}>(최대 20개까지만 표시)</p></h4>
         {reserveData.map((name, index) => {
           const centerId = reservecenterId[index];
           const reservationId = reserveId[index];

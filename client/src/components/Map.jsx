@@ -11,6 +11,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Spinner from 'react-bootstrap/Spinner';
 import { DateTime } from 'luxon';
 
+
 function Map() {
   const mapElement = useRef(null);
   const navermaps = useNavermaps();
@@ -30,6 +31,7 @@ function Map() {
     const [selectedReservationTime, setSelectedReservationTime] = useState(null); // 선택한 예약시간을 저장
     const [selectedDate, setSelectedDate] = useState(null); //날짜 정보 저장
     const [headCount, setHeadCount] = useState(1); //헤드카운트 인원 정보 저장
+
 
     function GuestCountForm() {
     const decreaseHeadCount = () => { //헤드카운트 감소 
@@ -52,6 +54,9 @@ function Map() {
     };
 
     const handleCloseModal = () => { //예약모달창 닫기 버튼함수
+      setSelectedReservationTime(null);
+      setSelectedDate(null);
+      setHeadCount(1);
       setShowModal(false);
     };
 
@@ -59,7 +64,6 @@ function Map() {
       setSelectedDate(date);
       console.log(date)
     };
-
 
   useEffect(() => { // 마커 데이터 지도에 표시하는 첫번째 useEffect
     const { naver } = window;
@@ -282,9 +286,9 @@ function Map() {
   }
 
 
-  function handleReservation() {  //모달창 예약하기 버튼
+  function handleReservation() {  //모달창 예약하기 버튼 함수
     const selectedDateString = selectedDate
-      ? DateTime.fromJSDate(selectedDate).toFormat('yyyy-MM-dd')   // 06-06으로 보내면 06-06로 보내져서 수정완료
+      ? DateTime.fromJSDate(selectedDate).toFormat('yyyy-MM-dd')   
       : null; 
 
     if (!selectedReservationTime || selectedReservationTime.length === 0 || !selectedDateString || selectedDateString.length === 0) {
@@ -315,6 +319,7 @@ function Map() {
             setSelectedReservationTime([]);
             alert(`시설 이름 : ${selectedMarker.name}\n예약 시간: ${selectedReservationTime}에 예약되었습니다.`);
             window.location.reload();
+
           })
           .catch((error) => {
             console.log(error);
