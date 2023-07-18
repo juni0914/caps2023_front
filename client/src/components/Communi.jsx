@@ -1,7 +1,6 @@
 import { Route, Routes, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Map from "./Map";
 import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
 import gnuhan from "../images/gnuhan.png"
 import "./communi.css";
@@ -183,7 +182,6 @@ function Communi() {
   };
   
 
-
   const handleClick = (postId) => {                     //클릭한 특정 게시물 상세 정보 가져오기
       try {
         axios({
@@ -332,7 +330,6 @@ function Communi() {
               // setsecondOpen(false);
               setCommentOpen(true);
               console.log(postId)
-
             }
           })
           .catch((error) => {
@@ -428,7 +425,6 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
 };
 
 
-
 const handleUpdateComment = (commentId,postId) => {                  //댓글 수정하기
 
   if (window.confirm("댓글을 수정하시겠습니까?")) {
@@ -470,7 +466,6 @@ const handleUpdateComment = (commentId,postId) => {                  //댓글 �
 
 
 const openCommentUpdateModal = (commentId,postId) => {               //댓글 수정하기 버튼 눌렀을 때 모달창이 등장하는 함수
-
     try {
       axios({
         url: `http://localhost:8080/comment/readAll/${postId}`,
@@ -491,7 +486,6 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
               setUpdateComment(true);
               console.log(commentId);
             }
-
           }
         })
         .catch((error) => {
@@ -502,8 +496,6 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
     }
  
 };
-
-
     
       return (
         <>
@@ -518,12 +510,9 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
                 </h4><br />
                 <h4><Link style={{ textDecoration: 'none', fontWeight: '800' }} to="/">홈 화면으로 이동하기  </Link></h4><br/>
             </div>
-
+            
             <div>
-
               {/* 글쓰기 버튼 */}
-
-
               <div className="board">
               <h1 className="board-title">게시판</h1> 
                 <div className="board-button">

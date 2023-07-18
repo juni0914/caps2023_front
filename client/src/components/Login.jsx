@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import "./login.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import gnu from '../images/gnulogo.png'
 import gnulogo from '../images/gnulogo.png';
 // import { cookies, setCookie, useCookies } from "react-cookie"
 // import { setCookie, getCookie,removeCookie } from "./cookie";
@@ -16,20 +15,13 @@ export default function Login() {
   // const [user, setUser] = useState({});
   
   const token = localStorage.getItem('login-token') || '';
-
-  const setLoginToken = (token) => {
-    return new Promise((resolve, reject) => {
-      try {
-        localStorage.setItem('login-token', token);
-        resolve();
-      } catch (error) {
-        reject(error);
-      }
-    });
-  };
   
   const login = async () => {
     try {
+      if (username.trim() === '' || password.trim() === '') {
+        alert('아이디 또는 비밀번호를 입력해주세요.');
+        return;
+      }
       const response = await axios({
         url: "http://localhost:8080/login",
         method: "POST",
@@ -45,7 +37,7 @@ export default function Login() {
         window.open('/', '_self');
       }
     } catch (error) {
-      alert('로그인에 실패했습니다.')
+      alert('등록되지 않은 아이디이거나 아이디 또는 비밀번호를\n잘못 입력했습니다.')
       console.log(error);
     }
   };
@@ -96,11 +88,10 @@ export default function Login() {
     <div className="auth-wrapper-container" style={{ display: 'flex' }}>
       <div className="second-auth">
             <form style={{ textAlign: 'center' }}> 
-            <p style={{fontSize: '20px', textAlign: 'left'}}>"Effortlessly book your favorite sports facilities"</p>
+            <p style={{fontSize: '20px', textAlign: 'left'}}>" Effortlessly book your favorite sports facilities "</p>
               <img src={gnulogo} alt="GNU 로고" />
-              <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'left', marginTop: '20px'}}>GNU</h2>
-              <h2 style={{fontSize: '35px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'left'}}>Sports Facility</h2>
-              <h2 style={{fontSize: '35px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'left'}}>Reservation </h2>
+              <h1>GNU</h1>
+              <h2>Sports Facility</h2><h2>Reservation </h2>
             </form>
       </div>
 
@@ -126,8 +117,7 @@ export default function Login() {
               value={password}
             />
 
-          <button onClick={login} type="button" style={{
-            width: '400px',cursor: 'pointer'}}>Login</button>
+          <button onClick={login} type="button">Login</button><br/>
           <Link style={{ color: '#50BDCF', textDecoration: 'none', fontWeight: '800' }} to="/join">아직 아이디가 없으신가요?  </Link>
         </form>
       </div>

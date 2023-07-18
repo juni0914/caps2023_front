@@ -41,27 +41,29 @@
   }
   
   .auth-wrapper-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: linear-gradient(30deg, #b4fedb 0%, #FFE6FA 70%);
-    background-size: cover;
-    background-position: center;
     display: flex;
-    flex-direction: row;
-
   }
-  
+
 
   .auth-wrapper  {
-    flex-basis: 50%;
+    flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    align-items: center;
     justify-content: center;
     margin: 0;
     padding: 0;
   }
   
   .auth-wrapper form {
-    width: 500px;
+    width: 520px;
     height: 600px;
     margin: 0 auto;
     margin-left: 0;
@@ -73,17 +75,18 @@
   }
 
   .second-auth{
-    flex-basis: 50%;
+    flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    align-items: center;
     justify-content: center;
     margin: 0;
     padding: 0;
   }
 
   .second-auth form{
-    width: 500px;
+    width: 520px;
     height: 600px;
     margin: 0 auto;
     margin-right: 0;
@@ -92,6 +95,21 @@
     /* border-radius: 10px; */
         box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
               0 10px 10px rgba(0,0,0,0.22);
+  }
+
+  .second-auth h1 {
+    font-size: 40px;
+    letter-spacing: 15px;
+    color: #50BDCF;
+    text-align: left;
+    margin-top: 30px;
+  }
+
+  .second-auth h2{
+    font-size: 35px;
+    letter-spacing: 3px;
+    color: #50BDCF;
+    text-align: left;
   }
   
   .auth-wrapper h1 {
@@ -146,12 +164,14 @@
     text-transform: uppercase;
     border: none;
     border-radius: 30px;
-    margin-top: 40px;
+    margin-top: 60px;
+    margin-bottom: 20px;
     padding: 20px;
     font-size: 16px;
     font-weight: 100;
     letter-spacing: 10px;
-    width: 500px;
+    appearance: none;
+    width: 420px;
   }
   
 
@@ -160,26 +180,35 @@
     background: #99CCFF;
   }
 
-
   .auth-wrapper input[type="button"]:hover {
     transition: 0.3s all;
   }
-  
-
-  
- 
   
   .auth-wrapper hr {
     margin-top: 30px;
   }
   
-  .auth-wrapper button {
-    display: block;
-    appearance: none;
-    margin-top: 40px;
-    border: 1px solid #333;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    padding: 10px 20px;
-    border-radius: 4px;
+
+
+  @media (max-width: 1000px) {
+    .auth-wrapper form {
+      width: calc(100% - 10%);
+      padding: 80px 30px;
+    }
+    .second-auth form {
+      width: calc(100% - 10%);
+      padding: 20px 20px;
+    }
+    /* .second-auth h1 {
+      font-size: 32px;
+      margin-top: 70px;
+      margin-bottom: 20px;
+    } */
+    /* .second-auth h2 {
+      font-size: 25px;
+    } */
+    .auth-wrapper button[type="button"]{
+      width: 100%;
+    }
+
   }

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Container as MapDiv, NaverMap, Marker, useNavermaps, mapOptions, } from 'react-naver-maps'
-import { Link } from "react-router-dom";
 import SidePanel from './SidePanel';
 import axios from "axios";
 import ReactDOMServer from 'react-dom/server';
@@ -10,12 +9,7 @@ import DatePicker from 'react-datepicker';
 import subDays from 'date-fns/subDays';
 import 'react-datepicker/dist/react-datepicker.css';
 import Spinner from 'react-bootstrap/Spinner';
-
-
 import { DateTime } from 'luxon';
-
-// import mapmarker from "../components/mapmarker";
-
 
 function Map() {
   const mapElement = useRef(null);
@@ -30,12 +24,10 @@ function Map() {
     const gajwa = new navermaps.LatLng(35.154299, 128.102384); // 가좌캠퍼스 위치
     const tongyeong = new navermaps.LatLng(34.838744, 128.399730); // 통영캠퍼스 위치
 
-
     const [showModal, setShowModal] = useState(false);  //모달 열고 닫는 정보를 저장
     const [selectedMarker, setSelectedMarker] = useState(null); // 마커 정보 저장
     const [reservationInfo, setReservationInfo] = useState(null); //선택된 마커의 예약 정보를 저장
     const [selectedReservationTime, setSelectedReservationTime] = useState(null); // 선택한 예약시간을 저장
-    const [selectedButton, setSelectedButton] = useState(null); //시간 중복 선택정보 저장
     const [selectedDate, setSelectedDate] = useState(null); //날짜 정보 저장
     const [headCount, setHeadCount] = useState(1); //헤드카운트 인원 정보 저장
 
@@ -62,14 +54,11 @@ function Map() {
     const handleCloseModal = () => { //예약모달창 닫기 버튼함수
       setShowModal(false);
     };
-    // handleClose = () => this.setState({ show: false });
-    // handleShow = () => this.setState({ show: true });
 
     const handleDateChange = (date) => {
       setSelectedDate(date);
       console.log(date)
     };
-
 
 
   useEffect(() => { // 마커 데이터 지도에 표시하는 첫번째 useEffect
@@ -81,27 +70,25 @@ function Map() {
     map.setCenter(chilam); 
     map.setZoom(17);
 
-
-
     // 특정 좌표로 이동하는 예시 (버튼 클릭 시 호출되도록 작성)
     const handleButtonClick1 = () => {
       map.setCenter((chilam));
     };
-    // 버튼 클릭 시 특정 좌표로 이동하는 이벤트 핸들러를 연결합니다.
+    // 버튼 클릭 시 특정 좌표로 이동하는 이벤트 핸들러
     const button1 = document.getElementById('moveButton1');
     button1.addEventListener('click', handleButtonClick1);
 
     const handleButtonClick2 = () => {
       map.setCenter((gajwa));
     };
-    // 버튼 클릭 시 가좌캠으로 이동하는 이벤트 핸들러를 연결합니다.
+    // 버튼 클릭 시 가좌캠으로 이동하는 이벤트 핸들러
     const button2 = document.getElementById('moveButton2');
     button2.addEventListener('click', handleButtonClick2);
 
     const handleButtonClick3 = () => {
       map.setCenter((tongyeong));
     };
-    // 버튼 클릭 시 통영캠으로 이동하는 이벤트 핸들러를 연결합니다.
+    // 버튼 클릭 시 통영캠으로 이동하는 이벤트 핸들러
     const button3 = document.getElementById('moveButton3');
     button3.addEventListener('click', handleButtonClick3);
 
@@ -126,9 +113,7 @@ function Map() {
                 map : map,
                 title : maparray[i].centerId
               });
-        
-              
-              
+                
               const content = (  // 마커 클릭시 infoWindow 내용
                 <div className="markerinfo_div" style={{ 
                 width: '320px', height: '300px', border: 'none',backgroundColor: '#fff',
@@ -150,24 +135,19 @@ function Map() {
                 </div>
               );
               
-              
-        
               const infoWindow = new naver.maps.InfoWindow({
                 content: ReactDOMServer.renderToString(content),
                 borderWidth: 0
               });
               infoWindows.push(infoWindow);
         
-              
-        
-        
+
               function ClickMap(i) { // 마커 이외의 영역 클릭 시 마커 창 닫기
                 return function () {
                   var infowindow = infoWindows[i];
                   infowindow.close()
                 }
               }
-        
         
               naver.maps.Event.addListener(otherMarkers, 'click', function(e){ //마커 클릭시 동작하는 함수
                 map.panTo(e.coord);
@@ -226,7 +206,6 @@ function Map() {
   }, [selectedMarker, selectedDate]);
 
 
-
   function generateReservationButtons() {  //예약시간 버튼 생성 함수
     // 이용 가능 시간 추출
     const { openTime, closeTime } = reservationInfo.center;
@@ -234,7 +213,6 @@ function Map() {
     const endTime = parseInt(closeTime.split(":")[0]); // 종료 시간 (ex: 17)
     const reservedTimes = reservationInfo.reservedTimes || []; // 이미 예약된 시간
 
-    
     const buttons = [];
 
   for (let i = startTime; i < endTime; i++) {
@@ -283,7 +261,7 @@ function Map() {
     return selectedReservationTime.includes(buttonId); // 선택된 예약 시간 배열에 버튼 ID가 포함되어 있는지 확인하여 결과를 반환
   }
   
-  
+
   function handleReservationTimeSelect(buttonId) {  // 예약된 시간 버튼 정보 함수
     let updatedSelectedTime = [];
   
@@ -301,9 +279,7 @@ function Map() {
   
     setSelectedReservationTime(updatedSelectedTime); // 업데이트된 선택된 예약 시간 배열을 설정
     console.log("선택한 시간대:", updatedSelectedTime);
- 
   }
-
 
 
   function handleReservation() {  //모달창 예약하기 버튼
@@ -386,7 +362,7 @@ function Map() {
           </Modal.Header>
           
               <Modal.Body>
-              {reservationInfo ? (
+                {reservationInfo ? (
                     <Form>
                       <Form.Group className="mb-3">
                         <Form.Label>✔ 시설명 : {reservationInfo && reservationInfo.center.name}</Form.Label>
@@ -428,13 +404,10 @@ function Map() {
                       <Form.Label style={{fontSize:'13px'}}>ex) 09:00 ~ 10:00 1시간 예약을 희망할 경우 09:00과 09:30클릭</Form.Label><br/>
                       {generateReservationButtons()}
                     </Form.Group>
-
-
-                    </Form>
+                  </Form>
                     ) : (
                       <Spinner animation="border" />
-                  )}
-          
+                    )}
               </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseModal}>
