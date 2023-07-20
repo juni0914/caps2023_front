@@ -26,7 +26,7 @@ function Communi() {
   const [totalPages, setTotalPages] = useState(0);      // 게시물 페이지 수 정보 저장
   const [currentPage, setCurrentPage] = useState(0);    // 게시물 현재 페이지 정보 저장
   const [updatedCommentIdColor, setUpdatedCommentIdColor] = useState(null); // 댓글 수정되면 수정된 댓글 색상으로 표시
-
+  const [updatedPostIdColor, setUpdatedPostIdColor] = useState(null); // 글 수정되면 수정된 글 색상으로 표시
 
   let token = localStorage.getItem('login-token') || '';
 
@@ -166,7 +166,7 @@ function Communi() {
           setIsOpen(false);
           setTitle('');
           setContent('');
-          alert("게시글이 성공적으로 생성되었습니다")
+          alert("게시글이 성공적으로 생성되었습니다.")
           console.log("게시글이 성공적으로 생성되었습니다:", res.data);
           
           // 게시글 생성 후 게시글 리스트 업데이트
@@ -226,13 +226,18 @@ function Communi() {
         },
       })
         .then((res) => {
-          alert("게시글이 수정되었습니다")
+          alert("게시글이 수정되었습니다.")
           console.log("게시글이 수정되었습니다:", res.data); 
           // 게시글 수정 후 게시글 리스트 업데이트
           fetchPosts();
           setTitle('');
           setContent('');
           setUpdateOpen(false);
+          // 댓글이 수정되었을 때 색상 표시
+          setUpdatedPostIdColor(postId);
+          setTimeout(() => {
+            setUpdatedPostIdColor(null);
+          }, 2000); // 3초 후에 원래 색상으로 되돌림
         })
         .catch((error) => {
           alert("글 내용은 최대 255자까지만 허용됩니다.")
@@ -291,7 +296,7 @@ function Communi() {
           },
         })
           .then((res) => {
-            alert("게시글이 작성되었습니다")
+            alert("게시글이 작성되었습니다.")
             console.log("게시글이 작성되었습니다:", res.data); 
             // 게시글 수정 후 게시글 리스트 업데이트
             fetchPosts();
@@ -375,7 +380,7 @@ function Communi() {
           })
             .then((res) => {
               if (res.data) {
-                alert("게시글이 삭제되었습니다")
+                alert("게시글이 삭제되었습니다.")
                 fetchPosts();
                 setPost(res.data)
                 setsecondOpen(false)
@@ -408,7 +413,7 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
         })
           .then((res) => {
             if (res.data) {
-              alert("댓글이 삭제되었습니다")
+              alert("댓글이 삭제되었습니다.")
 
               fetchComments(postId);
               // setsecondOpen(false)
@@ -441,7 +446,7 @@ const handleUpdateComment = (commentId,postId) => {                  //댓글 �
       },
     })
       .then((res) => {
-        alert("댓글이 수정되었습니다")
+        alert("댓글이 수정되었습니다.")
         console.log("댓글이 수정되었습니다:", res.data); 
         setCommentOpen(true);
         // 댓글이 수정되었을 때 색상 표시
@@ -511,21 +516,23 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
                 ⛹️‍♂️ {user.username} 님
                 <button  onClick={logout} style={{float: 'right', backgroundColor: 'white'}}>Logout</button>
                 </h4><br />
-                <h4><Link style={{ textDecoration: 'none', fontWeight: '800', color: "#333" }} to="/">🏠 홈 화면으로 이동하기  </Link></h4><br/>
+                <h4 className="home-link"><Link style={{ textDecoration: 'none', fontWeight: '800', color: "#333" }} to="/">🏠 홈 화면으로 이동하기  </Link></h4><br/>
             </div>
 
             <div>
               {/* 글쓰기 버튼 */}
               <div className="board">
-              <h1 className="board-title">게시판</h1> 
+              <h1 className="board-title">경상국립대학교 체육시설 커뮤니티</h1> 
                 <div className="board-button">
-                  <Button variant="primary" onClick={() => setIsOpen(true)}>글쓰기</Button>
+                  <Button variant="primary"size="lg" onClick={() => setIsOpen(true)}>글쓰기</Button>
                 </div>
                 <div className="post-list">
                   {posts.reverse().map((post) => (
-                    <div key={post.id} className="post" onClick={() => handleClick(post.id)}>
-                      <h3 className="post-title">◾ 제목 : {post.title}</h3>
-                      {/* <p className="post-content">{post.id}</p> */}
+                    <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
+                      <h3 className="post-title">◾ 제목 : {post.title}{' '}
+                        {post.user && user && user.username === post.user.username ? (
+                          <span style={{ color: '#8282FF', marginRight: '10px', float: 'right' }}>(내가 쓴 글)</span>
+                        ) : null}</h3>
                       <h4 className="post-author">▫ 작성자 : {post.user.username}</h4>
                     </div>
                   ))}
@@ -555,7 +562,7 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages - 1}
                   >
-                    &gt; 다음
+                    다음 &gt; 
                   </Button>
                 </div>
               </div>
@@ -597,7 +604,7 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
               </Modal>
 
                {/* 글수정 모달 창 */} 
-              <Modal show={updateOpen} onHide={() => setUpdateClose(false)}>                              {/* 글수정 모달 창 */} 
+              <Modal show={updateOpen} onHide={() => {setUpdateClose(false); setsecondOpen(true);}}>                              {/* 글수정 모달 창 */} 
                 <Modal.Header closeButton>
                   <Modal.Title>게시글 수정</Modal.Title>
                 </Modal.Header>
@@ -641,8 +648,12 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
                   {post && (
                     <>
                       <div>
-                        <h4 style={{marginTop: '10px'}}>제목 : {post.title}</h4><br/>
-                        <p style={{ wordWrap: 'break-word', maxWidth: '100%', marginBottom: '30px' }}>{post.content}</p>
+                      <h4 style={{ marginTop: '10px' }}>
+                        제목 : {post.title}
+                      </h4><br/>
+                        <p style={{ wordWrap: 'break-word', maxWidth: '100%', marginBottom: '30px' }}>
+                          {post.content}
+                        </p>
                         <hr style={{ borderTop: '1px solid #808080' , marginTop: '30px'}} />
                         <div className="p-1 bg-info bg-opacity-10 border border-info border-start-0 border-end-0"
                         style={{textAlign: 'center', marginBottom: '20px'}}>
@@ -653,8 +664,9 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
                         {postComment && postComment.map((comment) => (
                           <div key={comment.id} 
                           className={`comment ${updatedCommentIdColor === comment.id ? 'updated' : ''}`}>
-                            <p>🙋‍♂️ {comment.user.username}님의 댓글 : {comment.content}</p>
-                            {/* 댓글의 내용과 작성자를 출력하거나 필요한 형식으로 표시 */}
+                            <p>🙋‍♂️ {comment.user.username}님
+                              {user && comment.user.username === user.username && <span> (나)</span>}의 댓글 : {comment.content}
+                            </p>
                             {postComment && comment.user && user && comment.user.username === user.username && (
                               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-40px' }}>
                                 <Button variant="outline-success" onClick={()=> openCommentUpdateModal(comment.id,post.id)} 
@@ -667,7 +679,7 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
                           </div>
                         ))}
                       </div>
-                      <hr style={{ borderTop: '1px solid #808080' , marginTop: '30px'}} />
+                      <hr style={{ borderTop: '1px solid #808080' , marginTop: '20px'}} />
 
                     </>
                   )}

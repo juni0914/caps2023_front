@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import "./login.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import gnulogo from '../images/gnulogo.png';
 // import { cookies, setCookie, useCookies } from "react-cookie"
 // import { setCookie, getCookie,removeCookie } from "./cookie";
@@ -11,6 +12,7 @@ import gnulogo from '../images/gnulogo.png';
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); //비밀번호 텍스트 표시 상태 저장
   // const [isLogin, setIsLogin] = useState(false);
   // const [user, setUser] = useState({});
   
@@ -98,26 +100,38 @@ export default function Login() {
       <div className="auth-wrapper"  >
           <form>
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'center'}}>LOGIN</h2>
-                  <label>✉ Email</label>
+                  <label style={{marginTop: '50px'}}>✉ Email</label>
             <input
               placeholder="email"
               className="inputValue"
               onChange={(e) => setUsername(e.target.value)}
               value={username}
+              maxLength={20}
             />
 
-            <label className="inputLabel" style={{ color: 'white', textDecoration: 'none' }}>password</label>
-            <label>🔒 Password</label>
-            <input
-              type="password"
-              placeholder="password"
-              className="inputValue"
-              autoComplete="off"
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-            />
-
-          <button onClick={login} type="button">Login</button><br/>
+            <label style={{marginTop: '30px'}}>🔒 Password</label>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="password"
+                className="inputValue"
+                autoComplete="off"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+              />
+              {showPassword ? (
+                <FiEyeOff
+                  style={{ cursor: 'pointer', position: 'absolute', right: '10px', marginBottom: '20px'}}
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <FiEye
+                  style={{ cursor: 'pointer', position: 'absolute', right: '10px', marginBottom: '20px' }}
+                  onClick={() => setShowPassword(true)}
+                />
+              )}
+          </div>
+          <button onClick={login} type="button" style={{marginTop: '30px'}}>Login</button><br/>
           <Link style={{ color: '#50BDCF', textDecoration: 'none', fontWeight: '800' }} to="/join">아직 아이디가 없으신가요?  </Link>
         </form>
       </div>

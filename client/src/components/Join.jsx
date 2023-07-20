@@ -3,11 +3,15 @@ import { useState } from "react";
 import "./login.css";
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import gnulogo from '../images/gnulogo.png';
 
 export default function Join() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState(''); //아이디 상태 저장
+  const [password, setPassword] = useState(''); //비밀번호 상태 저장
+  const [confirmPassword, setConfirmPassword] = useState(''); //비밀번호 확인 상태 저장
+  const [showPassword, setShowPassword] = useState(false); //비밀번호 텍스트 표시 상태 저장
+
   const navigate = useNavigate();
 
   const join = async () => {
@@ -18,7 +22,13 @@ export default function Join() {
       return; // 유효성 검사에 실패한 경우 종료
     }
 
+    if (password !== confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return; // 비밀번호 확인이 일치하지 않는 경우 종료
+    }
+
     setPassword('');  //패스워드 칸 초기화
+    setConfirmPassword('');  //패스워드확인 칸 초기화
 
     try {
       const response = await axios({
@@ -63,15 +73,15 @@ export default function Join() {
 
   return (
     <div className="auth-wrapper-container" style={{ display: 'flex' }}>
-    <div className="second-auth" style={{ flex: '1' }}>
-    <form style={{ textAlign: 'center' }}> 
-            <p style={{fontSize: '20px', textAlign: 'left'}}>" Effortlessly book your favorite sports facilities "</p>
-              <img src={gnulogo} alt="GNU 로고" />
-              <h1>GNU</h1>
-              <h2>Sports Facility</h2><h2>Reservation </h2>
-            </form>
-    </div>
-        <div className="auth-wrapper" >
+        <div className="second-auth" style={{ flex: '1' }}>
+        <form style={{ textAlign: 'center' }}> 
+                <p style={{fontSize: '20px', textAlign: 'left'}}>" Effortlessly book your favorite sports facilities "</p>
+                  <img src={gnulogo} alt="GNU 로고" />
+                  <h1>GNU</h1>
+                  <h2>Sports Facility</h2><h2>Reservation </h2>
+                </form>
+        </div>
+        <div className="auth-wrapper">
           <form>
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'center'}}>JOIN</h2>
                   <label>✉ Email</label>
@@ -80,24 +90,61 @@ export default function Join() {
             className="inputValue"
             onChange={(e) => setUsername(e.target.value)}
             value={username}
+            maxLength={20}
           />
 
         <div className="inputGroup">
-          <label className="inputLabel" style={{ color: 'white', textDecoration: 'none' }}>password</label>
           <label>🔒 Password</label>
-          <input
-            type="password"
-            placeholder="password"
-            className="inputValue"
-            autoComplete="off"
-            onChange={(e) => {
-              setPassword(e.target.value)
-            }}
-            value={password}
-            onBlur={() => validatePassword(password)}
-          />
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="password"
+                className="inputValue"
+                autoComplete="off"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+              />
+              {/* 눈 모양 아이콘 */}
+              {showPassword ? (
+                <FiEyeOff
+                  style={{ cursor: 'pointer', position: 'absolute', right: '10px', marginBottom: '20px'}}
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <FiEye
+                  style={{ cursor: 'pointer', position: 'absolute', right: '10px', marginBottom: '20px' }}
+                  onClick={() => setShowPassword(true)}
+                />
+              )}
+            </div>
         </div>
-        <button onClick={join} type="button" >Join</button>
+
+
+        <div className="inputGroup"  style={{marginTop: "-15px"}}>
+            <label>🔒 Confirm Password</label>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="confirm password"
+              className="inputValue"
+              autoComplete="off"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={confirmPassword}
+            />
+            {showPassword ? (
+                <FiEyeOff
+                  style={{ cursor: 'pointer', position: 'absolute', right: '10px', marginBottom: '20px'}}
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <FiEye
+                  style={{ cursor: 'pointer', position: 'absolute', right: '10px', marginBottom: '20px' }}
+                  onClick={() => setShowPassword(true)}
+                />
+              )}
+          </div>
+        </div>
+        <button onClick={join} type="button" style={{marginTop: "30px"}}>Join</button>
         <Link style={{ color: '#50BDCF', textDecoration: 'none', fontWeight: '800'}} to="/login">로그인 하러가기  </Link>
 {/*         <p>{props.data}</p> */}
           </form>
