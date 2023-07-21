@@ -396,7 +396,7 @@ function Map() {
                       </Form.Group>
 
                       <Form.Group className="mb-3">
-                      <Form.Label>👥 인원 수</Form.Label>
+                      <Form.Label>⛹️‍♂️ 인원 수</Form.Label>
                       <div className="d-flex align-items-center">
                         <Button variant="outline-secondary" size="sm" onClick={GuestCountForm().decreaseHeadCount}>-</Button>
                         <Form.Control type="text" value={headCount} readOnly className="text-center mx-2" style={{ width: '50px' }} />

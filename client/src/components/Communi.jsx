@@ -31,9 +31,11 @@ function Communi() {
   let token = localStorage.getItem('login-token') || '';
 
   const logout = () => {
-    alert("로그아웃 되었습니다.")
-    localStorage.clear()
-    window.location.replace('http://localhost:3000/login')
+    if (window.confirm("로그아웃 하시겠습니까?")) {
+      alert("로그아웃 되었습니다.")
+      localStorage.clear()
+      window.location.replace('http://localhost:3000/login')
+    }
   };
 
   useEffect(() => {       // 로그인 여부와 사용자 정보 가져오기
@@ -148,37 +150,43 @@ function Communi() {
 
 
   const handleCreatePost = () => {                      //게시글 생성하기
-    if (window.confirm("게시글을 작성하시겠습니까?")) {
-      axios({
-        url: "http://localhost:8080/post/create",
-        method: "POST",
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${token}`,
-        },
-        data: JSON.stringify({
-          title: title,
-          content: content,
-        }),
-      })
-        .then((res) => {
-          setIsOpen(false);
-          setTitle('');
-          setContent('');
-          alert("게시글이 성공적으로 생성되었습니다.")
-          console.log("게시글이 성공적으로 생성되었습니다:", res.data);
-          
-          // 게시글 생성 후 게시글 리스트 업데이트
-          fetchPosts();
+    if (title.trim().length >= 2 && content.trim().length >= 2) { 
+      if (window.confirm("게시글을 작성하시겠습니까?")) {
+        const currentTime = new Date().toISOString();
+        axios({
+          url: "http://localhost:8080/post/create",
+          method: "POST",
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+          data: JSON.stringify({
+            title: title,
+            content: content,
+            createdAt: currentTime,    // 나중에 백엔드 수정해달라 하자, 글쓴 시간 보내기 위함임
+          }),
         })
-        .catch((error) => {
-          alert("글 내용은 최대 255자까지만 허용됩니다.")
-          console.error("게시글 생성 중 오류가 발생했습니다:", error);
-        });
-    } else {
-      console.log('작성이 취소되었습니다.');
-    }
+          .then((res) => {
+            setIsOpen(false);
+            setTitle('');
+            setContent('');
+            alert("게시글이 성공적으로 생성되었습니다.")
+            console.log("게시글이 성공적으로 생성되었습니다:", res.data);
+            
+            // 게시글 생성 후 게시글 리스트 업데이트
+            fetchPosts();
+          })
+          .catch((error) => {
+            alert("글 내용은 최대 255자까지만 허용됩니다.")
+            console.error("게시글 생성 중 오류가 발생했습니다:", error);
+          });
+      } else {
+        console.log('작성이 취소되었습니다.');
+      }
+    }else{
+      alert("제목과 내용이 최소 2글자 이상이어야 합니다.")
+    }  
   };
   
 
@@ -209,43 +217,46 @@ function Communi() {
 
 
   const handleUpdatePost = (postId) => {                  //게시글 수정하기
-
-    if (window.confirm("게시글을 수정하시겠습니까?")) {
-      axios({
-        url: `http://localhost:8080/post/update/${postId}`,
-        method: "PATCH",
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${token}`,
-        },
-        data: {
-          postId: postId,
-          title: title,
-          content: content,
-        },
-      })
-        .then((res) => {
-          alert("게시글이 수정되었습니다.")
-          console.log("게시글이 수정되었습니다:", res.data); 
-          // 게시글 수정 후 게시글 리스트 업데이트
-          fetchPosts();
-          setTitle('');
-          setContent('');
-          setUpdateOpen(false);
-          // 댓글이 수정되었을 때 색상 표시
-          setUpdatedPostIdColor(postId);
-          setTimeout(() => {
-            setUpdatedPostIdColor(null);
-          }, 2000); // 3초 후에 원래 색상으로 되돌림
+    if (title.trim().length >= 2 && content.trim().length >= 2) {  
+      if (window.confirm("게시글을 수정하시겠습니까?")) {
+        axios({
+          url: `http://localhost:8080/post/update/${postId}`,
+          method: "PATCH",
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+          data: {
+            postId: postId,
+            title: title,
+            content: content,
+          },
         })
-        .catch((error) => {
-          alert("글 내용은 최대 255자까지만 허용됩니다.")
-          console.error("게시글 수정 중 오류가 발생했습니다:", error);
-        });
-    } else {
-      console.log('수정이 취소되었습니다.');
-    }
+          .then((res) => {
+            alert("게시글이 수정되었습니다.")
+            console.log("게시글이 수정되었습니다:", res.data); 
+            // 게시글 수정 후 게시글 리스트 업데이트
+            fetchPosts();
+            setTitle('');
+            setContent('');
+            setUpdateOpen(false);
+            // 댓글이 수정되었을 때 색상 표시
+            setUpdatedPostIdColor(postId);
+            setTimeout(() => {
+              setUpdatedPostIdColor(null);
+            }, 2000); // 3초 후에 원래 색상으로 되돌림
+          })
+          .catch((error) => {
+            alert("글 내용은 최대 255자까지만 허용됩니다.")
+            console.error("게시글 수정 중 오류가 발생했습니다:", error);
+          });
+      } else {
+        console.log('수정이 취소되었습니다.');
+      }
+    }else{
+      alert("제목과 내용이 최소 2글자 이상이어야 합니다.")
+    } 
   };
 
   const openUpdateModal = (postId) => {               //글 수정하기 버튼 눌렀을 때 모달창이 등장하는 함수
@@ -431,42 +442,45 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
 
 
 const handleUpdateComment = (commentId,postId) => {                  //댓글 수정하기
-
-  if (window.confirm("댓글을 수정하시겠습니까?")) {
-    axios({
-      url: `http://localhost:8080/comment/update/${commentId}`,
-      method: "PATCH",
-      withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${token}`,
-      },
-      data: {
-        content: comment
-      },
-    })
-      .then((res) => {
-        alert("댓글이 수정되었습니다.")
-        console.log("댓글이 수정되었습니다:", res.data); 
-        setCommentOpen(true);
-        // 댓글이 수정되었을 때 색상 표시
-        setUpdatedCommentIdColor(commentId);
-        setTimeout(() => {
-          setUpdatedCommentIdColor(null);
-        }, 2000); // 3초 후에 원래 색상으로 되돌림
-
-        // 게시글 수정 후 게시글 리스트 업데이트
-        fetchComments(postId);
-        setComment('');
-        setUpdateComment(false);
+  if (comment.trim().length >= 2) {
+    if (window.confirm("댓글을 수정하시겠습니까?")) {
+      axios({
+        url: `http://localhost:8080/comment/update/${commentId}`,
+        method: "PATCH",
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        data: {
+          content: comment
+        },
       })
-      .catch((error) => {
-        alert("댓글 내용은 최대 255자까지만 허용됩니다.")
-        console.error("댓글 수정 중 오류가 발생했습니다:", error);
-      });
-  } else {
-    console.log('댓글 수정이 취소되었습니다.');
-  }
+        .then((res) => {
+          alert("댓글이 수정되었습니다.")
+          console.log("댓글이 수정되었습니다:", res.data); 
+          setCommentOpen(true);
+          // 댓글이 수정되었을 때 색상 표시
+          setUpdatedCommentIdColor(commentId);
+          setTimeout(() => {
+            setUpdatedCommentIdColor(null);
+          }, 2000); // 3초 후에 원래 색상으로 되돌림
+
+          // 게시글 수정 후 게시글 리스트 업데이트
+          fetchComments(postId);
+          setComment('');
+          setUpdateComment(false);
+        })
+        .catch((error) => {
+          alert("댓글 내용은 최대 255자까지만 허용됩니다.")
+          console.error("댓글 수정 중 오류가 발생했습니다:", error);
+        });
+    } else {
+      console.log('댓글 수정이 취소되었습니다.');
+    }
+  }else{
+    alert("댓글은 최소 2글자 이상 입력해야 합니다.")
+  }  
 };
 
 
@@ -499,9 +513,17 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
     } catch (error) {
       console.log(error);
     }
- 
 };
     
+const getMyPosts = () => {
+  if (!user|| !posts) {
+    return []; // 사용자 정보가 없을 경우 빈 배열 반환
+  }
+
+  // 현재 로그인한 사용자의 username과 글을 작성한 사용자의 username을 비교하여 일치하는 글만 필터링
+  return posts.filter((post) => post.user.username === user.username);
+};
+
       return (
         <>
           <div style={{ display: 'flex' }}>
@@ -514,9 +536,17 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
                 </div>
                 <h4>
                 ⛹️‍♂️ {user.username} 님
-                <button  onClick={logout} style={{float: 'right', backgroundColor: 'white'}}>Logout</button>
+                <Button variant="outline-light" onClick={logout}>Logout</Button>{' '}
                 </h4><br />
                 <h4 className="home-link"><Link style={{ textDecoration: 'none', fontWeight: '800', color: "#333" }} to="/">🏠 홈 화면으로 이동하기  </Link></h4><br/>
+                <h4 className="home-link">내가 작성한 게시글  </h4><br/>
+                <div style={{ marginLeft: '20px' }}>
+                  {getMyPosts().map((post) => (
+                    <div key={post.id} style={{cursor: 'pointer'}}>
+                      <p onClick={() => handleClick(post.id)}  >◾{post.title}{' '}</p>
+                    </div>
+                  ))}
+                </div>
             </div>
 
             <div>
@@ -527,9 +557,9 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
                   <Button variant="primary"size="lg" onClick={() => setIsOpen(true)}>글쓰기</Button>
                 </div>
                 <div className="post-list">
-                  {posts.reverse().map((post) => (
+                  {posts.map((post) => (
                     <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
-                      <h3 className="post-title">◾ 제목 : {post.title}{' '}
+                      <h3 className="post-title">◾ 제목 : {post.title}
                         {post.user && user && user.username === post.user.username ? (
                           <span style={{ color: '#8282FF', marginRight: '10px', float: 'right' }}>(내가 쓴 글)</span>
                         ) : null}</h3>
@@ -706,7 +736,7 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
 
 
               {/* 댓글수정 모달 창 */} 
-              <Modal show={postUpdateComment} onHide={() => {setUpdateComment(false); setCommentOpen(true);}}>   {/* 댓글수정 모달 창 */} 
+              <Modal show={postUpdateComment} onHide={() => setCommentUpdateClose()}>   {/* 댓글수정 모달 창 */} 
                 <Modal.Header closeButton>
                   <Modal.Title>댓글 수정</Modal.Title>
                 </Modal.Header>
