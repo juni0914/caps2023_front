@@ -102,6 +102,10 @@ function Map() {
         url: "http://localhost:8080/center/all",
         method: "GET",
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`
+        },
       })
         .then((res) => {
           if (res.data) {
@@ -189,10 +193,15 @@ function Map() {
       }
       try {
         axios({
-          url: `http://localhost:8080/center/${selectedMarker.centerId}/reservation?date=${selectedDateString}`,
+          url: `http://localhost:8080/centerReservation/${selectedMarker.centerId}/reservation?date=${selectedDateString}`,
           method: "GET",
           withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`
+          },
         })
+        
           .then((res) => {
             if (res.data) {
               setReservationInfo(res.data);
@@ -301,7 +310,7 @@ function Map() {
     try {
       if (window.confirm("선택한 예약 정보로 예약을 진행하시겠습니까?")) {
         axios({
-          url: `http://localhost:8080/center/${selectedMarker.centerId}/reservation`,
+          url: `http://localhost:8080/centerReservation/${selectedMarker.centerId}/reservation`,
           method: "POST",
           withCredentials: true,
           headers: {

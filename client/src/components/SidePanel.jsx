@@ -79,7 +79,7 @@ const updateReservationData = (centerId, reservationId) => {
    useEffect(() => {  // 예약 데이터 가져오기
     try {
       axios({
-        url: "http://localhost:8080/center/reservations",
+        url: "http://localhost:8080/centerReservation/reservations",
         method: "GET",
         withCredentials: true,
         headers: {
@@ -114,7 +114,7 @@ const updateReservationData = (centerId, reservationId) => {
 
     try {   //해당 체육시설 상세 예약정보 가져오기
       axios({
-        url: `http://localhost:8080/center/${centerId}/reservation/${reservationId}`,
+        url: `http://localhost:8080/centerReservation/${centerId}/reservation/${reservationId}`,
         method: "GET",
         withCredentials: true,
         headers: {
@@ -140,7 +140,7 @@ const updateReservationData = (centerId, reservationId) => {
   
     if (window.confirm("정말로 예약을 취소하시겠습니까?")) {
       axios({
-        url: `http://localhost:8080/center/${centerId}/reservation/${reservationId}`,
+        url: `http://localhost:8080/centerReservation/${centerId}/reservation/${reservationId}`,
         method: "DELETE",
         withCredentials: true,
         headers: {
@@ -201,13 +201,12 @@ const updateReservationData = (centerId, reservationId) => {
       <h2 id="sidepaneltitle" style={{ fontWeight: '600' }}>
       <img src={gnuhan} style={{ width: '300px', height: '60px', marginBottom: '10px'}}alt="GNU 로고" /> 경상국립대학교<br />체육시설 예약 사이트
       </h2><br />
-      <h4>
-        ⛹️‍♂️ {user.username} 님
+      <h4> 
+        ⛹️‍♂️ {user.nickname} 님
         <Button  variant="outline-secondary"onClick={logout} 
-        style={{ borderRadius: '20px', fontSize: '15px', borderWidth: '2px', 
-        marginLeft: '120px', padding: '0.5rem', cursor: 'pointer'}}>
+        style={{ borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
           Logout
-        </Button>{' '}      </h4><br />
+        </Button>{' '}</h4><br />
       <h4><Link style={{  textDecoration: 'none', fontWeight: '800', fontSize: '20px' }} to="/community">👨‍👨‍👧‍👧 체육시설 커뮤니티 바로가기  </Link></h4>
 
       <h4 style={{marginLeft: '-5px', marginTop: '20px' }}>📌 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '45px' }}>(최대 20개까지만 표시)</p></h4>

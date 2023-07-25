@@ -27,6 +27,7 @@ function Communi() {
   const [currentPage, setCurrentPage] = useState(0);    // 게시물 현재 페이지 정보 저장
   const [updatedCommentIdColor, setUpdatedCommentIdColor] = useState(null); // 댓글 수정되면 수정된 댓글 색상으로 표시
   const [updatedPostIdColor, setUpdatedPostIdColor] = useState(null); // 글 수정되면 수정된 글 색상으로 표시
+  const [mypost, setMyPost] = useState([]); // 자신이 작성한 모든 글 정보
 
   let token = localStorage.getItem('login-token') || '';
 
@@ -96,6 +97,7 @@ function Communi() {
         setPosts(response.data.content);
         setTotalPages(response.data.totalPages);
         setCurrentPage(response.data.number);
+        fetchMyPosts();
         // console.log(response.data.content);
         // console.log(response.data.content[1].id)
       }
@@ -104,7 +106,24 @@ function Communi() {
     }
   };
 
-  const fetchComments = async (postId, token) => {      //게시물 댓글 불러오기
+  const fetchMyPosts = async () => {           //자신이 작성한 모든 게시물 불러오기
+    try {
+      const response = await axios.get(`http://localhost:8080/post/readAll`, {
+        withCredentials: true,
+        headers: {
+          Authorization: token,
+        },
+      });
+      if (response.data && response.data.content) {
+        setMyPost(response.data.content);
+        console.log(response.data.content[0].title)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchComments = async (postId) => {      //게시물 댓글 불러오기
     try {
       const commentRes = await axios.get(`http://localhost:8080/comment/readAll/${postId}`, {
         withCredentials: true,
@@ -123,6 +142,7 @@ function Communi() {
   
   useEffect(() => {
     fetchPosts();
+    fetchMyPosts();
   }, [page, size]);
 
   const maxPageButtons = 5; // 페이지 이동 버튼의 최대 개수
@@ -152,7 +172,7 @@ function Communi() {
   const handleCreatePost = () => {                      //게시글 생성하기
     if (title.trim().length >= 2 && content.trim().length >= 2) { 
       if (window.confirm("게시글을 작성하시겠습니까?")) {
-        const currentTime = new Date().toISOString();
+        const currentTime = new Date().toLocaleString();
         axios({
           url: "http://localhost:8080/post/create",
           method: "POST",
@@ -204,7 +224,7 @@ function Communi() {
             if (res.data) {
               setPost(res.data)
               setsecondOpen(true)
-              console.log(postId)
+              console.log(res.data)
             }
           })
           .catch((error) => {
@@ -241,7 +261,7 @@ function Communi() {
             setTitle('');
             setContent('');
             setUpdateOpen(false);
-            // 댓글이 수정되었을 때 색상 표시
+            // 글이 수정되었을 때 색상 표시
             setUpdatedPostIdColor(postId);
             setTimeout(() => {
               setUpdatedPostIdColor(null);
@@ -260,7 +280,7 @@ function Communi() {
   };
 
   const openUpdateModal = (postId) => {               //글 수정하기 버튼 눌렀을 때 모달창이 등장하는 함수
-    if (post.user.username === user.username) { 
+    if (post.user.nickname === user.nickname) { 
       try {
         axios({
           url: `http://localhost:8080/post/read/${postId}`,
@@ -300,6 +320,7 @@ function Communi() {
           method: "POST",
           withCredentials: true,
           headers: {
+            "Content-Type": "application/json",
             Authorization: `${token}`,
           },
           data: {
@@ -378,7 +399,7 @@ function Communi() {
 
 
   const handlePostDelete = (postId) => {        //클릭한 특정 게시물 삭제하기
-    if(post.user.username === user.username){
+    if(post.user.nickname === user.nickname){
       if (window.confirm("게시글을 삭제하시겠습니까?")) {
         try {
           axios({
@@ -425,7 +446,7 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
           .then((res) => {
             if (res.data) {
               alert("댓글이 삭제되었습니다.")
-
+              fetchPosts();
               fetchComments(postId);
               // setsecondOpen(false)
               // console.log(postId)
@@ -515,13 +536,13 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
     }
 };
     
-const getMyPosts = () => {
-  if (!user|| !posts) {
+const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 함수
+  if (!user|| !mypost) {
     return []; // 사용자 정보가 없을 경우 빈 배열 반환
   }
 
-  // 현재 로그인한 사용자의 username과 글을 작성한 사용자의 username을 비교하여 일치하는 글만 필터링
-  return posts.filter((post) => post.user.username === user.username);
+  // 현재 로그인한 사용자의 nickname과 글을 작성한 사용자의 nickname을 비교하여 일치하는 글만 필터링
+  return mypost.filter((post) => post.user.nickname === user.nickname);
 };
 
       return (
@@ -534,16 +555,18 @@ const getMyPosts = () => {
                 <div>
                   <h2 id="sidepaneltitle"> 경상국립대학교<br />체육시설 커뮤니티</h2><br />
                 </div>
-                <h4>
-                ⛹️‍♂️ {user.username} 님
-                <Button variant="outline-light" onClick={logout}>Logout</Button>{' '}
+                <h4 onClick={fetchMyPosts}>
+                ⛹️‍♂️ {user.nickname} 님 
+                <Button variant="outline-light" onClick={logout} style={{
+                   borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
+                    Logout</Button>{' '}
                 </h4><br />
                 <h4 className="home-link"><Link style={{ textDecoration: 'none', fontWeight: '800', color: "#333" }} to="/">🏠 홈 화면으로 이동하기  </Link></h4><br/>
                 <h4 className="home-link">내가 작성한 게시글  </h4><br/>
-                <div style={{ marginLeft: '20px' }}>
+                <div style={{ marginLeft: '10px' }}>
                   {getMyPosts().map((post) => (
                     <div key={post.id} style={{cursor: 'pointer'}}>
-                      <p onClick={() => handleClick(post.id)}  >◾{post.title}{' '}</p>
+                      <p onClick={() => handleClick(post.id)}>◾{post.title}{' '}</p>
                     </div>
                   ))}
                 </div>
@@ -560,10 +583,16 @@ const getMyPosts = () => {
                   {posts.map((post) => (
                     <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
                       <h3 className="post-title">◾ 제목 : {post.title}
-                        {post.user && user && user.username === post.user.username ? (
-                          <span style={{ color: '#8282FF', marginRight: '10px', float: 'right' }}>(내가 쓴 글)</span>
-                        ) : null}</h3>
-                      <h4 className="post-author">▫ 작성자 : {post.user.username}</h4>
+                        {post.user && user && user.nickname === post.user.nickname ? (
+                          <span style={{ color: '#8282FF', marginRight: '10px' }}>ㅤ(내가 쓴 글)</span>
+                        ) : null}<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '50px', height: '50px', borderRadius: '20%', backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                        <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{post.commentSize}</span>
+                      </div></h3>
+                        
+                      <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>▫ 작성자: {post.user.nickname}</span>
+                        <span>작성일: {post.createdAt}</span>
+                      </h4>
                     </div>
                   ))}
                 </div><br/>
@@ -611,7 +640,7 @@ const getMyPosts = () => {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="제목을 입력하세요"
-                        maxLength={20}
+                        maxLength={30}
                       />
                     </Form.Group><br/>
                     <Form.Group>
@@ -634,7 +663,7 @@ const getMyPosts = () => {
               </Modal>
 
                {/* 글수정 모달 창 */} 
-              <Modal show={updateOpen} onHide={() => {setUpdateClose(false); setsecondOpen(true);}}>                              {/* 글수정 모달 창 */} 
+              <Modal show={updateOpen} onHide={() => {setUpdateClose(false); setsecondOpen(true);}}>          {/* 글수정 모달 창 */} 
                 <Modal.Header closeButton>
                   <Modal.Title>게시글 수정</Modal.Title>
                 </Modal.Header>
@@ -672,7 +701,7 @@ const getMyPosts = () => {
               {/* 댓글 모달 창 */} 
               <Modal show={commentOpen} onHide={() => setCommentClose(false)}>                    {/* 댓글 모달 창 */} 
                 <Modal.Header closeButton>
-                  <Modal.Title>작성자 : {post && post.user && post.user.username}</Modal.Title>
+                  <Modal.Title>작성자 : {post && post.user && post.user.nickname}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                   {post && (
@@ -684,7 +713,7 @@ const getMyPosts = () => {
                         <p style={{ wordWrap: 'break-word', maxWidth: '100%', marginBottom: '30px' }}>
                           {post.content}
                         </p>
-                        <hr style={{ borderTop: '1px solid #808080' , marginTop: '30px'}} />
+                        {/* <hr style={{ borderTop: '1px solid #808080' , marginTop: '30px'}} /> */}
                         <div className="p-1 bg-info bg-opacity-10 border border-info border-start-0 border-end-0"
                         style={{textAlign: 'center', marginBottom: '20px'}}>
                           <GoCommentDiscussion/> 이 게시글의 댓글
@@ -694,10 +723,10 @@ const getMyPosts = () => {
                         {postComment && postComment.map((comment) => (
                           <div key={comment.id} 
                           className={`comment ${updatedCommentIdColor === comment.id ? 'updated' : ''}`}>
-                            <p>🙋‍♂️ {comment.user.username}님
-                              {user && comment.user.username === user.username && <span> (나)</span>}의 댓글 : {comment.content}
+                            <p style={{ wordWrap: 'break-word', maxWidth: '70%' }}>🙋‍♂️ {comment.user.nickname}님
+                              {user && comment.user.nickname === user.nickname && <span> (나)</span>}의 댓글 : {comment.content}
                             </p>
-                            {postComment && comment.user && user && comment.user.username === user.username && (
+                            {postComment && comment.user && user && comment.user.nickname === user.nickname && (
                               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-40px' }}>
                                 <Button variant="outline-success" onClick={()=> openCommentUpdateModal(comment.id,post.id)} 
                                 size="sm" style={{marginRight: '5px'}}>수정하기</Button>
@@ -709,7 +738,7 @@ const getMyPosts = () => {
                           </div>
                         ))}
                       </div>
-                      <hr style={{ borderTop: '1px solid #808080' , marginTop: '20px'}} />
+                      {/* <hr style={{ borderTop: '1px solid #808080' , marginTop: '20px'}} /> */}
 
                     </>
                   )}
@@ -722,7 +751,7 @@ const getMyPosts = () => {
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         placeholder="댓글을 입력하세요"
-                        maxLength={10}
+                        maxLength={20}
                       />
                     </Form.Group>
                   </Form>
@@ -768,8 +797,8 @@ const getMyPosts = () => {
               {/* 특정 글 조회 모달 창 */} 
               <Modal show={secondOpen} onHide={() => setsecondOpen(false)}>                            {/* 특정 글 조회 모달 창 */}          
               <Modal.Header >
-                <Modal.Title>📑 {post && post.user && post.user.username}님의 게시글</Modal.Title>
-                {post && post.user && user && post.user.username === user.username && (
+                <Modal.Title>📑 {post && post.user && post.user.nickname}님의 게시글</Modal.Title>
+                {post && post.user && user && post.user.nickname === user.nickname && (
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                       <Button variant="outline-danger" onClick={() => handlePostDelete(post.id)} style={{marginRight: '5px'}}>글 삭제</Button>
                       <Button variant="outline-success" onClick={() => openUpdateModal(post.id)} >수정하기</Button>
@@ -780,6 +809,7 @@ const getMyPosts = () => {
               {post && (
                   <>
                     <h4>제목 : {post.title}</h4><br/>
+                    <hr style={{ borderTop: '1px solid #808080' , marginTop: '-10px'}} />
                     <p style={{ wordWrap: 'break-word', maxWidth: '100%' }}>{post.content}</p>
                   </>
                 )}

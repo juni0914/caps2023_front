@@ -9,6 +9,7 @@ import gnulogo from '../images/gnulogo.png';
 export default function Join() {
   const [username, setUsername] = useState(''); //아이디 상태 저장
   const [password, setPassword] = useState(''); //비밀번호 상태 저장
+  const [nickname, setNickname] = useState(''); //닉네임 상태 저장 
   const [confirmPassword, setConfirmPassword] = useState(''); //비밀번호 확인 상태 저장
   const [showPassword, setShowPassword] = useState(false); //비밀번호 텍스트 표시 상태 저장
 
@@ -38,6 +39,7 @@ export default function Join() {
         headers: { 'Content-Type': 'application/json' },
         data: JSON.stringify({
           username: username,
+          nickname: nickname,
           password: password,
         }),
       });
@@ -47,6 +49,7 @@ export default function Join() {
         navigate('/login');
         console.log(response);
         console.log("username: ", username);
+        console.log("nickname: ", nickname);
         console.log("password: ", password);
       }
     } catch (error) {
@@ -69,6 +72,15 @@ export default function Join() {
   
     return true;
   };
+
+  const handleNicknameChange = (e) => {
+    const inputValue = e.target.value;
+    const maxChars = 6; // 한글 기준으로 5글자 제한
+  
+    if (inputValue.length <= maxChars) {
+      setNickname(inputValue);
+    }
+  };
   
 
   return (
@@ -82,7 +94,7 @@ export default function Join() {
                 </form>
         </div>
         <div className="auth-wrapper">
-          <form>
+          <form style={{padding: '50px 50px'}}>
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'center'}}>JOIN</h2>
                   <label>✉ Email</label>
           <input
@@ -92,6 +104,15 @@ export default function Join() {
             value={username}
             maxLength={20}
           />
+          <label>🤍 Ninkname</label>
+          <input
+            placeholder="(최대 6자)"
+            className="inputValue"
+            onChange={handleNicknameChange}
+            value={nickname}
+            maxLength={6}
+          />
+          
 
         <div className="inputGroup">
           <label>🔒 Password</label>
@@ -144,7 +165,7 @@ export default function Join() {
               )}
           </div>
         </div>
-        <button onClick={join} type="button" style={{marginTop: "30px"}}>Join</button>
+        <button onClick={join} type="button" style={{marginTop: "10px"}}>Join</button>
         <Link style={{ color: '#50BDCF', textDecoration: 'none', fontWeight: '800'}} to="/login">로그인 하러가기  </Link>
 {/*         <p>{props.data}</p> */}
           </form>
