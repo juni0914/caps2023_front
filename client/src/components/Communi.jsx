@@ -2,9 +2,12 @@ import { Route, Routes, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
+import InputGroup from 'react-bootstrap/InputGroup';
 import gnuhan from "../images/gnuhan.png"
 import "./communi.css";
 import {GoCommentDiscussion} from 'react-icons/go'
+import {IoPersonCircle} from 'react-icons/io5'
+import { AiOutlineSearch } from 'react-icons/ai';
 
 function Communi() {
   const [isLogin, setIsLogin] = useState(false);     //로그인 정보 저장
@@ -28,6 +31,9 @@ function Communi() {
   const [updatedCommentIdColor, setUpdatedCommentIdColor] = useState(null); // 댓글 수정되면 수정된 댓글 색상으로 표시
   const [updatedPostIdColor, setUpdatedPostIdColor] = useState(null); // 글 수정되면 수정된 글 색상으로 표시
   const [mypost, setMyPost] = useState([]); // 자신이 작성한 모든 글 정보
+  const [myInfo, setMyInfo] = useState(false); //내 정보 모달 창 열림여부
+
+  const [searchQuery, setSearchQuery] = useState("");
 
   let token = localStorage.getItem('login-token') || '';
 
@@ -63,6 +69,10 @@ function Communi() {
       console.log(error);
     }
   }, []);
+
+  const handleSearchInputChange = (event) => { //게시글 제목 기준으로 검색
+    setSearchQuery(event.target.value);
+  };
 
   const setUpdateClose = () => {       // 글 수정창을 닫을 시 제목과 내용  state 초기화
     setTitle("");
@@ -116,7 +126,7 @@ function Communi() {
       });
       if (response.data && response.data.content) {
         setMyPost(response.data.content);
-        console.log(response.data.content[0].title)
+        // console.log(response.data.content[0].title)
       }
     } catch (error) {
       console.log(error);
@@ -553,11 +563,11 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
                   <img src={gnuhan} style={{ width: '300px', height: '60px', marginBottom: '10px'}}alt="GNU 로고" />
                 </div>
                 <div>
-                  <h2 id="sidepaneltitle"> 경상국립대학교<br />체육시설 커뮤니티</h2><br />
+                  <h2 id="sidepaneltitle"> 경상국립대학교<br />체육시설 커뮤니티</h2> <br />
                 </div>
-                <h4 onClick={fetchMyPosts}>
+                <h4 onClick={()=> setMyInfo(true)} style={{cursor: 'pointer'}}>
                 ⛹️‍♂️ {user.nickname} 님 
-                <Button variant="outline-light" onClick={logout} style={{
+                <Button variant="outline-secondary" onClick={logout} style={{
                    borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
                     Logout</Button>{' '}
                 </h4><br />
@@ -575,12 +585,28 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
             <div>
               {/* 글쓰기 버튼 */}
               <div className="board">
-              <h1 className="board-title">경상국립대학교 체육시설 커뮤니티</h1> 
+              <h1 className="board-title" >
+                경상국립대학교 체육시설 커뮤니티
+                
+              </h1> 
+
                 <div className="board-button">
                   <Button variant="primary"size="lg" onClick={() => setIsOpen(true)}>글쓰기</Button>
+                  <InputGroup     className='search_form' >
+                    <InputGroup.Text id="basic-addon1">
+                      <AiOutlineSearch />
+                    </InputGroup.Text>
+                    <Form.Control
+                      type="text"
+                      placeholder="제목으로 검색"
+                      value={searchQuery}
+                      onChange={handleSearchInputChange}
+
+                    />
+                  </InputGroup>
                 </div>
                 <div className="post-list">
-                  {posts.map((post) => (
+                  {posts.filter((post) => post.title.includes(searchQuery)).map((post) => (
                     <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
                       <h3 className="post-title">◾ 제목 : {post.title}
                         {post.user && user && user.nickname === post.user.nickname ? (
@@ -625,6 +651,40 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
                   </Button>
                 </div>
               </div>
+              
+
+              <Modal show={myInfo} onHide={() => setMyInfo(false)} >                         {/* 내 정보 모달 창 */}
+                <Modal.Header closeButton >
+                  <Modal.Title><IoPersonCircle/> 내 정보</Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{
+                                    borderRadius: '10px',
+                                    padding: '20px',
+                                    }}>
+                  <Form>
+                    <Form.Group>
+                      <Form.Label><h4><strong>아이디 : {user.username}</strong></h4></Form.Label><br/>
+                      <Form.Label><h4><strong>닉네임 : {user.nickname}</strong></h4></Form.Label>
+                    </Form.Group>
+                    <Form.Group>
+                    <hr style={{ borderTop: '1px solid #808080'}} />
+                      <Form.Label>내가 작성한 게시글</Form.Label>
+                      <div style={{ marginLeft: '10px' }}>
+                      {getMyPosts().map((post) => (
+                        <div key={post.id} style={{cursor: 'pointer'}}>
+                          <p onClick={() => handleClick(post.id)}><strong>◾ {post.title}{' '}</strong></p>
+                        </div>
+                      ))}
+                    </div>
+                    </Form.Group>
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setMyInfo(false)}>닫기</Button>
+
+                </Modal.Footer>
+              </Modal>
+
 
               {/* 글쓰기 모달 창 */}
               <Modal show={isOpen} onHide={() => setIsOpen(false)}>                         {/* 글쓰기 모달 창 */}
@@ -809,7 +869,7 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
               {post && (
                   <>
                     <h4>제목 : {post.title}</h4><br/>
-                    <hr style={{ borderTop: '1px solid #808080' , marginTop: '-10px'}} />
+
                     <p style={{ wordWrap: 'break-word', maxWidth: '100%' }}>{post.content}</p>
                   </>
                 )}

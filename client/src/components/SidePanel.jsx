@@ -188,7 +188,7 @@ const updateReservationData = (centerId, reservationId) => {
   return (
     <div
       style={{
-        backgroundColor: "#b4fedb",
+        backgroundColor: "#f0fff0       ",
         // width: "22vw",
         padding: '2rem',
         minHeight: "95vh",

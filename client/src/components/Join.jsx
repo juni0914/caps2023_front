@@ -94,7 +94,7 @@ export default function Join() {
                 </form>
         </div>
         <div className="auth-wrapper">
-          <form style={{padding: '50px 50px'}}>
+          <form style={{padding: '30px 50px'}}>
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'center'}}>JOIN</h2>
                   <label>✉ Email</label>
           <input
@@ -104,7 +104,7 @@ export default function Join() {
             value={username}
             maxLength={20}
           />
-          <label>🤍 Ninkname</label>
+          <label>🤍 Nickname</label>
           <input
             placeholder="(최대 6자)"
             className="inputValue"

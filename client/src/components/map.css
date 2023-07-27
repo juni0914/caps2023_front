@@ -13,7 +13,7 @@
     text-align: center;
 }
 .btn1 #moveButton1 {
-    background-color: #b4fedb;
+    background-color: #f0fff0;
     border-radius: 20px;
     border-color : white;
     color: #5a635f;
@@ -22,7 +22,7 @@
     cursor: pointer;
 } 
 .btn1 #moveButton2 {
-    background-color: #b4fedb;
+    background-color: #f0fff0;
     border-radius: 20px;
     border-color : white;
     color: #5a635f;
@@ -31,7 +31,7 @@
     cursor: pointer;
 }
 .btn1 #moveButton3 {
-    background-color: #b4fedb;
+    background-color: #f0fff0;
     border-radius: 20px;
     border-color : white;
     color: #5a635f;

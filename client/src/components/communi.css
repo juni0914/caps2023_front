@@ -1,5 +1,5 @@
 .sidebar {
-    background-color: #99CCFF;
+    background-color: #f0f8ff          ;
     padding: 2rem;
     min-height: 90vh;
     max-height: 95vh;;
@@ -33,21 +33,41 @@
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 10px;
+  position: relative;
 }
 
 .board-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+  position: relative;
 }
 
 .board-button {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+  position: relative;
 }
 
+.search_form{
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 10px;
+  width: 250px;
+}
+
+@media (max-width: 900px) {
+  .search_form {
+    width: 170px;
+  }
+}
 
 .post-list {
   display: flex;
@@ -56,7 +76,7 @@
 }
 
 .post {
-  background-color: #CAE1FF;
+  background-color: #e6e6fa ;
   padding: 10px;
   margin-bottom: 15px;
   border-radius: 5px;
@@ -72,11 +92,11 @@
 }
 
 .updated {
-  background-color: #ffddff;
+  background-color: #ffddff ;
 }
 
 .post:hover {
-  background-color: #A4C8FF;
+  background-color: #fff0f5         ;
 }
 
 .post-title {
@@ -101,7 +121,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px; /* 필요에 따라 여백을 조정하세요 */
 }
 
 .pagination-buttons button {
