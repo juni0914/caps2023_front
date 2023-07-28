@@ -8,6 +8,7 @@ import "./communi.css";
 import {GoCommentDiscussion} from 'react-icons/go'
 import {IoPersonCircle} from 'react-icons/io5'
 import { AiOutlineSearch } from 'react-icons/ai';
+import { HiOutlinePencilSquare } from 'react-icons/hi2';
 
 function Communi() {
   const [isLogin, setIsLogin] = useState(false);     //로그인 정보 저장
@@ -31,9 +32,12 @@ function Communi() {
   const [updatedCommentIdColor, setUpdatedCommentIdColor] = useState(null); // 댓글 수정되면 수정된 댓글 색상으로 표시
   const [updatedPostIdColor, setUpdatedPostIdColor] = useState(null); // 글 수정되면 수정된 글 색상으로 표시
   const [mypost, setMyPost] = useState([]); // 자신이 작성한 모든 글 정보
+  const [myCommentPost, setMyCommentPost] = useState([]);  // 자신이 작성한 댓글이 있는 글 정보
   const [myInfo, setMyInfo] = useState(false); //내 정보 모달 창 열림여부
+  const [searchQuery, setSearchQuery] = useState(""); // 게시글 검색어 정보 저장
+  const [updateNickname, setUpdateNickname] = useState(false); //닉네임 변경 모달 창 열림여부
+  const [newNickname, setNewNickname] = useState(''); // 변경할 닉네임 정보 저장
 
-  const [searchQuery, setSearchQuery] = useState("");
 
   let token = localStorage.getItem('login-token') || '';
 
@@ -74,6 +78,26 @@ function Communi() {
     setSearchQuery(event.target.value);
   };
 
+
+  const openNicknameUpdate = () => {   // 닉네임변경 모달 창 열기 함수
+    setUpdateNickname(true);
+    setMyInfo(false);
+  };
+
+
+  const closeNicknameUpdate = () => {   // 닉네임변경 모달 창 닫기 함수
+    setUpdateNickname(false);
+    setMyInfo(true);
+  };
+
+
+
+  const openMyInfoModal = () => {   // 유저 모달 창 열기 함수
+    setMyInfo(true);
+    getMyCommentPost();
+  };
+
+
   const setUpdateClose = () => {       // 글 수정창을 닫을 시 제목과 내용  state 초기화
     setTitle("");
     setContent("");
@@ -92,6 +116,30 @@ function Communi() {
     setContent("");
     setComment("");
     setCommentOpen(false);
+  };
+
+
+  const handleUpdateNickname = () => {                  //닉네임 수정하기
+        axios({
+          url: 'http://localhost:8080/user/update',
+          method: "PATCH",
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+          data: {
+            nickname: newNickname,
+          },
+        })
+          .then((res) => {
+            alert("닉네임이 수정되었습니다.")
+            console.log("닉네임이 수정되었습니다:", res.data); 
+          })
+          .catch((error) => {
+            alert("글 내용은 최대 255자까지만 허용됩니다.")
+            console.error("게시글 수정 중 오류가 발생했습니다:", error);
+          });
   };
 
 
@@ -153,7 +201,30 @@ function Communi() {
   useEffect(() => {
     fetchPosts();
     fetchMyPosts();
+    // getMyCommentPost();
   }, [page, size]);
+
+
+  // useEffect(() => {   
+  //   const getMyCommentPost = async () => {
+  //     try {
+  //       const res = await axios.get("http://localhost:8080/post/postByMyComments", {
+  //         withCredentials: true,
+  //         headers: {
+  //           'Authorization': token
+  //         }
+  //       });
+  //       if (res.data) {
+  //         setMyCommentPost(res.data.content);
+  //         console.log(myCommentPost);
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   getMyCommentPost();
+  // },[]);
+
 
   const maxPageButtons = 5; // 페이지 이동 버튼의 최대 개수
 
@@ -271,6 +342,7 @@ function Communi() {
             setTitle('');
             setContent('');
             setUpdateOpen(false);
+            getMyCommentPost();
             // 글이 수정되었을 때 색상 표시
             setUpdatedPostIdColor(postId);
             setTimeout(() => {
@@ -344,6 +416,7 @@ function Communi() {
             fetchPosts();
             fetchComments(postId);
             setComment('');
+
             // setCommentOpen(false);
           })
           .catch((error) => {
@@ -424,6 +497,7 @@ function Communi() {
               if (res.data) {
                 alert("게시글이 삭제되었습니다.")
                 fetchPosts();
+                getMyCommentPost();
                 setPost(res.data)
                 setsecondOpen(false)
                 // console.log(postId)
@@ -458,6 +532,7 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
               alert("댓글이 삭제되었습니다.")
               fetchPosts();
               fetchComments(postId);
+              getMyCommentPost();
               // setsecondOpen(false)
               // console.log(postId)
             }
@@ -555,6 +630,39 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
   return mypost.filter((post) => post.user.nickname === user.nickname);
 };
 
+const getMyCommentPost = () => {    //내가 작성한 댓글의 게시글 정보 불러오는 함수
+  try {
+    axios({
+      url: "http://localhost:8080/post/postByMyComments",
+      method: "GET",
+      withCredentials: true,
+      headers: {
+        'Authorization': token
+      }
+    })
+      .then((res) => {
+        if (res.data) {
+          setMyCommentPost(res.data.content);
+          console.log(res.data.content);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const handleNicknameChange = (e) => {
+  const inputValue = e.target.value;
+  const maxChars = 6; // 한글 기준으로 5글자 제한
+
+  if (inputValue.length <= maxChars) {
+    setNewNickname(inputValue);
+  }
+};
+
       return (
         <>
           <div style={{ display: 'flex' }}>
@@ -565,7 +673,7 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
                 <div>
                   <h2 id="sidepaneltitle"> 경상국립대학교<br />체육시설 커뮤니티</h2> <br />
                 </div>
-                <h4 onClick={()=> setMyInfo(true)} style={{cursor: 'pointer'}}>
+                <h4 onClick={openMyInfoModal} style={{cursor: 'pointer'}}>
                 ⛹️‍♂️ {user.nickname} 님 
                 <Button variant="outline-secondary" onClick={logout} style={{
                    borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
@@ -653,7 +761,7 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
               </div>
               
 
-              <Modal show={myInfo} onHide={() => setMyInfo(false)} >                         {/* 내 정보 모달 창 */}
+              <Modal show={myInfo} onHide={() => setMyInfo(false)} size="lg" >      {/* 내 정보 모달 창 */}
                 <Modal.Header closeButton >
                   <Modal.Title><IoPersonCircle/> 내 정보</Modal.Title>
                 </Modal.Header>
@@ -664,18 +772,57 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
                   <Form>
                     <Form.Group>
                       <Form.Label><h4><strong>아이디 : {user.username}</strong></h4></Form.Label><br/>
-                      <Form.Label><h4><strong>닉네임 : {user.nickname}</strong></h4></Form.Label>
+                      <Form.Label><h4><strong>닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={()=>setUpdateNickname(true)} style={{
+                   borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
+                    닉네임 변경</Button>
                     </Form.Group>
                     <Form.Group>
+
                     <hr style={{ borderTop: '1px solid #808080'}} />
-                      <Form.Label>내가 작성한 게시글</Form.Label>
-                      <div style={{ marginLeft: '10px' }}>
-                      {getMyPosts().map((post) => (
-                        <div key={post.id} style={{cursor: 'pointer'}}>
-                          <p onClick={() => handleClick(post.id)}><strong>◾ {post.title}{' '}</strong></p>
+                    <div style={{ display: 'flex' }}>
+                      <div style={{ flex: 1 , marginRight: '10px'}}>
+                        <Form.Label style={{
+                   marginLeft: '15px' }}><HiOutlinePencilSquare/> 내가 작성한 게시글</Form.Label>
+                        <div style={{ marginLeft: '10px'}}>
+                          {getMyPosts().map((post) => (
+                            <div key={post.id} style={{ cursor: 'pointer' }}>
+                                <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
+                                  <h4 className="post-title" style={{fontSize: '15px'}}>◾ 제목 : {post.title}
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '45px', height: '45px', borderRadius: '20%', backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                                    <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{post.commentSize}</span>
+                                  </div></h4>
+                                    
+                                  <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span>▫ 작성자: {post.user.nickname}</span>
+                                    <span>작성일: {post.createdAt}</span>
+                                  </h4>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      ))}
-                    </div>
+
+                      <div style={{ flex: 1}}>
+                        <Form.Label style={{ marginLeft: '15px' }}><GoCommentDiscussion/> 내가 댓글단 글</Form.Label>
+                        <div style={{ marginLeft: '10px' }}>
+                          {myCommentPost.map((post) => (
+                              <div key={post.id} style={{ cursor: 'pointer' }}>
+                                <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
+                                  <h3 className="post-title" style={{fontSize: '15px'}}>◾ 제목 : {post.title}
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '45px', height: '45px', borderRadius: '20%', backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                                    <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{post.commentSize}</span>
+                                  </div></h3>
+                                    
+                                  <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span>▫ 작성자: {post.user.nickname}</span>
+                                    <span>작성일: {post.createdAt}</span>
+                                  </h4>
+                                </div>
+                              </div>
+                              ))}
+                          </div>
+                        </div>
+                      </div>  
                     </Form.Group>
                   </Form>
                 </Modal.Body>
@@ -869,7 +1016,6 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
               {post && (
                   <>
                     <h4>제목 : {post.title}</h4><br/>
-
                     <p style={{ wordWrap: 'break-word', maxWidth: '100%' }}>{post.content}</p>
                   </>
                 )}
@@ -880,6 +1026,31 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
                 </div>
                     <Button variant="secondary" onClick={() => setsecondOpen(false)}>닫기</Button>
               </Modal.Footer>
+              </Modal>
+
+
+              <Modal show={updateNickname} onHide={closeNicknameUpdate}>   {/* 닉네임수정 모달 창 */} 
+                <Modal.Header closeButton>
+                  <Modal.Title>닉네임 수정</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                <Form>
+                    <Form.Group>
+                      <Form.Control
+                        as="textarea"
+                        rows={1}
+                        value={newNickname}
+                        onChange={handleNicknameChange}
+                        placeholder="수정할 닉네임을 입력하세요"
+                        maxLength={6}
+                      />
+                    </Form.Group>
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={closeNicknameUpdate}>닫기</Button>
+                  <Button variant="primary" onClick={handleUpdateNickname}>닉네임 수정</Button>
+                </Modal.Footer>
               </Modal>
             </div>
         </div>  

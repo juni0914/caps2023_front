@@ -198,9 +198,12 @@ const updateReservationData = (centerId, reservationId) => {
         marginTop: "20px",
         boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)'
       }}>
-      <h2 id="sidepaneltitle" style={{ fontWeight: '600' }}>
-      <img src={gnuhan} style={{ width: '300px', height: '60px', marginBottom: '10px'}}alt="GNU 로고" /> 경상국립대학교<br />체육시설 예약 사이트
-      </h2><br />
+        <div>
+            <img src={gnuhan} style={{ width: '300px', height: '60px', marginBottom: '10px'}}alt="GNU 로고" />
+        </div>
+        <div>
+            <h2 id="sidepaneltitle"> 경상국립대학교<br />체육시설 커뮤니티</h2> <br />
+        </div>
       <h4> 
         ⛹️‍♂️ {user.nickname} 님
         <Button  variant="outline-secondary"onClick={logout} 
