@@ -95,6 +95,7 @@ function Communi() {
   const openMyInfoModal = () => {   // 유저 모달 창 열기 함수
     setMyInfo(true);
     getMyCommentPost();
+    fetchMyPosts();
   };
 
 
@@ -120,26 +121,35 @@ function Communi() {
 
 
   const handleUpdateNickname = () => {                  //닉네임 수정하기
-        axios({
-          url: 'http://localhost:8080/user/update',
-          method: "PATCH",
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${token}`,
-          },
-          data: {
-            nickname: newNickname,
-          },
+    if (window.confirm("닉네임을 수정하시겠습니까?")) {
+      axios({
+        url: 'http://localhost:8080/user/update',
+        method: "PATCH",
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        data: {
+          nickname: newNickname,
+        },
+      })
+        .then((res) => {
+          setUser((prevUser) => ({ ...prevUser, nickname: newNickname }));
+          fetchMyPosts();
+          fetchPosts();
+          getMyCommentPost();
+          closeNicknameUpdate();
+          alert("닉네임이 수정되었습니다.")
+          console.log("닉네임이 수정되었습니다:", res.data); 
         })
-          .then((res) => {
-            alert("닉네임이 수정되었습니다.")
-            console.log("닉네임이 수정되었습니다:", res.data); 
-          })
-          .catch((error) => {
-            alert("글 내용은 최대 255자까지만 허용됩니다.")
-            console.error("게시글 수정 중 오류가 발생했습니다:", error);
-          });
+        .catch((error) => {
+          alert("글 내용은 최대 255자까지만 허용됩니다.")
+          console.error("게시글 수정 중 오류가 발생했습니다:", error);
+        });
+      } else {
+        console.log('닉네임 수정이 취소되었습니다.');
+      }
   };
 
 
@@ -204,26 +214,6 @@ function Communi() {
     // getMyCommentPost();
   }, [page, size]);
 
-
-  // useEffect(() => {   
-  //   const getMyCommentPost = async () => {
-  //     try {
-  //       const res = await axios.get("http://localhost:8080/post/postByMyComments", {
-  //         withCredentials: true,
-  //         headers: {
-  //           'Authorization': token
-  //         }
-  //       });
-  //       if (res.data) {
-  //         setMyCommentPost(res.data.content);
-  //         console.log(myCommentPost);
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   getMyCommentPost();
-  // },[]);
 
 
   const maxPageButtons = 5; // 페이지 이동 버튼의 최대 개수
@@ -410,14 +400,11 @@ function Communi() {
           },
         })
           .then((res) => {
-            alert("게시글이 작성되었습니다.")
-            console.log("게시글이 작성되었습니다:", res.data); 
-            // 게시글 수정 후 게시글 리스트 업데이트
+            alert("댓글이 작성되었습니다.")
+            console.log("댓글이 작성되었습니다:", res.data); 
             fetchPosts();
             fetchComments(postId);
             setComment('');
-
-            // setCommentOpen(false);
           })
           .catch((error) => {
             alert("댓글은 최대 100자까지만 허용됩니다.")
@@ -630,6 +617,7 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
   return mypost.filter((post) => post.user.nickname === user.nickname);
 };
 
+
 const getMyCommentPost = () => {    //내가 작성한 댓글의 게시글 정보 불러오는 함수
   try {
     axios({
@@ -654,7 +642,7 @@ const getMyCommentPost = () => {    //내가 작성한 댓글의 게시글 정�
   }
 }
 
-const handleNicknameChange = (e) => {
+const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제한 함수 
   const inputValue = e.target.value;
   const maxChars = 6; // 한글 기준으로 5글자 제한
 
@@ -673,21 +661,26 @@ const handleNicknameChange = (e) => {
                 <div>
                   <h2 id="sidepaneltitle"> 경상국립대학교<br />체육시설 커뮤니티</h2> <br />
                 </div>
+
+                
                 <h4 onClick={openMyInfoModal} style={{cursor: 'pointer'}}>
                 ⛹️‍♂️ {user.nickname} 님 
-                <Button variant="outline-secondary" onClick={logout} style={{
-                   borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
-                    Logout</Button>{' '}
+                <Button variant="outline-secondary" onClick={(e) => {
+                    e.stopPropagation();
+                    logout();
+                  }} style={{
+                    borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px',
+                    padding: '0.5rem', cursor: 'pointer' }}>Logout</Button>{' '}
                 </h4><br />
                 <h4 className="home-link"><Link style={{ textDecoration: 'none', fontWeight: '800', color: "#333" }} to="/">🏠 홈 화면으로 이동하기  </Link></h4><br/>
-                <h4 className="home-link">내가 작성한 게시글  </h4><br/>
+                {/* <h4 className="home-link">내가 작성한 게시글  </h4><br/>
                 <div style={{ marginLeft: '10px' }}>
                   {getMyPosts().map((post) => (
                     <div key={post.id} style={{cursor: 'pointer'}}>
                       <p onClick={() => handleClick(post.id)}>◾{post.title}{' '}</p>
                     </div>
                   ))}
-                </div>
+                </div> */}
             </div>
 
             <div>
@@ -709,18 +702,17 @@ const handleNicknameChange = (e) => {
                       placeholder="제목으로 검색"
                       value={searchQuery}
                       onChange={handleSearchInputChange}
-
                     />
                   </InputGroup>
                 </div>
                 <div className="post-list">
                   {posts.filter((post) => post.title.includes(searchQuery)).map((post) => (
                     <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
-                      <h3 className="post-title">◾ 제목 : {post.title}
-                        {post.user && user && user.nickname === post.user.nickname ? (
-                          <span style={{ color: '#8282FF', marginRight: '10px' }}>ㅤ(내가 쓴 글)</span>
-                        ) : null}<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '50px', height: '50px', borderRadius: '20%', backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                        <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{post.commentSize}</span>
+                      <h3 className="post-title">◾ 제목 : {post.title} 
+                        {post.user && user && user.nickname === post.user.nickname ? 
+                        (<span style={{ color: '#8282FF', marginRight: '10px' }}>ㅤ(내가 쓴 글)</span>) : null}
+                        <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',alignItems: 'center', width: '50px', height: '50px', borderRadius: '20%', backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                        <span style={{ fontSize: '17px', marginTop: '5px',marginBottom: '-20px' }}>{post.commentSize}</span><br/><p style={{fontSize: '10px', margin: '0'}}>댓글</p>
                       </div></h3>
                         
                       <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -772,7 +764,7 @@ const handleNicknameChange = (e) => {
                   <Form>
                     <Form.Group>
                       <Form.Label><h4><strong>아이디 : {user.username}</strong></h4></Form.Label><br/>
-                      <Form.Label><h4><strong>닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={()=>setUpdateNickname(true)} style={{
+                      <Form.Label><h4><strong>닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} style={{
                    borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
                     닉네임 변경</Button>
                     </Form.Group>
