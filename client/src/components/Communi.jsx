@@ -25,7 +25,7 @@ function Communi() {
   const [postComment, setPostComment] = useState(null);            //클릭하는 특정 게시글의 댓글 정보 저장
   const [postUpdateComment, setUpdateComment] = useState(null);       //댓글수정 모달 창 열림 여부
   const [commentId, setCommentId] = useState(null);       //commentId 정보 저장
-  const [size, setSize] = useState(7); // 페이지당 게시물 수
+  const [size, setSize] = useState(8); // 페이지당 게시물 수
   const [page, setPage] = useState(0); // 페이지 번호
   const [totalPages, setTotalPages] = useState(0);      // 게시물 페이지 수 정보 저장
   const [currentPage, setCurrentPage] = useState(0);    // 게시물 현재 페이지 정보 저장
@@ -38,6 +38,8 @@ function Communi() {
   const [updateNickname, setUpdateNickname] = useState(false); //닉네임 변경 모달 창 열림여부
   const [newNickname, setNewNickname] = useState(''); // 변경할 닉네임 정보 저장
 
+  
+  const server_api = process.env.REACT_APP_SERVER_API;
 
   let token = localStorage.getItem('login-token') || '';
 
@@ -45,14 +47,14 @@ function Communi() {
     if (window.confirm("로그아웃 하시겠습니까?")) {
       alert("로그아웃 되었습니다.")
       localStorage.clear()
-      window.location.replace('http://localhost:3000/login')
+      window.location.replace("/login")
     }
   };
 
   useEffect(() => {       // 로그인 여부와 사용자 정보 가져오기
     try {
       axios({
-        url: "http://localhost:8080/user/success",
+        url: `${server_api}/user/success`,
         method: "GET",
         withCredentials: true,
         headers: {
@@ -74,25 +76,25 @@ function Communi() {
     }
   }, []);
 
-  const handleSearchInputChange = (event) => { //게시글 제목 기준으로 검색
+  const handleSearchInputChange = (event) => {  //게시글 제목 기준으로 검색
     setSearchQuery(event.target.value);
   };
 
 
-  const openNicknameUpdate = () => {   // 닉네임변경 모달 창 열기 함수
+  const openNicknameUpdate = () => {      // 닉네임변경 모달 창 열기 함수
     setUpdateNickname(true);
     setMyInfo(false);
   };
 
 
-  const closeNicknameUpdate = () => {   // 닉네임변경 모달 창 닫기 함수
+  const closeNicknameUpdate = () => {    // 닉네임변경 모달 창 닫기 함수
     setUpdateNickname(false);
     setMyInfo(true);
   };
 
 
 
-  const openMyInfoModal = () => {   // 유저 모달 창 열기 함수
+  const openMyInfoModal = () => {        // 유저 모달 창 열기 함수
     setMyInfo(true);
     getMyCommentPost();
     fetchMyPosts();
@@ -123,7 +125,7 @@ function Communi() {
   const handleUpdateNickname = () => {                  //닉네임 수정하기
     if (window.confirm("닉네임을 수정하시겠습니까?")) {
       axios({
-        url: 'http://localhost:8080/user/update',
+        url: `${server_api}/user/update`,
         method: "PATCH",
         withCredentials: true,
         headers: {
@@ -155,7 +157,7 @@ function Communi() {
 
   const fetchPosts = async () => {           //모든 게시물 불러오기
     try {
-      const response = await axios.get(`http://localhost:8080/post/readAll?page=${page}&size=${size}`, {
+      const response = await axios.get(`${server_api}/post/readAll?page=${page}&size=${size}`, {
         withCredentials: true,
         headers: {
           Authorization: token,
@@ -176,7 +178,7 @@ function Communi() {
 
   const fetchMyPosts = async () => {           //자신이 작성한 모든 게시물 불러오기
     try {
-      const response = await axios.get(`http://localhost:8080/post/readAll`, {
+      const response = await axios.get(`${server_api}/post/readAll`, {
         withCredentials: true,
         headers: {
           Authorization: token,
@@ -193,7 +195,7 @@ function Communi() {
 
   const fetchComments = async (postId) => {      //게시물 댓글 불러오기
     try {
-      const commentRes = await axios.get(`http://localhost:8080/comment/readAll/${postId}`, {
+      const commentRes = await axios.get(`${server_api}/comment/readAll/${postId}`, {
         withCredentials: true,
         headers: {
           Authorization: token,
@@ -245,7 +247,7 @@ function Communi() {
       if (window.confirm("게시글을 작성하시겠습니까?")) {
         const currentTime = new Date().toLocaleString();
         axios({
-          url: "http://localhost:8080/post/create",
+          url: `${server_api}/post/create`,
           method: "POST",
           withCredentials: true,
           headers: {
@@ -255,7 +257,7 @@ function Communi() {
           data: JSON.stringify({
             title: title,
             content: content,
-            createdAt: currentTime,    // 나중에 백엔드 수정해달라 하자, 글쓴 시간 보내기 위함임
+            createdAt: currentTime,    
           }),
         })
           .then((res) => {
@@ -284,7 +286,7 @@ function Communi() {
   const handleClick = (postId) => {                     //클릭한 특정 게시물 상세 정보 가져오기
       try {
         axios({
-          url: `http://localhost:8080/post/read/${postId}`,
+          url: `${server_api}/post/read/${postId}`,
           method: "GET",
           withCredentials: true,
           headers: {
@@ -311,7 +313,7 @@ function Communi() {
     if (title.trim().length >= 2 && content.trim().length >= 2) {  
       if (window.confirm("게시글을 수정하시겠습니까?")) {
         axios({
-          url: `http://localhost:8080/post/update/${postId}`,
+          url: `${server_api}/post/update/${postId}`,
           method: "PATCH",
           withCredentials: true,
           headers: {
@@ -355,7 +357,7 @@ function Communi() {
     if (post.user.nickname === user.nickname) { 
       try {
         axios({
-          url: `http://localhost:8080/post/read/${postId}`,
+          url: `${server_api}/post/read/${postId}`,
           method: "GET",
           withCredentials: true,
           headers: {
@@ -388,7 +390,7 @@ function Communi() {
     if (comment.trim().length >= 2) {
       if (window.confirm("작성하신 댓글을 작성하시겠습니까?")) {
         axios({
-          url: `http://localhost:8080/comment/create/${postId}`,
+          url: `${server_api}/comment/create/${postId}`,
           method: "POST",
           withCredentials: true,
           headers: {
@@ -404,6 +406,7 @@ function Communi() {
             console.log("댓글이 작성되었습니다:", res.data); 
             fetchPosts();
             fetchComments(postId);
+            getMyCommentPost();
             setComment('');
           })
           .catch((error) => {
@@ -423,7 +426,7 @@ function Communi() {
       try {
         //게시글의 정보 가져오기
         axios({
-          url: `http://localhost:8080/post/read/${postId}`,         //게시글의 정보 가져오기
+          url: `${server_api}/post/read/${postId}`,         //게시글의 정보 가져오기
           method: "GET",
           withCredentials: true,
           headers: {
@@ -445,7 +448,7 @@ function Communi() {
 
         // 게시물의 댓글 가져오기
         axios({
-          url: `http://localhost:8080/comment/readAll/${postId}`,       // 게시물의 댓글 가져오기
+          url: `${server_api}/comment/readAll/${postId}`,       // 게시물의 댓글 가져오기
           method: "GET",
           withCredentials: true,
           headers: {
@@ -473,7 +476,7 @@ function Communi() {
       if (window.confirm("게시글을 삭제하시겠습니까?")) {
         try {
           axios({
-            url: `http://localhost:8080/post/delete/${postId}`,
+            url: `${server_api}/post/delete/${postId}`,
             method: "DELETE",
             withCredentials: true,
             headers: {
@@ -507,7 +510,7 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
     if (window.confirm("댓글을 삭제하시겠습니까?")) {
       try {
         axios({
-          url: `http://localhost:8080/comment/delete/${commentId}`,
+          url: `${server_api}/comment/delete/${commentId}`,
           method: "DELETE",
           withCredentials: true,
           headers: {
@@ -538,7 +541,7 @@ const handleUpdateComment = (commentId,postId) => {                  //댓글 �
   if (comment.trim().length >= 2) {
     if (window.confirm("댓글을 수정하시겠습니까?")) {
       axios({
-        url: `http://localhost:8080/comment/update/${commentId}`,
+        url: `${server_api}/comment/update/${commentId}`,
         method: "PATCH",
         withCredentials: true,
         headers: {
@@ -580,7 +583,7 @@ const handleUpdateComment = (commentId,postId) => {                  //댓글 �
 const openCommentUpdateModal = (commentId,postId) => {               //댓글 수정하기 버튼 눌렀을 때 모달창이 등장하는 함수
     try {
       axios({
-        url: `http://localhost:8080/comment/readAll/${postId}`,
+        url: `${server_api}/comment/readAll/${postId}`,
         method: "GET",
         withCredentials: true,
         headers: {
@@ -621,7 +624,7 @@ const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 �
 const getMyCommentPost = () => {    //내가 작성한 댓글의 게시글 정보 불러오는 함수
   try {
     axios({
-      url: "http://localhost:8080/post/postByMyComments",
+      url: `${server_api}/post/postByMyComments`,
       method: "GET",
       withCredentials: true,
       headers: {
@@ -672,15 +675,9 @@ const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제�
                     borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px',
                     padding: '0.5rem', cursor: 'pointer' }}>Logout</Button>{' '}
                 </h4><br />
-                <h4 className="home-link"><Link style={{ textDecoration: 'none', fontWeight: '800', color: "#333" }} to="/">🏠 홈 화면으로 이동하기  </Link></h4><br/>
-                {/* <h4 className="home-link">내가 작성한 게시글  </h4><br/>
-                <div style={{ marginLeft: '10px' }}>
-                  {getMyPosts().map((post) => (
-                    <div key={post.id} style={{cursor: 'pointer'}}>
-                      <p onClick={() => handleClick(post.id)}>◾{post.title}{' '}</p>
-                    </div>
-                  ))}
-                </div> */}
+                <h4 className="home-link"><Link style={{ 
+                    textDecoration: 'none', fontWeight: '800', color: "#333" 
+                    }} to="/">🏠 홈 화면으로 이동하기  </Link></h4><br/>
             </div>
 
             <div>
@@ -711,8 +708,11 @@ const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제�
                       <h3 className="post-title">◾ 제목 : {post.title} 
                         {post.user && user && user.nickname === post.user.nickname ? 
                         (<span style={{ color: '#8282FF', marginRight: '10px' }}>ㅤ(내가 쓴 글)</span>) : null}
-                        <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',alignItems: 'center', width: '50px', height: '50px', borderRadius: '20%', backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                        <span style={{ fontSize: '17px', marginTop: '5px',marginBottom: '-20px' }}>{post.commentSize}</span><br/><p style={{fontSize: '10px', margin: '0'}}>댓글</p>
+                        <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
+                                      alignItems: 'center', width: '50px', height: '50px', borderRadius: '20%', 
+                                      backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                        <span style={{ fontSize: '17px', marginTop: '5px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
+                        <p style={{fontSize: '10px', margin: '0'}}>댓글</p>
                       </div></h3>
                         
                       <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -758,14 +758,14 @@ const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제�
                   <Modal.Title><IoPersonCircle/> 내 정보</Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{
-                                    borderRadius: '10px',
-                                    padding: '20px',
+                                    borderRadius: '10px', padding: '20px',
                                     }}>
                   <Form>
                     <Form.Group>
                       <Form.Label><h4><strong>아이디 : {user.username}</strong></h4></Form.Label><br/>
-                      <Form.Label><h4><strong>닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} style={{
-                   borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
+                      <Form.Label><h4><strong>닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} 
+                        style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', 
+                        marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
                     닉네임 변경</Button>
                     </Form.Group>
                     <Form.Group>
@@ -778,10 +778,14 @@ const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제�
                         <div style={{ marginLeft: '10px'}}>
                           {getMyPosts().map((post) => (
                             <div key={post.id} style={{ cursor: 'pointer' }}>
-                                <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
+                                <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} 
+                                  onClick={() => handleClick(post.id)}>
                                   <h4 className="post-title" style={{fontSize: '15px'}}>◾ 제목 : {post.title}
-                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '45px', height: '45px', borderRadius: '20%', backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                                    <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{post.commentSize}</span>
+                                  <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
+                                                alignItems: 'center', width: '50px', height: '45px', borderRadius: '20%', 
+                                                backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                                    <span style={{ fontSize: '17px', marginTop: '5px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
+                                    <p style={{fontSize: '10px', marginTop: '3px', margin: '0'}}>댓글</p>
                                   </div></h4>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -801,8 +805,11 @@ const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제�
                               <div key={post.id} style={{ cursor: 'pointer' }}>
                                 <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
                                   <h3 className="post-title" style={{fontSize: '15px'}}>◾ 제목 : {post.title}
-                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '45px', height: '45px', borderRadius: '20%', backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                                    <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{post.commentSize}</span>
+                                  <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
+                                                alignItems: 'center', width: '50px', height: '45px', borderRadius: '20%',
+                                                backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                                    <span style={{ fontSize: '17px', marginTop: '5px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
+                                    <p style={{fontSize: '10px', marginTop: '3px',margin: '0'}}>댓글</p>
                                   </div></h3>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>

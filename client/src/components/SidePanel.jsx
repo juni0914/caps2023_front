@@ -22,19 +22,19 @@ function SidePanel() {
   const [updateNickname, setUpdateNickname] = useState(false); //닉네임 변경 모달 창 열림여부
   const [newNickname, setNewNickname] = useState(''); // 변경할 닉네임 정보 저장  
 
+  const server_api = process.env.REACT_APP_SERVER_API;
+
+  let token = localStorage.getItem('login-token') || '';
 
   const openNicknameUpdate = () => {   // 닉네임변경 모달 창 열기 함수
     setUpdateNickname(true);
     setMyInfo(false);
   };
 
-
   const closeNicknameUpdate = () => {   // 닉네임변경 모달 창 닫기 함수
     setUpdateNickname(false);
     setMyInfo(true);
   };
-
-
 
   const openMyInfoModal = () => {   // 유저 모달 창 열기 함수
     setMyInfo(true);
@@ -42,12 +42,9 @@ function SidePanel() {
     // fetchMyPosts();
   };
 
-
   const handleCloseModal = () => { //예약모달창 닫기 버튼함수
     setShowModal(false);
   };
-
-  let token = localStorage.getItem('login-token') || '';
 
 
 const updateReservationData = (centerId, reservationId) => {
@@ -71,14 +68,14 @@ const updateReservationData = (centerId, reservationId) => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
       alert("로그아웃 되었습니다.")
       localStorage.clear()
-      window.location.replace('http://localhost:3000/login')
+      window.location.replace("/login")
     }
   };
 
   useEffect(() => { // 로그인 여부와 사용자 정보 가져오기
     try {
       axios({
-        url: "http://localhost:8080/user/success",
+        url: `${server_api}/user/success`,
         method: "GET",
         withCredentials: true,
         headers: {
@@ -100,10 +97,11 @@ const updateReservationData = (centerId, reservationId) => {
     }
   }, []);
 
+
   const handleUpdateNickname = () => {                  //닉네임 수정하기
     if (window.confirm("닉네임을 수정하시겠습니까?")) {
       axios({
-        url: 'http://localhost:8080/user/update',
+        url: `${server_api}/user/update`,
         method: "PATCH",
         withCredentials: true,
         headers: {
@@ -143,7 +141,7 @@ const updateReservationData = (centerId, reservationId) => {
    useEffect(() => {  // 예약 데이터 가져오기
     try {
       axios({
-        url: "http://localhost:8080/centerReservation/reservations",
+        url: `${server_api}/centerReservation/reservations`,
         method: "GET",
         withCredentials: true,
         headers: {
@@ -178,7 +176,7 @@ const updateReservationData = (centerId, reservationId) => {
 
     try {   //해당 체육시설 상세 예약정보 가져오기
       axios({
-        url: `http://localhost:8080/centerReservation/${centerId}/reservation/${reservationId}`,
+        url: `${server_api}/centerReservation/${centerId}/reservation/${reservationId}`,
         method: "GET",
         withCredentials: true,
         headers: {
@@ -204,7 +202,7 @@ const updateReservationData = (centerId, reservationId) => {
   
     if (window.confirm("정말로 예약을 취소하시겠습니까?")) {
       axios({
-        url: `http://localhost:8080/centerReservation/${centerId}/reservation/${reservationId}`,
+        url: `${server_api}/centerReservation/${centerId}/reservation/${reservationId}`,
         method: "DELETE",
         withCredentials: true,
         headers: {
@@ -353,8 +351,9 @@ const updateReservationData = (centerId, reservationId) => {
                   <Form>
                     <Form.Group>
                       <Form.Label><h4><strong>아이디 : {user.username}</strong></h4></Form.Label><br/>
-                      <Form.Label><h4><strong>닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} style={{
-                   borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
+                      <Form.Label><h4><strong>닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} 
+                      style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', 
+                              padding: '0.5rem', cursor: 'pointer' }}>
                     닉네임 변경</Button>
                     </Form.Group>
                   </Form>

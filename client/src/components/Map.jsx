@@ -17,6 +17,7 @@ function Map() {
   const navermaps = useNavermaps();
   const token = localStorage.getItem('login-token') || ''; 
   const today = new Date();
+  const server_api = process.env.REACT_APP_SERVER_API;
 
     let markers = [];
     let infoWindows = [];
@@ -73,6 +74,7 @@ function Map() {
     
     map.setCenter(chilam); 
     map.setZoom(17);
+    
 
     // 특정 좌표로 이동하는 예시 (버튼 클릭 시 호출되도록 작성)
     const handleButtonClick1 = () => {
@@ -95,11 +97,10 @@ function Map() {
     // 버튼 클릭 시 통영캠으로 이동하는 이벤트 핸들러
     const button3 = document.getElementById('moveButton3');
     button3.addEventListener('click', handleButtonClick3);
-
     
     try {
       axios({
-        url: "http://localhost:8080/center/all",
+        url: `${server_api}/center/all`,
         method: "GET",
         withCredentials: true,
         headers: {
@@ -119,17 +120,15 @@ function Map() {
                   maparray[i].lnt
                 ),
                 map : map,
-                title : maparray[i].centerId
+                title : maparray[i].name
               });
                 
               const content = (  // 마커 클릭시 infoWindow 내용
-                <div className="markerinfo_div" style={{ 
-                width: '320px', height: '300px', border: 'none',backgroundColor: '#fff',
-                borderRadius: '20px',
-                border: 'none',
-                boxShadow: '0 14px 28px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.22)',
-                margin: '0 auto',
-                padding: '10px 10px' }}>
+                <div className="markerinfo_div" 
+                  style={{ 
+                          width: '320px', height: '300px', border: 'none',backgroundColor: '#fff',
+                          borderRadius: '20px',border: 'none',boxShadow: '0 14px 28px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.22)',
+                          margin: '0 auto',padding: '10px 10px' }}>
                   <h4 className="markerinfo_h4" style={{
                     cursor: 'pointer',
                     fontWeight: '550'}}>
@@ -137,7 +136,8 @@ function Map() {
                     <Button variant="outline-primary" onClick={handleButtonClick} style={{
                       float: 'right', borderRadius: '10px',marginBottom: '7px'}} >예약</Button>
                   </h4>                  
-                  <img referrerPolicy="no-referrer" src={maparray[i].imgUrl} style={{ width: '300px', height: '180px', borderRadius: '10px' }} />
+                  <img referrerPolicy="no-referrer" src={maparray[i].imgUrl} 
+                    style={{ width: '300px', height: '180px', borderRadius: '10px' }} />
                   <p className="markerinfo_h4">주소 : {maparray[i].address}</p>
                   <p className="markerinfo_h4">이용가격 : {maparray[i].price}원</p>
                 </div>
@@ -148,7 +148,7 @@ function Map() {
                 borderWidth: 0
               });
               infoWindows.push(infoWindow);
-        
+            
 
               function ClickMap(i) { // 마커 이외의 영역 클릭 시 마커 창 닫기
                 return function () {
@@ -193,7 +193,7 @@ function Map() {
       }
       try {
         axios({
-          url: `http://localhost:8080/centerReservation/${selectedMarker.centerId}/reservation?date=${selectedDateString}`,
+          url: `${server_api}/centerReservation/${selectedMarker.centerId}/reservation?date=${selectedDateString}`,
           method: "GET",
           withCredentials: true,
           headers: {
@@ -310,7 +310,7 @@ function Map() {
     try {
       if (window.confirm("선택한 예약 정보로 예약을 진행하시겠습니까?")) {
         axios({
-          url: `http://localhost:8080/centerReservation/${selectedMarker.centerId}/reservation`,
+          url: `${server_api}/centerReservation/${selectedMarker.centerId}/reservation`,
           method: "POST",
           withCredentials: true,
           headers: {

@@ -15,7 +15,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false); //비밀번호 텍스트 표시 상태 저장
   // const [isLogin, setIsLogin] = useState(false);
   // const [user, setUser] = useState({});
-  
+  const server_api = process.env.REACT_APP_SERVER_API;
   const token = localStorage.getItem('login-token') || '';
   
   const login = async () => {
@@ -25,7 +25,7 @@ export default function Login() {
         return;
       }
       const response = await axios({
-        url: "http://localhost:8080/login",
+        url: `${server_api}/login`,
         method: "POST",
         withCredentials: true,
         data: JSON.stringify({
@@ -48,7 +48,7 @@ export default function Login() {
   useEffect(() => {
     try {
       axios({
-        url: "http://localhost:8080/api/user/1", // user/success 에서 변경했는데 되긴함. 수정 필요
+        url: `${server_api}/api/user/1`, // user/success 에서 변경했는데 되긴함. 수정 필요
         method: "GET",
         withCredentials: true,
         headers: {

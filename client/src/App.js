@@ -29,7 +29,7 @@ function App() {
 
     <div className="App">
       <NavermapsProvider 
-      ncpClientId='ujwxyclvcs'
+      // ncpClientId={process.env.REACT_APP_NCP_CLIENT_ID}
       // or finClientId, govClientId  
     >
       </NavermapsProvider>

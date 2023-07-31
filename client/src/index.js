@@ -8,7 +8,9 @@ import reportWebVitals from './reportWebVitals';
 // import setToken from './components/controller/setToken';
 import { CookiesProvider } from 'react-cookie';
 import { BrowserRouter } from 'react-router-dom';
+// import dotenv from 'dotenv';
 
+// dotenv.config();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

@@ -12,6 +12,7 @@ export default function Join() {
   const [nickname, setNickname] = useState(''); //닉네임 상태 저장 
   const [confirmPassword, setConfirmPassword] = useState(''); //비밀번호 확인 상태 저장
   const [showPassword, setShowPassword] = useState(false); //비밀번호 텍스트 표시 상태 저장
+  const server_api = process.env.REACT_APP_SERVER_API;
 
   const navigate = useNavigate();
 
@@ -33,7 +34,7 @@ export default function Join() {
 
     try {
       const response = await axios({
-        url: "http://localhost:8080/join",
+        url: `${server_api}/join`,
         method: "POST",
         withCredentials: true,
         headers: { 'Content-Type': 'application/json' },

@@ -26,7 +26,7 @@
 
 /* 게시판 스타일 */
 .board {
-  width: 75vw; /* 원하는 고정 넓이로 설정 */
+  width: 77vw; /* 원하는 고정 넓이로 설정 */
   height: 95vh;
   min-width: 50vw;
   margin: 20px;
@@ -121,6 +121,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
 }
 
 .pagination-buttons button {
