@@ -22,9 +22,21 @@ function SidePanel() {
   const [updateNickname, setUpdateNickname] = useState(false); //닉네임 변경 모달 창 열림여부
   const [newNickname, setNewNickname] = useState(''); // 변경할 닉네임 정보 저장  
 
+  const [openPoint, setOpenPoint] = useState(false); // 포인트 충전 모달 창 열림여부
+  const [point, setPoint] = useState(""); // 포인트 상태 정보 저장
+
   const server_api = process.env.REACT_APP_SERVER_API;
 
   let token = localStorage.getItem('login-token') || '';
+
+  const openPointCharge = () => {
+    setOpenPoint(true);
+  }
+
+  const closePointCharge  = () => {
+    setOpenPoint(false);
+    setPoint("");
+  }
 
   const openNicknameUpdate = () => {   // 닉네임변경 모달 창 열기 함수
     setUpdateNickname(true);
@@ -127,6 +139,58 @@ const updateReservationData = (centerId, reservationId) => {
     }
 };
 
+const PointCharge = () => {                  //포인트 충전하기
+  if (window.confirm(`입력하신 포인트만큼 충전하시겠습니까?`)) {
+    const minChargeAmount = 5000;
+    const chargepoint = parseInt(point,10);
+    if (chargepoint >= minChargeAmount) {
+      axios({
+        url: `${server_api}/user/point`,
+        method: "PATCH",
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        params: {
+          chargePoint: chargepoint,
+        },
+      })
+        .then((res) => {
+          setOpenPoint(false);
+          setPoint("");
+          alert(`${chargepoint}포인트가 충전되었습니다.`)
+          console.log("포인트가 충전되었습니다:", res.data); 
+          axios({
+            url: `${server_api}/user/success`,
+            method: "GET",
+            withCredentials: true,
+            headers: {
+              'Authorization': token
+            }
+          })
+            .then((res) => {
+              if (res.data) {
+                setIsLogin(true);
+                setUser(res.data);
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          alert("포인트 충전 중 오류가 발생했습니다.");
+          console.error("포인트 충전 중 오류가 발생했습니다:", error);
+        });
+      } else {
+        alert(`최소 충전금액은 ${minChargeAmount}원입니다.`);
+      }
+    } else {
+      console.log('포인트 충전이 취소되었습니다.');
+    }
+};
+
 
     const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제한 함수 
       const inputValue = e.target.value;
@@ -134,6 +198,18 @@ const updateReservationData = (centerId, reservationId) => {
 
       if (inputValue.length <= maxChars) {
       setNewNickname(inputValue);
+      }
+    };
+
+
+    const handlePointCharge = (e) => {         //포인트 충전 한도 제한 함수 
+      const inputValue = e.target.value;
+      const maxChars = 6; // 한글 기준으로 5글자 제한
+
+      const numericValue = inputValue.replace(/[^0-9]/g, '');       // 입력값에서 숫자만 추출
+
+      if (inputValue.length <= maxChars) {
+        setPoint(numericValue);
       }
     };
 
@@ -250,7 +326,7 @@ const updateReservationData = (centerId, reservationId) => {
   return (
     <div
       style={{
-        backgroundColor: "#f0fff0       ",
+        backgroundColor: "#f0fff0",
         // width: "22vw",
         padding: '2rem',
         minHeight: "95vh",
@@ -350,12 +426,18 @@ const updateReservationData = (centerId, reservationId) => {
                 <Modal.Body style={{borderRadius: '10px',padding: '20px'}}>
                   <Form>
                     <Form.Group>
-                      <Form.Label><h4><strong>아이디 : {user.username}</strong></h4></Form.Label><br/>
-                      <Form.Label><h4><strong>닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} 
+                      <Form.Label><h4><strong>🍀 아이디 : {user.username}</strong></h4></Form.Label><br/>
+                      <Form.Label><h4><strong>🍙 닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} 
                       style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', 
                               padding: '0.5rem', cursor: 'pointer' }}>
                     닉네임 변경</Button>
                     </Form.Group>
+                    <hr style={{ borderTop: '1px solid #808080'}} />
+                    <Form.Label><h4><strong>💰 나의 보유 포인트 : {user.point} 원</strong></h4></Form.Label>
+                    <Button variant="outline-secondary" onClick={openPointCharge} 
+                      style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', 
+                              padding: '0.5rem', cursor: 'pointer' }}>
+                    포인트 충전</Button>
                   </Form>
                 </Modal.Body>
                 <Modal.Footer>
@@ -384,6 +466,31 @@ const updateReservationData = (centerId, reservationId) => {
                 <Modal.Footer>
                   <Button variant="secondary" onClick={closeNicknameUpdate}>닫기</Button>
                   <Button variant="primary" onClick={handleUpdateNickname}>닉네임 수정</Button>
+                </Modal.Footer>
+              </Modal>
+
+
+              <Modal show={openPoint} onHide={closePointCharge}>   {/* 포인트충전 모달 창 */} 
+                <Modal.Header closeButton>
+                  <Modal.Title>💰 포인트 충전</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                <Form>
+                    <Form.Group>
+                      <Form.Control
+                        as="textarea"
+                        rows={1}
+                        value={point}
+                        onChange={handlePointCharge}
+                        placeholder="충전할 포인트를 입력하세요"
+                        maxLength={6}
+                      />
+                    </Form.Group>
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={closePointCharge}>닫기</Button>
+                  <Button variant="primary" onClick={PointCharge}>포인트 충전</Button>
                 </Modal.Footer>
               </Modal>
     </div>

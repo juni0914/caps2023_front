@@ -331,6 +331,7 @@ function Map() {
 
           })
           .catch((error) => {
+            alert("보유한 포인트가 부족합니다.")
             console.log(error);
           });
       } else {
