@@ -1,7 +1,7 @@
 import { Route, Routes, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
+import { Button, Modal, Form, Dropdown, Col, Row } from 'react-bootstrap';
 import InputGroup from 'react-bootstrap/InputGroup';
 import gnuhan from "../images/gnuhan.png"
 import "./communi.css";
@@ -34,10 +34,13 @@ function Communi() {
   const [mypost, setMyPost] = useState([]); // 자신이 작성한 모든 글 정보
   const [myCommentPost, setMyCommentPost] = useState([]);  // 자신이 작성한 댓글이 있는 글 정보
   const [myInfo, setMyInfo] = useState(false); //내 정보 모달 창 열림여부
-  const [searchQuery, setSearchQuery] = useState(""); // 게시글 검색어 정보 저장
   const [updateNickname, setUpdateNickname] = useState(false); //닉네임 변경 모달 창 열림여부
   const [newNickname, setNewNickname] = useState(''); // 변경할 닉네임 정보 저장
 
+  const [searchQuery, setSearchQuery] = useState(""); // 게시글 검색어 정보 저장
+  const [searchResults, setSearchResults] = useState([]);  //검색결과 정보 저장
+  const [searchType, setSearchType] = useState('title');  //검색타입 정보 저장 , 초기값은 title
+  const [openSearch, setOpenSearch] = useState(false); // 검색결과 모달 창 열림여부 
   
   const server_api = process.env.REACT_APP_SERVER_API;
 
@@ -80,6 +83,9 @@ function Communi() {
     setSearchQuery(event.target.value);
   };
 
+  // const openSearchModal = () => {      // 검색결과 모달 창 열기 함수
+  //   setOpenSearch(true);
+  // };
 
   const openNicknameUpdate = () => {      // 닉네임변경 모달 창 열기 함수
     setUpdateNickname(true);
@@ -120,6 +126,30 @@ function Communi() {
     setComment("");
     setCommentOpen(false);
   };
+
+  const handleSearch = async () => {  //게시글 검색함수
+    if(searchQuery!==''){
+      try {
+        const response = await axios.get(`${server_api}/post/search`, {
+          withCredentials: true,
+          headers: {
+            Authorization: token,
+          },
+          params: {
+            searchType: searchType,
+            keyword: searchQuery
+          },
+        });
+        if (response.data && response.data.content) {
+          setSearchResults(response.data.content);
+          setOpenSearch(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }  
+  };
+
 
 
   const handleUpdateNickname = () => {                  //닉네임 수정하기
@@ -178,7 +208,7 @@ function Communi() {
 
   const fetchMyPosts = async () => {           //자신이 작성한 모든 게시물 불러오기
     try {
-      const response = await axios.get(`${server_api}/post/readAll`, {
+      const response = await axios.get(`${server_api}/post/myPosts`, {
         withCredentials: true,
         headers: {
           Authorization: token,
@@ -611,14 +641,6 @@ const openCommentUpdateModal = (commentId,postId) => {               //댓글 �
     }
 };
     
-const getMyPosts = () => {   //내가 작성한 게시글 정보 불러오는 함수
-  if (!user|| !mypost) {
-    return []; // 사용자 정보가 없을 경우 빈 배열 반환
-  }
-
-  // 현재 로그인한 사용자의 nickname과 글을 작성한 사용자의 nickname을 비교하여 일치하는 글만 필터링
-  return mypost.filter((post) => post.user.nickname === user.nickname);
-};
 
 
 const getMyCommentPost = () => {    //내가 작성한 댓글의 게시글 정보 불러오는 함수
@@ -651,6 +673,13 @@ const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제�
 
   if (inputValue.length <= maxChars) {
     setNewNickname(inputValue);
+  }
+};
+
+const handleKeyPress = (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    handleSearch();
   }
 };
 
@@ -689,21 +718,35 @@ const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제�
               </h1> 
 
                 <div className="board-button">
-                  <Button variant="primary"size="lg" onClick={() => setIsOpen(true)}>글쓰기</Button>
-                  <InputGroup     className='search_form' >
-                    <InputGroup.Text id="basic-addon1">
-                      <AiOutlineSearch />
-                    </InputGroup.Text>
+                  <Button className="write-button" variant="primary"size="lg" onClick={() => setIsOpen(true)}>글쓰기</Button>
+                  <InputGroup className='search_form'>
+                    <Dropdown>
+                      <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
+                        {searchType === 'title' ? '제목' : '내용'}
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => setSearchType('title')}>제목</Dropdown.Item>
+                        <Dropdown.Item onClick={() => setSearchType('content')}>내용</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+
+
+
                     <Form.Control
                       type="text"
-                      placeholder="제목으로 검색"
+                      placeholder=" 내용을 입력하세요."
                       value={searchQuery}
                       onChange={handleSearchInputChange}
+                      onKeyPress={handleKeyPress}
                     />
+                    <InputGroup.Text id="basic-addon1" onClick={handleSearch}>
+                      <AiOutlineSearch />
+                    </InputGroup.Text>
                   </InputGroup>
                 </div>
                 <div className="post-list">
-                  {posts.filter((post) => post.title.includes(searchQuery)).map((post) => (
+                  {posts.map((post) => (
                     <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
                       <h3 className="post-title">◾ 제목 : {post.title} 
                         {post.user && user && user.nickname === post.user.nickname ? 
@@ -776,7 +819,7 @@ const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제�
                         <Form.Label style={{
                    marginLeft: '15px' }}><HiOutlinePencilSquare/> 내가 작성한 게시글</Form.Label>
                         <div style={{ marginLeft: '10px'}}>
-                          {getMyPosts().map((post) => (
+                          {mypost.map((post) => (
                             <div key={post.id} style={{ cursor: 'pointer' }}>
                                 <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} 
                                   onClick={() => handleClick(post.id)}>
@@ -1049,6 +1092,86 @@ const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제�
                 <Modal.Footer>
                   <Button variant="secondary" onClick={closeNicknameUpdate}>닫기</Button>
                   <Button variant="primary" onClick={handleUpdateNickname}>닉네임 수정</Button>
+                </Modal.Footer>
+              </Modal>
+
+
+              <Modal show={openSearch} onHide={() => setOpenSearch(false)} >      {/* 검색결과 모달 창 */}
+                <Modal.Header closeButton >
+                  <Modal.Title><IoPersonCircle/>검색창</Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{borderRadius: '10px', padding: '20px',}}>
+                  <Form>
+                    <Form.Group>
+
+                    <InputGroup >
+                    <Dropdown>
+                      <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
+                        {searchType === 'title' ? '제목' : '내용'}
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => setSearchType('title')}>제목</Dropdown.Item>
+                        <Dropdown.Item onClick={() => setSearchType('content')}>내용</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+
+                    <InputGroup.Text id="basic-addon1" onClick={handleSearch}>
+                      <AiOutlineSearch />
+                    </InputGroup.Text>
+
+                    <Form.Control
+                      type="text"
+                      placeholder=" 내용을 입력하세요."
+                      value={searchQuery}
+                      onChange={handleSearchInputChange}
+                      onKeyPress={handleKeyPress}
+                    />
+                  </InputGroup>
+
+                    <hr style={{ borderTop: '3px solid #FFF'}} />
+                        <div >
+                        {searchResults.length === 0 ? (
+                            <p>검색결과와 일치하는 게시글이 없습니다</p>
+                          ) : (
+                            searchResults.map((post) => (
+                              <div key={post.id} style={{ cursor: 'pointer' }}>
+                                <div
+                                  key={post.id}
+                                  className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`}
+                                  onClick={() => handleClick(post.id)}
+                                >
+                                  <h4 className="post-title" style={{ fontSize: '15px' }}>
+                                    ◾ 제목 : {post.title}
+                                    <div
+                                      style={{
+                                        display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center',
+                                        width: '50px', height: '45px', borderRadius: '20%',
+                                        backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right',
+                                      }}
+                                    >
+                                      <span style={{ fontSize: '17px', marginTop: '5px', marginBottom: '-20px' }}>
+                                        {post.commentSize}
+                                      </span>
+                                      <br />
+                                      <p style={{ fontSize: '10px', marginTop: '3px', margin: '0' }}>댓글</p>
+                                    </div>
+                                  </h4>
+                                  <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span>▫ 작성자: {post.user.nickname}</span>
+                                    <span>작성일: {post.createdAt}</span>
+                                  </h4>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                          </div>
+     
+                    </Form.Group>
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setOpenSearch(false)}>닫기</Button>
                 </Modal.Footer>
               </Modal>
             </div>

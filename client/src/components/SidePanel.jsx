@@ -289,9 +289,23 @@ const PointCharge = () => {                  //포인트 충전하기
           console.log(res.data);
           alert('예약이 취소되었습니다.')
           updateReservationData(centerId, reservationId);
-          // fetchReservations();
-          // 성공적으로 삭제되었을 때 추가적인 작업 수행
-          // 예를 들어, 삭제된 예약 정보를 갱신하거나 목록을 새로고침하는 등의 동작을 수행할 수 있다.
+          axios({
+            url: `${server_api}/user/success`,
+            method: "GET",
+            withCredentials: true,
+            headers: {
+              'Authorization': token
+            }
+          })
+            .then((res) => {
+              if (res.data) {
+                setIsLogin(true);
+                setUser(res.data);
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         })
         .catch((error) => {
           console.log(error);
