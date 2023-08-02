@@ -750,7 +750,7 @@ const handleKeyPress = (event) => {
                     <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
                       <h3 className="post-title">◾ 제목 : {post.title} 
                         {post.user && user && user.nickname === post.user.nickname ? 
-                        (<span style={{ color: '#8282FF', marginRight: '10px' }}>ㅤ(내가 쓴 글)</span>) : null}
+                        (<span style={{ color: '#8282FF', marginRight: '10px' }}>ㅤ(내가 작성한 게시글)</span>) : null}
                         <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
                                       alignItems: 'center', width: '50px', height: '50px', borderRadius: '20%', 
                                       backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
