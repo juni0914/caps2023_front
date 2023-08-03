@@ -71,21 +71,13 @@ export default function Login() {
     }
   }, []);
   
-  // const accessToken = () => {
-  //   axios({
-  //     url: "http://localhost:8080/accesstoken",
-  //     method: "GET",
-  //     withCredentials: true,
-  //   });
-  // };
+  const handleKeyPress = (event) => {       // 엔터키를 누르면 로그인함수 작동
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      login();
+    }
+  };
 
-  // const refreshToken = () => {
-  //   axios({
-  //     url: "http://localhost:8080/refreshtoken",
-  //     method: "GET",
-  //     withCredentials: true,
-  //   });
-  // };
   return (
     <div className="auth-wrapper-container" style={{ display: 'flex' }}>
       <div className="second-auth">
@@ -117,6 +109,7 @@ export default function Login() {
                 className="inputValue"
                 autoComplete="off"
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={handleKeyPress}
                 value={password}
               />
               {showPassword ? (

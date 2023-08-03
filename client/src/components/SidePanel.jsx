@@ -365,6 +365,7 @@ const PointCharge = () => {                  //포인트 충전하기
         style={{ borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
           Logout
         </Button>{' '}</h4><br />
+        <h4 onClick={openMyInfoModal} style={{cursor: 'pointer'}}><strong>💰 나의 보유 포인트 : {user.point} 원</strong></h4><br />
       <h4><Link style={{  textDecoration: 'none', fontWeight: '800', fontSize: '20px' }} to="/community">👨‍👨‍👧‍👧 체육시설 커뮤니티 바로가기  </Link></h4>
 
       <h4 style={{marginLeft: '-5px', marginTop: '20px' }}>📌 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '45px' }}>(최대 20개까지만 표시)</p></h4>
@@ -442,14 +443,14 @@ const PointCharge = () => {                  //포인트 충전하기
                     <Form.Group>
                       <Form.Label><h4><strong>🍀 아이디 : {user.username}</strong></h4></Form.Label><br/>
                       <Form.Label><h4><strong>🍙 닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} 
-                      style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', 
+                      style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', marginBottom:'10px',
                               padding: '0.5rem', cursor: 'pointer' }}>
                     닉네임 변경</Button>
                     </Form.Group>
-                    <hr style={{ borderTop: '1px solid #808080'}} />
+                    <hr style={{ borderTop: '1px solid #808080', marginBottom: '20px'}} />
                     <Form.Label><h4><strong>💰 나의 보유 포인트 : {user.point} 원</strong></h4></Form.Label>
                     <Button variant="outline-secondary" onClick={openPointCharge} 
-                      style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', 
+                      style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', marginBottom:'10px',
                               padding: '0.5rem', cursor: 'pointer' }}>
                     포인트 충전</Button>
                   </Form>

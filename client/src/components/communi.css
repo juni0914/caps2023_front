@@ -88,6 +88,10 @@
   cursor: pointer;
 }
 
+.my-post {
+  background-color: #dae9fb; 
+}
+
 .comment {
   background-color: #F4FAFF ;
   margin-bottom: 20px;

@@ -9,6 +9,8 @@ import {GoCommentDiscussion} from 'react-icons/go'
 import {IoPersonCircle} from 'react-icons/io5'
 import { AiOutlineSearch } from 'react-icons/ai';
 import { HiOutlinePencilSquare } from 'react-icons/hi2';
+import { FcSearch } from 'react-icons/fc';
+import { PiWarningOctagonBold } from 'react-icons/pi';
 
 function Communi() {
   const [isLogin, setIsLogin] = useState(false);     //로그인 정보 저장
@@ -79,7 +81,7 @@ function Communi() {
     }
   }, []);
 
-  const handleSearchInputChange = (event) => {  //게시글 제목 기준으로 검색
+  const handleSearchInputChange = (event) => {  //게시글 제목,내용 기준으로 검색
     setSearchQuery(event.target.value);
   };
 
@@ -143,6 +145,7 @@ function Communi() {
         if (response.data && response.data.content) {
           setSearchResults(response.data.content);
           setOpenSearch(true);
+          
         }
       } catch (error) {
         console.log(error);
@@ -176,8 +179,8 @@ function Communi() {
           console.log("닉네임이 수정되었습니다:", res.data); 
         })
         .catch((error) => {
-          alert("글 내용은 최대 255자까지만 허용됩니다.")
-          console.error("게시글 수정 중 오류가 발생했습니다:", error);
+          alert("이미 사용 중인 닉네임입니다.\n다른 닉네임으로 수정해주세요.")
+          console.error("닉네임 수정 중 오류가 발생했습니다:", error);
         });
       } else {
         console.log('닉네임 수정이 취소되었습니다.');
@@ -365,6 +368,7 @@ function Communi() {
             setContent('');
             setUpdateOpen(false);
             getMyCommentPost();
+            handleSearch();
             // 글이 수정되었을 때 색상 표시
             setUpdatedPostIdColor(postId);
             setTimeout(() => {
@@ -440,7 +444,7 @@ function Communi() {
             setComment('');
           })
           .catch((error) => {
-            alert("댓글은 최대 100자까지만 허용됩니다.")
+            alert("댓글은 최대 20자까지만 허용됩니다.")
             console.error("댓글 작성 중 오류가 발생했습니다:", error);
           });
       } else {
@@ -518,6 +522,7 @@ function Communi() {
                 alert("게시글이 삭제되었습니다.")
                 fetchPosts();
                 getMyCommentPost();
+                handleSearch();
                 setPost(res.data)
                 setsecondOpen(false)
                 // console.log(postId)
@@ -598,7 +603,7 @@ const handleUpdateComment = (commentId,postId) => {                  //댓글 �
           setUpdateComment(false);
         })
         .catch((error) => {
-          alert("댓글 내용은 최대 255자까지만 허용됩니다.")
+          alert("댓글 내용은 최대 20자까지만 허용됩니다.")
           console.error("댓글 수정 중 오류가 발생했습니다:", error);
         });
     } else {
@@ -676,7 +681,7 @@ const handleNicknameChange = (e) => {         //닉네임 변경 글자 수 제�
   }
 };
 
-const handleKeyPress = (event) => {
+const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르면 검색함수 작동
   if (event.key === 'Enter') {
     event.preventDefault();
     handleSearch();
@@ -707,6 +712,8 @@ const handleKeyPress = (event) => {
                 <h4 className="home-link"><Link style={{ 
                     textDecoration: 'none', fontWeight: '800', color: "#333" 
                     }} to="/">🏠 홈 화면으로 이동하기  </Link></h4><br/>
+                   <p onClick={openMyInfoModal} style={{ marginLeft: '10px', fontSize: '20px', fontWeight: 'bold', cursor: 'pointer' }}><HiOutlinePencilSquare/>ㅤ내가 작성한 게시글</p>
+                   <p onClick={openMyInfoModal} style={{ marginLeft: '10px', fontSize: '20px', fontWeight: 'bold', cursor: 'pointer' }}><GoCommentDiscussion/>ㅤ내가 댓글단 글</p>
             </div>
 
             <div>
@@ -740,14 +747,17 @@ const handleKeyPress = (event) => {
                       onChange={handleSearchInputChange}
                       onKeyPress={handleKeyPress}
                     />
-                    <InputGroup.Text id="basic-addon1" onClick={handleSearch}>
+                    <InputGroup.Text id="basic-addon1" onClick={handleSearch} style={{cursor: 'pointer'}}> 
                       <AiOutlineSearch />
                     </InputGroup.Text>
                   </InputGroup>
                 </div>
                 <div className="post-list">
                   {posts.map((post) => (
-                    <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
+                    <div key={post.id} 
+                      className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}
+                      ${post.user && user && user.nickname === post.user.nickname ? 'my-post' : ''}`} 
+                      onClick={() => handleClick(post.id)}>
                       <h3 className="post-title">◾ 제목 : {post.title} 
                         {post.user && user && user.nickname === post.user.nickname ? 
                         (<span style={{ color: '#8282FF', marginRight: '10px' }}>ㅤ(내가 작성한 게시글)</span>) : null}
@@ -759,8 +769,8 @@ const handleKeyPress = (event) => {
                       </div></h3>
                         
                       <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span>▫ 작성자: {post.user.nickname}</span>
-                        <span>작성일: {post.createdAt}</span>
+                        <span>▫ 작성자 : {post.user.nickname}</span>
+                        <span>작성일자 : {post.createdAt}</span>
                       </h4>
                     </div>
                   ))}
@@ -801,14 +811,14 @@ const handleKeyPress = (event) => {
                   <Modal.Title><IoPersonCircle/> 내 정보</Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{
-                                    borderRadius: '10px', padding: '20px',
+                                    borderRadius: '10px', padding: '20px'
                                     }}>
                   <Form>
-                    <Form.Group>
+                    <Form.Group style={{marginLeft: '10px'}}>
                       <Form.Label><h4><strong>🍀 아이디 : {user.username}</strong></h4></Form.Label><br/>
                       <Form.Label><h4><strong>🍙 닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} 
                         style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', 
-                        marginLeft: '40px', padding: '0.5rem', cursor: 'pointer' }}>
+                        marginLeft: '40px', marginBottom:'10px', padding: '0.5rem', cursor: 'pointer' }}>
                     닉네임 변경</Button>
                     </Form.Group>
                     <Form.Group>
@@ -817,7 +827,7 @@ const handleKeyPress = (event) => {
                     <div style={{ display: 'flex' }}>
                       <div style={{ flex: 1 , marginRight: '10px'}}>
                         <Form.Label style={{
-                   marginLeft: '15px' }}><HiOutlinePencilSquare/> 내가 작성한 게시글</Form.Label>
+                   marginLeft: '15px', fontWeight: 'bold' }}><HiOutlinePencilSquare/> 내가 작성한 게시글</Form.Label>
                         <div style={{ marginLeft: '10px'}}>
                           {mypost.map((post) => (
                             <div key={post.id} style={{ cursor: 'pointer' }}>
@@ -832,8 +842,8 @@ const handleKeyPress = (event) => {
                                   </div></h4>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span>▫ 작성자: {post.user.nickname}</span>
-                                    <span>작성일: {post.createdAt}</span>
+                                    <span>▫ 작성자 : {post.user.nickname}</span>
+                                    <span>작성일자 : {post.createdAt}</span>
                                   </h4>
                                 </div>
                               </div>
@@ -842,7 +852,7 @@ const handleKeyPress = (event) => {
                         </div>
 
                       <div style={{ flex: 1}}>
-                        <Form.Label style={{ marginLeft: '15px' }}><GoCommentDiscussion/> 내가 댓글단 글</Form.Label>
+                        <Form.Label style={{ marginLeft: '15px', fontWeight: 'bold' }}><GoCommentDiscussion/> 내가 댓글단 글</Form.Label>
                         <div style={{ marginLeft: '10px' }}>
                           {myCommentPost.map((post) => (
                               <div key={post.id} style={{ cursor: 'pointer' }}>
@@ -856,8 +866,8 @@ const handleKeyPress = (event) => {
                                   </div></h3>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span>▫ 작성자: {post.user.nickname}</span>
-                                    <span>작성일: {post.createdAt}</span>
+                                    <span>▫ 작성자 : {post.user.nickname}</span>
+                                    <span>작성일자 : {post.createdAt}</span>
                                   </h4>
                                 </div>
                               </div>
@@ -1098,7 +1108,7 @@ const handleKeyPress = (event) => {
 
               <Modal show={openSearch} onHide={() => setOpenSearch(false)} >      {/* 검색결과 모달 창 */}
                 <Modal.Header closeButton >
-                  <Modal.Title><IoPersonCircle/>검색창</Modal.Title>
+                  <Modal.Title><FcSearch/> 검색 결과 뷰어</Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{borderRadius: '10px', padding: '20px',}}>
                   <Form>
@@ -1116,9 +1126,7 @@ const handleKeyPress = (event) => {
                       </Dropdown.Menu>
                     </Dropdown>
 
-                    <InputGroup.Text id="basic-addon1" onClick={handleSearch}>
-                      <AiOutlineSearch />
-                    </InputGroup.Text>
+                    
 
                     <Form.Control
                       type="text"
@@ -1127,12 +1135,16 @@ const handleKeyPress = (event) => {
                       onChange={handleSearchInputChange}
                       onKeyPress={handleKeyPress}
                     />
+                    <InputGroup.Text id="basic-addon1" onClick={handleSearch} style={{cursor: 'pointer'}}>
+                      <AiOutlineSearch />
+                    </InputGroup.Text>
                   </InputGroup>
+                  
 
                     <hr style={{ borderTop: '3px solid #FFF'}} />
                         <div >
                         {searchResults.length === 0 ? (
-                            <p>검색결과와 일치하는 게시글이 없습니다</p>
+                            <p style={{fontWeight: 'bold'}}><PiWarningOctagonBold/> 검색결과와 일치하는 게시글이 없습니다.</p>
                           ) : (
                             searchResults.map((post) => (
                               <div key={post.id} style={{ cursor: 'pointer' }}>
@@ -1158,8 +1170,8 @@ const handleKeyPress = (event) => {
                                     </div>
                                   </h4>
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span>▫ 작성자: {post.user.nickname}</span>
-                                    <span>작성일: {post.createdAt}</span>
+                                    <span>▫ 작성자 : {post.user.nickname}</span>
+                                    <span>작성일자 : {post.createdAt}</span>
                                   </h4>
                                 </div>
                               </div>
