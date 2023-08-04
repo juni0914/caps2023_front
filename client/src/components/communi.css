@@ -49,19 +49,32 @@
 
 .board-button {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   margin-bottom: 20px;
+  align-items: center;
   position: relative;
+}
+
+
+
+.keyword-button {
+  justify-content: flex-start;
 }
 
 @media (max-width: 900px) {
   .board-button {
     justify-content: flex-start;
   }
+  .board-button .keyword-button {
+    margin-right: 5px !important;
+  }
+  
 }
 
+
+
 .search_form{
-  position: absolute;
+  margin-bottom: -40px;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);

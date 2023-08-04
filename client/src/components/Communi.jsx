@@ -43,6 +43,7 @@ function Communi() {
   const [searchResults, setSearchResults] = useState([]);  //검색결과 정보 저장
   const [searchType, setSearchType] = useState('title');  //검색타입 정보 저장 , 초기값은 title
   const [openSearch, setOpenSearch] = useState(false); // 검색결과 모달 창 열림여부 
+  const [keywordType, setKeywordType] = useState('latest');   // 글 최신순, 오래된순 체크 정보 저장 
   
   const server_api = process.env.REACT_APP_SERVER_API;
 
@@ -80,6 +81,11 @@ function Communi() {
       console.log(error);
     }
   }, []);
+
+  const handleToggleOrder = () => {   //최신순, 오래된순 조회 버튼 
+    setKeywordType(keywordType === 'latest' ? 'oldest' : 'latest');
+  };
+
 
   const handleSearchInputChange = (event) => {  //게시글 제목,내용 기준으로 검색
     setSearchQuery(event.target.value);
@@ -139,7 +145,8 @@ function Communi() {
           },
           params: {
             searchType: searchType,
-            keyword: searchQuery
+            keyword: searchQuery,
+            sortType: 'latest'
           },
         });
         if (response.data && response.data.content) {
@@ -190,11 +197,11 @@ function Communi() {
 
   const fetchPosts = async () => {           //모든 게시물 불러오기
     try {
-      const response = await axios.get(`${server_api}/post/readAll?page=${page}&size=${size}`, {
+      const response = await axios.get(`${server_api}/post/readAll?keyword=${keywordType}&page=${page}&size=${size}`, {
         withCredentials: true,
         headers: {
           Authorization: token,
-        },
+        }
       });
       if (response.data && response.data.content) {
         setPosts(response.data.content);
@@ -247,7 +254,7 @@ function Communi() {
     fetchPosts();
     fetchMyPosts();
     // getMyCommentPost();
-  }, [page, size]);
+  }, [page, size, keywordType]);
 
 
 
@@ -725,8 +732,13 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
               </h1> 
 
                 <div className="board-button">
-                  <Button className="write-button" variant="primary"size="lg" onClick={() => setIsOpen(true)}>글쓰기</Button>
-                  <InputGroup className='search_form'>
+                <Button className="keyword-button" variant="outline-success"  onClick={handleToggleOrder}
+                   style={{ display: 'flex', alignItems: 'center', marginRight: '80px'}}>
+                  {keywordType === 'latest' ? '오래된순으로 조회' : ' 최신순으로 조회 '}
+                </Button>
+                  <Button className="write-button" variant="primary" size='lg' onClick={() => setIsOpen(true)} style={{ marginLeft: 'auto', marginRight: 'auto'}}
+                  >글쓰기</Button>
+                  <InputGroup className='search_form' style={{marginLeft: '10px'}}>
                     <Dropdown>
                       <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
                         {searchType === 'title' ? '제목' : '내용'}
@@ -816,7 +828,7 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                   <Form>
                     <Form.Group style={{marginLeft: '10px'}}>
                       <Form.Label><h4><strong>🍀 아이디 : {user.username}</strong></h4></Form.Label><br/>
-                      <Form.Label><h4><strong>🍙 닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} 
+                      <Form.Label><h4 style={{marginLeft:'3px'}}><strong>🍙 닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} 
                         style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', 
                         marginLeft: '40px', marginBottom:'10px', padding: '0.5rem', cursor: 'pointer' }}>
                     닉네임 변경</Button>

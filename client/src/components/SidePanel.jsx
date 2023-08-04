@@ -442,7 +442,7 @@ const PointCharge = () => {                  //포인트 충전하기
                   <Form>
                     <Form.Group>
                       <Form.Label><h4><strong>🍀 아이디 : {user.username}</strong></h4></Form.Label><br/>
-                      <Form.Label><h4><strong>🍙 닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} 
+                      <Form.Label><h4 style={{marginLeft:'3px'}}><strong>🍙 닉네임 : {user.nickname}</strong></h4></Form.Label> <Button variant="outline-secondary" onClick={openNicknameUpdate} 
                       style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', marginBottom:'10px',
                               padding: '0.5rem', cursor: 'pointer' }}>
                     닉네임 변경</Button>
