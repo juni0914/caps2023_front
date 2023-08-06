@@ -13,8 +13,16 @@ function SidePanel() {
   const [reserveData, setReserveData] = useState([]); //예약데이터 정보 저장
   const [reservecenterId, setReservecenterId] = useState([]);   //예약ID 정보 저장
   const [reserveId, setReserveId] = useState([]);   //센터ID 정보 저장
-  const [reservationInfo, setReservationInfo] = useState(null);
+  const [reservationInfo, setReservationInfo] = useState(null); // 예약상세정보 저장
+
+  const [expiredReservedData, setExpiredReserveData] = useState([]); // 만료된 지난 예약 데이터 정보 저장
+  const [expiredreservecenterId, setExpiredReservecenterId] = useState([]);   //만료된 지난 예약ID 정보 저장
+  const [expiredreserveId, setExpiredReserveId] = useState([]);   //만료된 지난 센터ID 정보 저장
+  const [ExpiredReservationInfo, setExpiredReservationInfo] = useState(null); // 만료된 예약상세정보 저장
+
+
   const [showModal, setShowModal] = useState(false);  //모달 열고 닫는 정보를 저장
+  const [expiredShowModal, setexpiredShowModal] = useState(false);  //만료된 예약 정보 모달 열고 닫는 정보를 저장
   const [loading, setLoading] = useState(false);   //로딩 표시 정보 저장
   const [deletedReservations, setDeletedReservations] = useState([]);  // 예약 삭제 정보 저장
 
@@ -227,12 +235,19 @@ const PointCharge = () => {                  //포인트 충전하기
         .then((res) => {
           if (res.data && res.data.content) {   
             console.log(res.data)
-            const reserveNames = res.data.content.map((item) => item.name); //예약된 체육시설을 이름 배열로 저장
-            const ReserveIds = res.data.content.map((item) => item.reservationId); //예약된 ID를 배열로 저장
-            const CenterIds = res.data.content.map((item) => item.centerId); //예약된 센터ID를 배열로 저장
+            const reservedData = res.data.content.filter((item) => item.status === 'RESERVED');  //예약상태가 'RESERVED'인 정보 저장
+            const reserveNames = reservedData.map((item) => item.name); //예약된 체육시설을 이름 배열로 저장
+            const ReserveIds = reservedData.map((item) => item.reservationId); //예약된 ID를 배열로 저장
+            const CenterIds = reservedData.map((item) => item.centerId); //예약된 센터ID를 배열로 저장
             setReserveData(reserveNames);
             setReserveId(ReserveIds);
             setReservecenterId(CenterIds);
+
+            const ExpiredReservedData = res.data.content.filter((item) => item.status === 'EXPIRED'); //예약상태가 'EXPIRED'인 정보 저장
+            setExpiredReserveData(ExpiredReservedData) //예약이 만료된 예약정보 저장
+            setExpiredReserveId(ExpiredReservedData.map((item) => item.reservationId))//예약이 만료된 예약정보 ID 저장
+            setExpiredReservecenterId(ExpiredReservedData.map((item) => item.centerId))//예약이 만료된 예약정보 센터ID 저장
+            console.log(expiredReservedData)
           }
         })
         .catch((error) => {
@@ -244,10 +259,32 @@ const PointCharge = () => {                  //포인트 충전하기
   }, []);
 
 
-  function handleReservationClick(index) {    //사이드패널 예약목록 h6태그 클릭시 함수
+  useEffect(() => {
+    // 이 블록은 데이터를 가져온 이후에 실행됩니다.
+    axios({
+      url: `${server_api}/centerReservation/reservations`,
+      method: "PATCH",
+      withCredentials: true,
+      headers: {
+        'Authorization': token
+      },
+      data: {
+        // PATCH 요청에 필요한 데이터를 여기에 추가합니다.
+      }
+    }).then((patchRes) => {
+      // PATCH 요청의 응답 처리
+    }).catch((patchError) => {
+      console.log(patchError);
+    });
+  }, [reserveData, reservecenterId]);
+
+
+
+  function handleReservationClick(index) {    //사이드패널 예약목록 h6태그 클릭시 함수 (status == reserved)
     //예약된 체육시설 센터ID랑 예약ID 추출
     const centerId = reservecenterId[index];  
     const reservationId = reserveId[index];
+
     setShowModal(true);
 
     try {   //해당 체육시설 상세 예약정보 가져오기
@@ -271,6 +308,36 @@ const PointCharge = () => {                  //포인트 충전하기
       console.log(error);
     }
   }
+
+  function handleExpiredReservationClick(item) {    //만료된 예약내역 상세보기 (status == expired)
+    //예약된 체육시설 센터ID랑 예약ID 추출
+    const centerId = item.centerId;
+    const reservationId = item.reservationId;
+
+    setexpiredShowModal(true);
+
+    try {   //해당 체육시설 상세 예약정보 가져오기
+      axios({
+        url: `${server_api}/centerReservation/${centerId}/reservation/${reservationId}`,
+        method: "GET",
+        withCredentials: true,
+        headers: {
+          'Authorization': token
+        }
+      })
+        .then((res) => {
+          setExpiredReservationInfo(res.data);
+          console.log(res.data);
+          // console.log(reservationInfo.reservingDate)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
   const handleDelete = () => {      //예약 취소하기
     setLoading(true);
@@ -368,7 +435,7 @@ const PointCharge = () => {                  //포인트 충전하기
         <h4 onClick={openMyInfoModal} style={{cursor: 'pointer'}}><strong>💰 나의 보유 포인트 : {user.point} 원</strong></h4><br />
       <h4><Link style={{  textDecoration: 'none', fontWeight: '800', fontSize: '20px' }} to="/community">👨‍👨‍👧‍👧 체육시설 커뮤니티 바로가기  </Link></h4>
 
-      <h4 style={{marginLeft: '-5px', marginTop: '20px' }}>📌 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '45px' }}>(최대 20개까지만 표시)</p></h4>
+      <h4 style={{ marginTop: '25px' }}>📌 나의 예약현황 <p style={{ fontSize: "15px", marginLeft: '45px' }}>(최대 20개까지만 표시)</p></h4>
         {reserveData.map((name, index) => {
           const centerId = reservecenterId[index];
           const reservationId = reserveId[index];
@@ -434,6 +501,56 @@ const PointCharge = () => {                  //포인트 충전하기
         </Modal>
       </Container>
 
+
+
+
+          <Modal show={expiredShowModal} onHide={()=>{setexpiredShowModal(false)}}>
+          <Modal.Header closeButton>
+            <Modal.Title>🌙 만료된 예약 상세 정보</Modal.Title>
+          </Modal.Header>
+          
+          <Modal.Body>
+              {ExpiredReservationInfo ? (
+                    <Form>
+                      <Form.Group className="mb-3">
+                        {ExpiredReservationInfo && ExpiredReservationInfo.imgUrl && (
+                          <img src={ExpiredReservationInfo.imgUrl} style={{width: '465px', height: '280px', borderRadius: '10px'}}/>
+                        )}
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>✔ 시설명 : {ExpiredReservationInfo && ExpiredReservationInfo.name}</Form.Label>
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>📅 내가 예약한 날짜 : {ExpiredReservationInfo && ExpiredReservationInfo.reservingDate}</Form.Label> 
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>⌚ 내가 예약한 시간 : {(ExpiredReservationInfo && ExpiredReservationInfo.reservingTime).join(", ")}
+                        </Form.Label>
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>⛹️‍♂️ 예약 인원 수 : {(ExpiredReservationInfo && ExpiredReservationInfo.headCount)}명
+                        </Form.Label>
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>💰 가격 : {ExpiredReservationInfo && ExpiredReservationInfo.price}원</Form.Label>
+                      </Form.Group>
+                    </Form>
+                    ) : (
+                      <Spinner animation="border" />
+                  )}
+          
+              </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={()=>{setexpiredShowModal(false)}}>
+              닫기
+            </Button>
+
+          </Modal.Footer>
+        </Modal>
+
+
+
+
               <Modal show={myInfo} onHide={() => setMyInfo(false)}  >      {/* 내 정보 모달 창 */}
                 <Modal.Header closeButton >
                   <Modal.Title><IoPersonCircle/> 내 정보</Modal.Title>
@@ -453,6 +570,14 @@ const PointCharge = () => {                  //포인트 충전하기
                       style={{borderRadius: '20px', fontSize: '15px', borderWidth: '2px', marginLeft: '40px', marginBottom:'10px',
                               padding: '0.5rem', cursor: 'pointer' }}>
                     포인트 충전</Button>
+                    <hr style={{ borderTop: '1px solid #808080', marginBottom: '20px'}} />
+                    <Form.Label><h4><strong>🌙 지난 예약 목록 </strong></h4></Form.Label>
+                    {expiredReservedData.map((item) => (
+                      <div key={item.reservationId} onClick={() => handleExpiredReservationClick(item)}
+                      style={{cursor: 'pointer', marginLeft: '30px', marginBottom: '5px'}}>✔ {item.name}</div>
+                    ))}
+                    
+
                   </Form>
                 </Modal.Body>
                 <Modal.Footer>

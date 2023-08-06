@@ -5,6 +5,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import gnulogo from '../images/gnulogo.png';
+import ginu300 from '../images/ginu300.gif';
 // import { cookies, setCookie, useCookies } from "react-cookie"
 // import { setCookie, getCookie,removeCookie } from "./cookie";
 
@@ -83,7 +84,7 @@ export default function Login() {
       <div className="second-auth">
             <form style={{ textAlign: 'center' }}> 
             <p style={{fontSize: '20px', textAlign: 'left'}}>" Effortlessly book your favorite sports facilities "</p>
-              <img src={gnulogo} alt="GNU 로고" />
+              <img src={ginu300} alt="GNU 로고" />
               <h1>GNU</h1>
               <h2>Sports Facility</h2><h2>Reservation </h2>
             </form>

@@ -4,7 +4,7 @@ import "./login.css";
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import gnulogo from '../images/gnulogo.png';
+import ginu2 from '../images/ginu2.gif';
 
 export default function Join() {
   const [username, setUsername] = useState(''); //아이디 상태 저장
@@ -89,7 +89,7 @@ export default function Join() {
         <div className="second-auth" style={{ flex: '1' }}>
         <form style={{ textAlign: 'center' }}> 
                 <p style={{fontSize: '20px', textAlign: 'left'}}>" Effortlessly book your favorite sports facilities "</p>
-                  <img src={gnulogo} alt="GNU 로고" />
+                  <img src={ginu2} alt="GNU 로고" />
                   <h1>GNU</h1>
                   <h2>Sports Facility</h2><h2>Reservation </h2>
                 </form>
@@ -120,7 +120,7 @@ export default function Join() {
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="password"
+                placeholder="비밀번호는 최소 6자 이상이고, 최소 1개이상의 특수문자 포함"
                 className="inputValue"
                 autoComplete="off"
                 onChange={(e) => setPassword(e.target.value)}

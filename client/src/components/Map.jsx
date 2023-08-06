@@ -30,7 +30,7 @@ function Map() {
     const [selectedMarker, setSelectedMarker] = useState(null); // 마커 정보 저장
     const [reservationInfo, setReservationInfo] = useState(null); //선택된 마커의 예약 정보를 저장
     const [selectedReservationTime, setSelectedReservationTime] = useState(null); // 선택한 예약시간을 저장
-    const [selectedDate, setSelectedDate] = useState(null); //날짜 정보 저장
+    const [selectedDate, setSelectedDate] = useState(subDays(today, 0)); //날짜 정보 저장
     const [headCount, setHeadCount] = useState(1); //헤드카운트 인원 정보 저장
 
 
@@ -56,15 +56,17 @@ function Map() {
 
     const handleCloseModal = () => { //예약모달창 닫기 버튼함수
       setSelectedReservationTime(null);
-      setSelectedDate(null);
+      setSelectedDate(today, 0);
       setHeadCount(1);
       setShowModal(false);
     };
 
     const handleDateChange = (date) => {
       setSelectedDate(date);
+      setSelectedReservationTime(null);
       console.log(date)
     };
+    
 
   useEffect(() => { // 마커 데이터 지도에 표시하는 첫번째 useEffect
     const { naver } = window;
@@ -219,53 +221,62 @@ function Map() {
   }, [selectedMarker, selectedDate]);
 
 
-  function generateReservationButtons() {  //예약시간 버튼 생성 함수
+  function generateReservationButtons() {
     // 이용 가능 시간 추출
     const { openTime, closeTime } = reservationInfo.center;
-    const startTime = parseInt(openTime.split(":")[0]).toString().padStart(2, "0");; // 시작 시간 (ex: 09)
-    const endTime = parseInt(closeTime.split(":")[0]); // 종료 시간 (ex: 17)
-    const reservedTimes = reservationInfo.reservedTimes || []; // 이미 예약된 시간
-
+    const startTime = parseInt(openTime.split(":")[0]).toString().padStart(2, "0");
+    const endTime = parseInt(closeTime.split(":")[0]);
+  
+    const reservedTimes = reservationInfo.reservedTimes || [];
     const buttons = [];
-
-  for (let i = startTime; i < endTime; i++) {
-    const hour = i.toString().padStart(2, "0");
-    const buttonId1 = `${hour}:00`;
-    const buttonId2 = `${hour}:30`;
-
-    const isReserved1 = reservedTimes.includes(buttonId1);
-    const isReserved2 = reservedTimes.includes(buttonId2);
-    const isDisabled1 = isReserved1; // 09:00 또는 09:30이 예약되었으면 09:00 버튼 비활성화
-    const isDisabled2 = isReserved2; // 09:00 또는 09:30이 예약되었으면 09:30 버튼 비활성화
-
-    buttons.push(
-      <Button
-        key={buttonId1}
-        variant={isSelected(buttonId1) ? "success" : isDisabled1 ? "light" : "outline-success"}
-        className={`w-25 ${isSelected(buttonId1) ? "selected" : ""}`}
-        onClick={() => handleReservationTimeSelect(buttonId1)}
-        disabled={isDisabled1}
-      >
-        {buttonId1}
-      </Button>
-    );
-
-    buttons.push(
-      <Button
-        key={buttonId2}
-        variant={isSelected(buttonId2) ? "success" : isDisabled2 ? "light" : "outline-success"}
-        className={`w-25 ${isSelected(buttonId2) ? "selected" : ""}`}
-        onClick={() => handleReservationTimeSelect(buttonId2)}
-        disabled={isDisabled2}
-      >
-        {buttonId2}
-      </Button>
-    );
+  
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = (now.getMonth() + 1).toString().padStart(2, "0");
+    const currentDate = now.getDate().toString().padStart(2, "0");
+    const currentHour = now.getHours().toString().padStart(2, "0");
+    const currentMinutes = now.getMinutes().toString().padStart(2, "0");
+  
+    const selectedYear = selectedDate.getFullYear();
+    const selectedMonth = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
+    const selectedDay = selectedDate.getDate().toString().padStart(2, "0");
+  
+    for (let i = startTime; i < endTime; i++) {
+      for (let j = 0; j < 60; j += 30) {
+        const hour = i.toString().padStart(2, "0");
+        const minute = j.toString().padStart(2, "0");
+        const buttonId = `${hour}:${minute}`;
+  
+        const isReserved = reservedTimes.includes(buttonId);
+  
+        // 오늘 날짜의 버튼 중 현재 시간 이전 버튼 비활성화
+        let isDisabled = false;
+  
+        if (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay === currentDate) {
+          isDisabled = parseInt(currentHour) > i || (parseInt(currentHour) === i && currentMinutes >= j);
+        }
+  
+        buttons.push(
+          <Button
+            key={buttonId}
+            variant={isSelected(buttonId) ? "success" : isDisabled || isReserved ? "light" : "outline-success"}
+            className={`w-25 ${isSelected(buttonId) ? "selected" : ""}`}
+            onClick={() => handleReservationTimeSelect(buttonId)}
+            disabled={isDisabled || isReserved}
+          >
+            {buttonId}
+          </Button>
+        );
+      }
+    }
+  
+    return buttons;
   }
+  
+  
+  
 
-  return buttons;
-}
-
+  
   function isSelected(buttonId) {
     if (selectedReservationTime === null) { // 선택된 예약 시간이 없는 경우 false를 반환
       return false;
@@ -274,6 +285,7 @@ function Map() {
     return selectedReservationTime.includes(buttonId); // 선택된 예약 시간 배열에 버튼 ID가 포함되어 있는지 확인하여 결과를 반환
   }
   
+
 
   function handleReservationTimeSelect(buttonId) {  // 예약된 시간 버튼 정보 함수
     let updatedSelectedTime = [];
@@ -293,6 +305,7 @@ function Map() {
     setSelectedReservationTime(updatedSelectedTime); // 업데이트된 선택된 예약 시간 배열을 설정
     console.log("선택한 시간대:", updatedSelectedTime);
   }
+
 
 
   function handleReservation() {  //모달창 예약하기 버튼 함수
