@@ -97,9 +97,9 @@ export default function Join() {
         <div className="auth-wrapper">
           <form style={{padding: '30px 50px'}}>
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'center'}}>JOIN</h2>
-                  <label>✉ Email</label>
+                  <label>✉ ID</label>
           <input
-            placeholder="email"
+            placeholder="ID"
             className="inputValue"
             onChange={(e) => setUsername(e.target.value)}
             value={username}

@@ -10,6 +10,7 @@ import subDays from 'date-fns/subDays';
 import 'react-datepicker/dist/react-datepicker.css';
 import Spinner from 'react-bootstrap/Spinner';
 import { DateTime } from 'luxon';
+import gnumarker from '../images/gnumarker.png';
 
 
 function Map() {
@@ -114,16 +115,27 @@ function Map() {
           if (res.data) {
             // console.log(res.data);
             const maparray = res.data.content;
+            // const markerIcon = {
+            //   url: '../images/gnumarker.png',
+            //   size: new naver.maps.Size(50, 52),
+            //   origin: new naver.maps.Point(0, 0),
+            //   anchor: new naver.maps.Point(25, 26)
+            // };
             for (let i = 0; i < maparray.length; i++) {    // 마커관련 함수
               naver.maps.Event.addListener(map, "click", ClickMap(i));
+              
               const otherMarkers = new naver.maps.Marker({
                 position: new naver.maps.LatLng(
                   maparray[i].lat,
                   maparray[i].lnt
                 ),
                 map : map,
-                title : maparray[i].name
+                icon: gnumarker,
+                title : maparray[i].name,
+
               });
+
+              // otherMarkers.setIcon(markerIcon);
                 
               const content = (  // 마커 클릭시 infoWindow 내용
                 <div className="markerinfo_div" 
@@ -414,7 +426,7 @@ function Map() {
                         <DatePicker 
                           selected={selectedDate}
                           onChange={handleDateChange} 
-                          minDate={subDays(today, 0)}
+                          minDate={subDays(today, 1)}
                           dateFormat="yyyy-MM-dd" />
                       </Form.Group>
 

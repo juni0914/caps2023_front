@@ -243,11 +243,12 @@ const PointCharge = () => {                  //포인트 충전하기
             setReserveId(ReserveIds);
             setReservecenterId(CenterIds);
 
+
             const ExpiredReservedData = res.data.content.filter((item) => item.status === 'EXPIRED'); //예약상태가 'EXPIRED'인 정보 저장
             setExpiredReserveData(ExpiredReservedData) //예약이 만료된 예약정보 저장
             setExpiredReserveId(ExpiredReservedData.map((item) => item.reservationId))//예약이 만료된 예약정보 ID 저장
             setExpiredReservecenterId(ExpiredReservedData.map((item) => item.centerId))//예약이 만료된 예약정보 센터ID 저장
-            console.log(expiredReservedData)
+            // console.log(expiredReservedData)
           }
         })
         .catch((error) => {
