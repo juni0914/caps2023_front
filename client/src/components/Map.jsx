@@ -426,7 +426,7 @@ function Map() {
                         <DatePicker 
                           selected={selectedDate}
                           onChange={handleDateChange} 
-                          minDate={subDays(today, 1)}
+                          minDate={subDays(today, 0)}
                           dateFormat="yyyy-MM-dd" />
                       </Form.Group>
 

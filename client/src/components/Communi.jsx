@@ -186,7 +186,7 @@ function Communi() {
           console.log("닉네임이 수정되었습니다:", res.data); 
         })
         .catch((error) => {
-          alert("이미 사용 중인 닉네임입니다.\n다른 닉네임으로 수정해주세요.")
+          alert("이미 사용 중인 닉네임입니다. 다른 닉네임으로 수정해주세요.")
           console.error("닉네임 수정 중 오류가 발생했습니다:", error);
         });
       } else {
@@ -911,7 +911,7 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="제목을 입력하세요"
-                        maxLength={30}
+                        maxLength={40}
                       />
                     </Form.Group><br/>
                     <Form.Group>
@@ -947,7 +947,7 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="제목을 입력하세요"
-                        maxLength={20}
+                        maxLength={40}
                       />
                     </Form.Group><br/>
                     <Form.Group>
@@ -1107,6 +1107,11 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                         onChange={handleNicknameChange}
                         placeholder="수정할 닉네임을 입력하세요"
                         maxLength={6}
+                        onKeyPress={(event) => {
+                          if (event.key === ' ') {
+                            event.preventDefault(); // 스페이스바 입력 방지
+                          }
+                        }}
                       />
                     </Form.Group>
                   </Form>

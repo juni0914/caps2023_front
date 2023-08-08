@@ -139,7 +139,7 @@ const updateReservationData = (centerId, reservationId) => {
           console.log("닉네임이 수정되었습니다:", res.data); 
         })
         .catch((error) => {
-          alert("글 내용은 최대 255자까지만 허용됩니다.")
+          alert("이미 사용 중인 닉네임입니다.")
           console.error("게시글 수정 중 오류가 발생했습니다:", error);
         });
     } else {
@@ -600,6 +600,11 @@ const PointCharge = () => {                  //포인트 충전하기
                         onChange={handleNicknameChange}
                         placeholder="수정할 닉네임을 입력하세요"
                         maxLength={6}
+                        onKeyPress={(event) => {
+                          if (event.key === ' ') {
+                            event.preventDefault(); // 스페이스바 입력 방지
+                          }
+                        }}
                       />
                     </Form.Group>
                   </Form>
