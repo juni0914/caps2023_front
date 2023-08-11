@@ -85,6 +85,7 @@ function Communi() {
   const handleToggleOrder = () => {   //최신순, 오래된순 조회 버튼 
     setKeywordType(keywordType === 'latest' ? 'oldest' : 'latest');
   };
+  
 
 
   const handleSearchInputChange = (event) => {  //게시글 제목,내용 기준으로 검색
@@ -135,6 +136,16 @@ function Communi() {
     setCommentOpen(false);
   };
 
+  const isToday = (date) => {       //작성일자 형식 변환 함수
+    const currentDate = new Date();
+    return (
+      date.getDate() === currentDate.getDate() &&
+      date.getMonth() === currentDate.getMonth() &&
+      date.getFullYear() === currentDate.getFullYear()
+    );
+  };
+
+
   const handleSearch = async () => {  //게시글 검색함수
     if(searchQuery!==''){
       try {
@@ -153,6 +164,29 @@ function Communi() {
           setSearchResults(response.data.content);
           setOpenSearch(true);
           
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }  
+  };
+
+  const handleSearch2 = async () => {  //게시글 검색함수2  => 검색결과뷰어에서 사용
+    if(searchQuery!==''){
+      try {
+        const response = await axios.get(`${server_api}/post/search`, {
+          withCredentials: true,
+          headers: {
+            Authorization: token,
+          },
+          params: {
+            searchType: searchType,
+            keyword: searchQuery,
+            sortType: 'latest'
+          },
+        });
+        if (response.data && response.data.content) {
+          setSearchResults(response.data.content);
         }
       } catch (error) {
         console.log(error);
@@ -529,7 +563,7 @@ function Communi() {
                 alert("게시글이 삭제되었습니다.")
                 fetchPosts();
                 getMyCommentPost();
-                handleSearch();
+                handleSearch2();
                 setPost(res.data)
                 setsecondOpen(false)
                 // console.log(postId)
@@ -733,7 +767,7 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
 
                 <div className="board-button">
                 <Button className="keyword-button" variant="outline-success"  onClick={handleToggleOrder}
-                   style={{ display: 'flex', alignItems: 'center', marginRight: '80px'}}>
+                   style={{ display: 'flex', alignItems: 'center', marginRight: '80px', width: '145px', textAlign: 'center'}}>
                   {keywordType === 'latest' ? '오래된순으로 조회' : ' 최신순으로 조회 '}
                 </Button>
                   <Button className="write-button" variant="primary" size='lg' onClick={() => setIsOpen(true)} style={{ marginLeft: 'auto', marginRight: 'auto'}}
@@ -782,7 +816,26 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                         
                       <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span>▫ 작성자 : {post.user.nickname}</span>
-                        <span>작성일자 : {post.createdAt}</span>
+                        {isToday(new Date(post.createdAt)) ? (
+                          <span>
+                          작성일자 :{' '}
+                          {new Date(post.createdAt).getHours() === new Date().getHours() &&
+                          new Date(post.createdAt).getMinutes() === new Date().getMinutes() ? (
+                            '방금'
+                          ) : (
+                            <>
+                              {new Date(post.createdAt).getTime() - new Date().getTime() > -3600000 ? (
+                                `${Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / 60000)}분전`
+                              ) : (
+                                `${new Date(post.createdAt).getHours().toString().padStart(2, '0')}:
+                                 ${new Date(post.createdAt).getMinutes().toString().padStart(2, '0')}`
+                              )}
+                            </>
+                          )}
+                        </span>
+                        ) : (
+                          <span>작성일자 : {post.createdAt}</span>
+                        )}
                       </h4>
                     </div>
                   ))}
@@ -845,18 +898,37 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                             <div key={post.id} style={{ cursor: 'pointer' }}>
                                 <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} 
                                   onClick={() => handleClick(post.id)}>
-                                  <h4 className="post-title" style={{fontSize: '15px'}}>◾ 제목 : {post.title}
+                                  <h4 className="post-title" style={{fontSize: '12px'}}>◾ 제목 : {post.title}
                                   <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
-                                                alignItems: 'center', width: '50px', height: '45px', borderRadius: '20%', 
+                                                alignItems: 'center', width: '45px', height: '40px', borderRadius: '20%', 
                                                 backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                                    <span style={{ fontSize: '17px', marginTop: '5px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
-                                    <p style={{fontSize: '10px', marginTop: '3px', margin: '0'}}>댓글</p>
+                                    <span style={{ fontSize: '17px', marginTop: '3px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
+                                    <p style={{fontSize: '10px', marginTop: '5px', margin: '0'}}>댓글</p>
                                   </div></h4>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span>▫ 작성자 : {post.user.nickname}</span>
-                                    <span>작성일자 : {post.createdAt}</span>
-                                  </h4>
+                                    {isToday(new Date(post.createdAt)) ? (
+                                      <span>
+                                      작성일자 :{' '}
+                                      {new Date(post.createdAt).getHours() === new Date().getHours() &&
+                                      new Date(post.createdAt).getMinutes() === new Date().getMinutes() ? (
+                                        '방금'
+                                      ) : (
+                                        <>
+                                          {new Date(post.createdAt).getTime() - new Date().getTime() > -3600000 ? (
+                                            `${Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / 60000)}분전`
+                                          ) : (
+                                            `${new Date(post.createdAt).getHours().toString().padStart(2, '0')}:
+                                            ${new Date(post.createdAt).getMinutes().toString().padStart(2, '0')}`
+                                          )}
+                                        </>
+                                      )}
+                                    </span>
+                                    ) : (
+                                      <span>작성일자 : {post.createdAt}</span>
+                                    )}
+                                </h4>
                                 </div>
                               </div>
                             ))}
@@ -869,17 +941,36 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                           {myCommentPost.map((post) => (
                               <div key={post.id} style={{ cursor: 'pointer' }}>
                                 <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
-                                  <h3 className="post-title" style={{fontSize: '15px'}}>◾ 제목 : {post.title}
+                                  <h4 className="post-title" style={{fontSize: '12px'}}>◾ 제목 : {post.title}
                                   <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
-                                                alignItems: 'center', width: '50px', height: '45px', borderRadius: '20%',
+                                                alignItems: 'center', width: '45px', height: '40px', borderRadius: '20%', 
                                                 backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                                    <span style={{ fontSize: '17px', marginTop: '5px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
-                                    <p style={{fontSize: '10px', marginTop: '3px',margin: '0'}}>댓글</p>
-                                  </div></h3>
+                                    <span style={{ fontSize: '17px', marginTop: '3px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
+                                    <p style={{fontSize: '10px', marginTop: '5px', margin: '0'}}>댓글</p>
+                                  </div></h4>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span>▫ 작성자 : {post.user.nickname}</span>
-                                    <span>작성일자 : {post.createdAt}</span>
+                                    {isToday(new Date(post.createdAt)) ? (
+                                      <span>
+                                      작성일자 :{' '}
+                                      {new Date(post.createdAt).getHours() === new Date().getHours() &&
+                                      new Date(post.createdAt).getMinutes() === new Date().getMinutes() ? (
+                                        '방금'
+                                      ) : (
+                                        <>
+                                          {new Date(post.createdAt).getTime() - new Date().getTime() > -3600000 ? (
+                                            `${Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / 60000)}분전`
+                                          ) : (
+                                            `${new Date(post.createdAt).getHours().toString().padStart(2, '0')}:
+                                            ${new Date(post.createdAt).getMinutes().toString().padStart(2, '0')}`
+                                          )}
+                                        </>
+                                      )}
+                                    </span>
+                                    ) : (
+                                      <span>작성일자 : {post.createdAt}</span>
+                                    )}
                                   </h4>
                                 </div>
                               </div>
@@ -1188,7 +1279,26 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                                   </h4>
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span>▫ 작성자 : {post.user.nickname}</span>
-                                    <span>작성일자 : {post.createdAt}</span>
+                                    {isToday(new Date(post.createdAt)) ? (
+                                      <span>
+                                      작성일자 :{' '}
+                                      {new Date(post.createdAt).getHours() === new Date().getHours() &&
+                                      new Date(post.createdAt).getMinutes() === new Date().getMinutes() ? (
+                                        '방금'
+                                      ) : (
+                                        <>
+                                          {new Date(post.createdAt).getTime() - new Date().getTime() > -3600000 ? (
+                                            `${Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / 60000)}분전`
+                                          ) : (
+                                            `${new Date(post.createdAt).getHours().toString().padStart(2, '0')}:
+                                            ${new Date(post.createdAt).getMinutes().toString().padStart(2, '0')}`
+                                          )}
+                                        </>
+                                      )}
+                                    </span>
+                                    ) : (
+                                      <span>작성일자 : {post.createdAt}</span>
+                                    )}
                                   </h4>
                                 </div>
                               </div>

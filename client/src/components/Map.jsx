@@ -351,7 +351,7 @@ function Map() {
           .then((res) => {
             console.log(res.data);
             setSelectedReservationTime([]);
-            alert(`시설 이름 : ${selectedMarker.name}\n예약 시간: ${selectedReservationTime}에 예약되었습니다.`);
+            alert(`시설 이름 : ${selectedMarker.name}\n예약 시간: ${selectedReservationTime}에 예약되었습니다.\n예약목록을 확인해주세요.`);
             window.location.reload();
 
           })

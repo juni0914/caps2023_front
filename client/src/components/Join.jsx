@@ -54,7 +54,7 @@ export default function Join() {
         console.log("password: ", password);
       }
     } catch (error) {
-      alert("이미 사용중인 아이디입니다.");
+      alert("이미 사용중인 아이디이거나 닉네임입니다.");
       console.error(error);
     }
   };
