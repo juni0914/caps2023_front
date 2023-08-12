@@ -902,8 +902,8 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                                   <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
                                                 alignItems: 'center', width: '45px', height: '40px', borderRadius: '20%', 
                                                 backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                                    <span style={{ fontSize: '17px', marginTop: '3px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
-                                    <p style={{fontSize: '10px', marginTop: '5px', margin: '0'}}>댓글</p>
+                                    <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
+                                    <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
                                   </div></h4>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -945,8 +945,8 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                                   <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
                                                 alignItems: 'center', width: '45px', height: '40px', borderRadius: '20%', 
                                                 backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                                    <span style={{ fontSize: '17px', marginTop: '3px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
-                                    <p style={{fontSize: '10px', marginTop: '5px', margin: '0'}}>댓글</p>
+                                    <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
+                                    <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
                                   </div></h4>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -1270,11 +1270,11 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                                         backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right',
                                       }}
                                     >
-                                      <span style={{ fontSize: '17px', marginTop: '5px', marginBottom: '-20px' }}>
+                                      <span style={{ fontSize: '17px', marginTop: '25px', marginBottom: '-20px' }}>
                                         {post.commentSize}
                                       </span>
                                       <br />
-                                      <p style={{ fontSize: '10px', marginTop: '3px', margin: '0' }}>댓글</p>
+                                      <p style={{ fontSize: '10px' }}>댓글</p>
                                     </div>
                                   </h4>
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
