@@ -816,8 +816,8 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                       ${post.user && user && user.nickname === post.user.nickname ? 'my-post' : ''}`} 
                       onClick={() => handleClick(post.id)}>
                         <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
-                                                  alignItems: 'center', width: '50px', height: '50px', borderRadius: '20%', fontWeight: 'bold',
-                                                  backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                                                  alignItems: 'center', width: '50px', height: '50px', borderRadius: '20%', 
+                                                  fontWeight: 'bold', backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
                                       <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-35px'}}>{post.commentSize}</span><br/>
                                       <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
                                     </div>
