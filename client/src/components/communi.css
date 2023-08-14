@@ -68,8 +68,26 @@
   .board-button .keyword-button {
     margin-right: 5px !important;
   }
-  
 }
+
+@media (max-width: 900px) {
+  .post {
+    height: 70px;
+  }
+  .updated{
+    height: 80px;
+  }
+  .Commentdiv{
+    height: 25px;
+  }
+}
+
+@media (max-width: 900px) {
+  .post-title {
+    font-size: 16px !important; /* 강제로 적용되도록 !important 키워드 사용 */
+  }
+}
+
 
 
 

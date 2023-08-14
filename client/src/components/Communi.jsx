@@ -44,6 +44,9 @@ function Communi() {
   const [searchType, setSearchType] = useState('title');  //검색타입 정보 저장 , 초기값은 title
   const [openSearch, setOpenSearch] = useState(false); // 검색결과 모달 창 열림여부 
   const [keywordType, setKeywordType] = useState('latest');   // 글 최신순, 오래된순 체크 정보 저장 
+
+  const [showMyPosts, setShowMyPosts] = useState(true); // 내가 작성한 게시글 버튼 클릭 정보 저장
+  const [showMyCommentPosts, setShowMyCommentPosts] = useState(false); // 내가 댓글단 글 버튼 클릭 정보 저장
   
   const server_api = process.env.REACT_APP_SERVER_API;
 
@@ -86,7 +89,15 @@ function Communi() {
     setKeywordType(keywordType === 'latest' ? 'oldest' : 'latest');
   };
   
+  const handleMyPostsClick = () => { //내가 작성한 게시글 버튼 클릭
+    setShowMyPosts(true);
+    setShowMyCommentPosts(false);
+  };
 
+  const handleMyCommentPostsClick = () => {  // 내가 댓글단 글 버튼
+    setShowMyPosts(false);
+    setShowMyCommentPosts(true);
+  };
 
   const handleSearchInputChange = (event) => {  //게시글 제목,내용 기준으로 검색
     setSearchQuery(event.target.value);
@@ -804,18 +815,17 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                       className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}
                       ${post.user && user && user.nickname === post.user.nickname ? 'my-post' : ''}`} 
                       onClick={() => handleClick(post.id)}>
-                      <h3 className="post-title">◾ 제목 : {post.title} 
-                        {post.user && user && user.nickname === post.user.nickname ? 
-                        (<span style={{ color: '#8282FF', marginRight: '10px' }}>ㅤ(내가 작성한 게시글)</span>) : null}
                         <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
-                                      alignItems: 'center', width: '50px', height: '50px', borderRadius: '20%', 
-                                      backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                        <span style={{ fontSize: '17px', marginTop: '5px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
-                        <p style={{fontSize: '10px', margin: '0'}}>댓글</p>
-                      </div></h3>
+                                                  alignItems: 'center', width: '50px', height: '50px', borderRadius: '20%', fontWeight: 'bold',
+                                                  backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                                      <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-35px'}}>{post.commentSize}</span><br/>
+                                      <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
+                                    </div>
+                      <h3 className="post-title" >◾ 제목 : {post.title} </h3>
                         
                       <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span>▫ 작성자 : {post.user.nickname}</span>
+                        <span>▫ 작성자 : {post.user.nickname}{post.user && user && user.nickname === post.user.nickname ? 
+                        (<span style={{ color: '#8282FF', marginRight: '10px', fontWeight: 'bold' }}>ㅤ(My)</span>) : null}</span>
                         {isToday(new Date(post.createdAt)) ? (
                           <span>
                           작성일자 :{' '}
@@ -871,9 +881,9 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
               </div>
               
 
-              <Modal show={myInfo} onHide={() => setMyInfo(false)} size="lg" >      {/* 내 정보 모달 창 */}
+              <Modal show={myInfo} className="myinfo-modal" onHide={() => setMyInfo(false)} size="lg" >      {/* 내 정보 모달 창 */}
                 <Modal.Header closeButton >
-                  <Modal.Title><IoPersonCircle/> 내 정보</Modal.Title>
+                  <Modal.Title style= {{marginLeft: '15px'}}><IoPersonCircle/> 내 정보</Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{
                                     borderRadius: '10px', padding: '20px'
@@ -889,22 +899,32 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                     <Form.Group>
 
                     <hr style={{ borderTop: '1px solid #808080'}} />
+                    <Button onClick={handleMyPostsClick} variant={showMyPosts ? 'primary' : 'outline-secondary'} style={{marginLeft: '10px'}}>내가 작성한 게시글</Button>
+                    <Button onClick={handleMyCommentPostsClick} variant={showMyCommentPosts ? 'primary' : 'outline-secondary'} style={{marginLeft: '10px'}}>내가 댓글단 글</Button>
+                    <hr style={{ borderTop: '1px solid #808080'}} />
                     <div style={{ display: 'flex' }}>
+                    {showMyPosts && (
                       <div style={{ flex: 1 , marginRight: '10px'}}>
-                        <Form.Label style={{
-                   marginLeft: '15px', fontWeight: 'bold' }}><HiOutlinePencilSquare/> 내가 작성한 게시글</Form.Label>
+                        <Form.Label style={{ marginLeft: '15px', fontWeight: 'bold' }}><HiOutlinePencilSquare/> 내가 작성한 게시글</Form.Label>
                         <div style={{ marginLeft: '10px'}}>
                           {mypost.map((post) => (
                             <div key={post.id} style={{ cursor: 'pointer' }}>
                                 <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} 
-                                  onClick={() => handleClick(post.id)}>
-                                  <h4 className="post-title" style={{fontSize: '12px'}}>◾ 제목 : {post.title}
-                                  <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
-                                                alignItems: 'center', width: '45px', height: '40px', borderRadius: '20%', 
-                                                backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                                    <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
-                                    <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
-                                  </div></h4>
+                                  onClick={() => handleClick(post.id)} >
+                                    <div className = "Commentdiv" style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
+                                                  alignItems: 'center', width: '45px', height: '45px', borderRadius: '20%', fontWeight: 'bold',
+                                                  backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                                      <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-35px'}}>{post.commentSize}</span><br/>
+                                      <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
+                                    </div>
+                                  <h4 className="post-title" style={{fontSize: '15px'}}>◾ 제목 : {post.title}
+                                    {/* <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
+                                                  alignItems: 'center', width: '45px', height: '40px', borderRadius: '20%', 
+                                                  backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                                      <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-20px'}}>{post.commentSize}</span><br/>
+                                      <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
+                                    </div> */}
+                                  </h4>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span>▫ 작성자 : {post.user.nickname}</span>
@@ -926,7 +946,7 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                                       )}
                                     </span>
                                     ) : (
-                                      <span>작성일자 : {post.createdAt}</span>
+                                      <span>{post.createdAt}</span>
                                     )}
                                 </h4>
                                 </div>
@@ -934,20 +954,22 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                             ))}
                           </div>
                         </div>
-
-                      <div style={{ flex: 1}}>
+                        )}
+                        
+                        {showMyCommentPosts && (
+                      <div style={{ flex: 1, marginRight: '10px'}}>
                         <Form.Label style={{ marginLeft: '15px', fontWeight: 'bold' }}><GoCommentDiscussion/> 내가 댓글단 글</Form.Label>
                         <div style={{ marginLeft: '10px' }}>
                           {myCommentPost.map((post) => (
                               <div key={post.id} style={{ cursor: 'pointer' }}>
                                 <div key={post.id} className={`post ${updatedPostIdColor === post.id ? 'updated' : ''}`} onClick={() => handleClick(post.id)}>
-                                  <h4 className="post-title" style={{fontSize: '12px'}}>◾ 제목 : {post.title}
-                                  <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
-                                                alignItems: 'center', width: '45px', height: '40px', borderRadius: '20%', 
-                                                backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                                    <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-20px' }}>{post.commentSize}</span><br/>
-                                    <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
-                                  </div></h4>
+                                    <div className = "Commentdiv" style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
+                                                  alignItems: 'center', width: '45px', height: '45px', borderRadius: '20%', fontWeight: 'bold',
+                                                  backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
+                                      <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-35px'}}>{post.commentSize}</span><br/>
+                                      <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
+                                    </div>
+                                  <h4 className="post-title" style={{fontSize: '15px'}}>◾ 제목 : {post.title} </h4>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span>▫ 작성자 : {post.user.nickname}</span>
@@ -969,7 +991,7 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                                       )}
                                     </span>
                                     ) : (
-                                      <span>작성일자 : {post.createdAt}</span>
+                                      <span>{post.createdAt}</span>
                                     )}
                                   </h4>
                                 </div>
@@ -977,6 +999,7 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                               ))}
                           </div>
                         </div>
+                        )}
                       </div>  
                     </Form.Group>
                   </Form>
@@ -1172,6 +1195,28 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                   <>
                     <h4>제목 : {post.title}</h4><br/>
                     <p style={{ wordWrap: 'break-word', maxWidth: '100%' }}>{post.content}</p>
+                    <h4 className="post-author" style={{display: 'flex', float: 'right'}} >
+                                    {isToday(new Date(post.createdAt)) ? (
+                                      <span>
+                                      작성일자 :{' '}
+                                      {new Date(post.createdAt).getHours() === new Date().getHours() &&
+                                      new Date(post.createdAt).getMinutes() === new Date().getMinutes() ? (
+                                        '방금'
+                                      ) : (
+                                        <>
+                                          {new Date(post.createdAt).getTime() - new Date().getTime() > -3600000 ? (
+                                            `${Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / 60000)}분전`
+                                          ) : (
+                                            `${new Date(post.createdAt).getHours().toString().padStart(2, '0')}:
+                                            ${new Date(post.createdAt).getMinutes().toString().padStart(2, '0')}`
+                                          )}
+                                        </>
+                                      )}
+                                    </span>
+                                    ) : (
+                                      <span>작성일자 : {post.createdAt}</span>
+                                    )}
+                                </h4>
                   </>
                 )}
               </Modal.Body>

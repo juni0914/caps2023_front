@@ -444,7 +444,7 @@ const PointCharge = () => {                  //포인트 충전하기
             return null; // 삭제된 예약이라면 출력하지 않음
           }
           return (
-            <h6 key={index} style={{ marginLeft: '20px', cursor: "pointer" }} onClick={() => handleReservationClick(index)}>
+            <h6 key={index} style={{ marginLeft: '20px', cursor: "pointer", fontWeight: 'bold' }} onClick={() => handleReservationClick(index)}>
              ✔ {index + 1}. {name}
             </h6>
           );
@@ -554,7 +554,7 @@ const PointCharge = () => {                  //포인트 충전하기
 
               <Modal show={myInfo} onHide={() => setMyInfo(false)}  >      {/* 내 정보 모달 창 */}
                 <Modal.Header closeButton >
-                  <Modal.Title><IoPersonCircle/> 내 정보</Modal.Title>
+                  <Modal.Title  style= {{marginLeft: '10px'}}><IoPersonCircle/> 내 정보</Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{borderRadius: '10px',padding: '20px'}}>
                   <Form>
