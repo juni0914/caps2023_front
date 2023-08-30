@@ -93,9 +93,9 @@ export default function Login() {
       <div className="auth-wrapper"  >
           <form>
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'center'}}>LOGIN</h2>
-                  <label style={{marginTop: '50px'}}>✉ Email</label>
+                  <label style={{marginTop: '50px'}}>✉ ID</label>
             <input
-              placeholder="email"
+              placeholder="ID"
               className="inputValue"
               onChange={(e) => setUsername(e.target.value)}
               value={username}
