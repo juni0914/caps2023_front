@@ -917,14 +917,7 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                                       <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-35px'}}>{post.commentSize}</span><br/>
                                       <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
                                     </div>
-                                  <h4 className="post-title" style={{fontSize: '15px'}}>◾ 제목 : {post.title}
-                                    {/* <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column',
-                                                  alignItems: 'center', width: '45px', height: '40px', borderRadius: '20%', 
-                                                  backgroundColor: '#f8fcff', marginLeft: '10px', float: 'right' }}>
-                                      <span style={{ fontSize: '17px', marginTop: '20px',marginBottom: '-20px'}}>{post.commentSize}</span><br/>
-                                      <p style={{fontSize: '10px', marginTop: '5px'}}>댓글</p>
-                                    </div> */}
-                                  </h4>
+                                  <h4 className="post-title" style={{fontSize: '15px'}}>◾ 제목 : {post.title}</h4>
                                     
                                   <h4 className="post-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <span>▫ 작성자 : {post.user.nickname}</span>
@@ -1123,8 +1116,6 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                           </div>
                         ))}
                       </div>
-                      {/* <hr style={{ borderTop: '1px solid #808080' , marginTop: '20px'}} /> */}
-
                     </>
                   )}
                   <Form>
@@ -1146,7 +1137,6 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                   <Button variant="primary" onClick={()=> handleCreateComment(post.id)}>작성하기</Button>
                 </Modal.Footer>
               </Modal>
-
 
 
               {/* 댓글수정 모달 창 */} 
@@ -1174,8 +1164,6 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                   <Button variant="primary" onClick={()=> handleUpdateComment(commentId,post.id)}>댓글 수정</Button>
                 </Modal.Footer>
               </Modal>
-
-
 
 
 
@@ -1227,7 +1215,6 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                     <Button variant="secondary" onClick={() => setsecondOpen(false)}>닫기</Button>
               </Modal.Footer>
               </Modal>
-
 
               <Modal show={updateNickname} onHide={closeNicknameUpdate}>   {/* 닉네임수정 모달 창 */} 
                 <Modal.Header closeButton>
@@ -1350,7 +1337,6 @@ const handleKeyPress = (event) => {       // 검색창에서 엔터키를 누르
                             ))
                           )}
                           </div>
-     
                     </Form.Group>
                   </Form>
                 </Modal.Body>
