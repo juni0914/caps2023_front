@@ -103,10 +103,6 @@ function Communi() {
     setSearchQuery(event.target.value);
   };
 
-  // const openSearchModal = () => {      // 검색결과 모달 창 열기 함수
-  //   setOpenSearch(true);
-  // };
-
   const openNicknameUpdate = () => {      // 닉네임변경 모달 창 열기 함수
     setUpdateNickname(true);
     setMyInfo(false);
@@ -253,8 +249,6 @@ function Communi() {
         setTotalPages(response.data.totalPages);
         setCurrentPage(response.data.number);
         fetchMyPosts();
-        // console.log(response.data.content);
-        // console.log(response.data.content[1].id)
       }
     } catch (error) {
       console.log(error);
@@ -271,7 +265,6 @@ function Communi() {
       });
       if (response.data && response.data.content) {
         setMyPost(response.data.content);
-        // console.log(response.data.content[0].title)
       }
     } catch (error) {
       console.log(error);
@@ -298,7 +291,6 @@ function Communi() {
   useEffect(() => {
     fetchPosts();
     fetchMyPosts();
-    // getMyCommentPost();
   }, [page, size, keywordType]);
 
 
@@ -425,7 +417,7 @@ function Communi() {
             setUpdatedPostIdColor(postId);
             setTimeout(() => {
               setUpdatedPostIdColor(null);
-            }, 2000); // 3초 후에 원래 색상으로 되돌림
+            }, 2000); // 2초 후에 원래 색상으로 되돌림
           })
           .catch((error) => {
             alert("글 내용은 최대 255자까지만 허용됩니다.")
@@ -521,9 +513,6 @@ function Communi() {
         })
           .then((res) => {
             if (res.data) {
-              // setPost(res.data);
-              // setTitle(res.data.title);
-              // setsecondOpen(false);
               setCommentOpen(true);
               console.log(postId)
             }
@@ -577,7 +566,6 @@ function Communi() {
                 handleSearch2();
                 setPost(res.data)
                 setsecondOpen(false)
-                // console.log(postId)
               }
             })
             .catch((error) => {
@@ -610,8 +598,6 @@ const handleCommentDelete = (commentId,postId) => {        //클릭한 댓글 �
               fetchPosts();
               fetchComments(postId);
               getMyCommentPost();
-              // setsecondOpen(false)
-              // console.log(postId)
             }
           })
           .catch((error) => {
@@ -647,7 +633,7 @@ const handleUpdateComment = (commentId,postId) => {                  //댓글 �
           setUpdatedCommentIdColor(commentId);
           setTimeout(() => {
             setUpdatedCommentIdColor(null);
-          }, 2000); // 3초 후에 원래 색상으로 되돌림
+          }, 2000); // 2초 후에 원래 색상으로 되돌림
 
           // 게시글 수정 후 게시글 리스트 업데이트
           fetchComments(postId);
