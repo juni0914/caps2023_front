@@ -378,7 +378,7 @@ function Map() {
           <div style={{
         position: "relative",
         zIndex: "2",
-        width: "75vw", /* 원하는 고정 넓이로 설정 */
+        width: "75vw", 
         height: "95vh",
         padding: "2rem",
         color: "white",
