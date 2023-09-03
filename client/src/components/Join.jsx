@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./login.css";
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
@@ -12,12 +12,13 @@ export default function Join() {
   const [nickname, setNickname] = useState(''); //닉네임 상태 저장 
   const [confirmPassword, setConfirmPassword] = useState(''); //비밀번호 확인 상태 저장
   const [showPassword, setShowPassword] = useState(false); //비밀번호 텍스트 표시 상태 저장
+  const inputRef = useRef();
   const server_api = process.env.REACT_APP_SERVER_API;
 
   const navigate = useNavigate();
 
   const join = async () => {
-
+    inputRef.current.focus();
     const isValidPassword = validatePassword(password);  // 패스워드 유효성 검사
 
     if (!isValidPassword) {
@@ -99,6 +100,7 @@ export default function Join() {
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'center'}}>JOIN</h2>
                   <label>✉ ID</label>
           <input
+          ref={inputRef}
             placeholder="ID"
             className="inputValue"
             onChange={(e) => setUsername(e.target.value)}

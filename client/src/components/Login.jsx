@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./login.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -14,8 +14,8 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); //비밀번호 텍스트 표시 상태 저장
-  // const [isLogin, setIsLogin] = useState(false);
-  // const [user, setUser] = useState({});
+
+  const inputRef = useRef();
   const server_api = process.env.REACT_APP_SERVER_API;
   const token = localStorage.getItem('login-token') || '';
   
@@ -47,6 +47,7 @@ export default function Login() {
 
 
   useEffect(() => {
+    inputRef.current.focus();
     try {
       axios({
         url: `${server_api}/api/user/1`, // user/success 에서 변경했는데 되긴함. 수정 필요
@@ -95,6 +96,7 @@ export default function Login() {
             <h2 style={{fontSize: '40px',letterSpacing: '10px', color:"#50BDCF",textAlign: 'center'}}>LOGIN</h2>
                   <label style={{marginTop: '50px'}}>✉ ID</label>
             <input
+              ref={inputRef}
               placeholder="ID"
               className="inputValue"
               onChange={(e) => setUsername(e.target.value)}
