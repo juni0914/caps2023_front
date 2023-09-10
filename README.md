@@ -4,11 +4,7 @@
 <br>
 
 ### 팀프로젝트 공유 레포지토리 : https://github.com/GNU-SPORTS
-<br>
 
-### 팀프로젝트 깃허브
-* [GNU_SPORTS](https://github.com/GNU-SPORTS)
-  
 <br>
 
 ## 🌟 목차 🌟
