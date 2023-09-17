@@ -1,21 +1,21 @@
-import React from "react";
+import React, { KeyboardEvent } from "react";
 import { useState, useEffect, useRef } from "react";
 import "./login.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import gnulogo from '../images/gnulogo.png';
 import ginu300 from '../images/ginu300.gif';
+
 // import { cookies, setCookie, useCookies } from "react-cookie"
 // import { setCookie, getCookie,removeCookie } from "./cookie";
 
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState(false); //비밀번호 텍스트 표시 상태 저장
 
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const server_api = process.env.REACT_APP_SERVER_API;
   const token = localStorage.getItem('login-token') || '';
   
@@ -47,7 +47,9 @@ export default function Login() {
 
 
   useEffect(() => {
-    inputRef.current.focus();
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
     try {
       axios({
         url: `${server_api}/api/user/1`, // user/success 에서 변경했는데 되긴함. 수정 필요
@@ -73,7 +75,7 @@ export default function Login() {
     }
   }, []);
   
-  const handleKeyPress = (event) => {       // 엔터키를 누르면 로그인함수 작동
+  const handleKeyPress = (event: KeyboardEvent) => {       // 엔터키를 누르면 로그인함수 작동
     if (event.key === 'Enter') {
       event.preventDefault();
       login();
@@ -112,7 +114,7 @@ export default function Login() {
                 className="inputValue"
                 autoComplete="off"
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyPress}
                 value={password}
               />
               {showPassword ? (

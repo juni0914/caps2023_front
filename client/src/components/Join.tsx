@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { useState, useRef } from "react";
 import "./login.css";
 import axios from "axios";
@@ -7,18 +7,22 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import ginu2 from '../images/ginu2.gif';
 
 export default function Join() {
-  const [username, setUsername] = useState(''); //아이디 상태 저장
-  const [password, setPassword] = useState(''); //비밀번호 상태 저장
-  const [nickname, setNickname] = useState(''); //닉네임 상태 저장 
-  const [confirmPassword, setConfirmPassword] = useState(''); //비밀번호 확인 상태 저장
+  const [username, setUsername] = useState<string>('');//아이디 상태 저장
+  const [password, setPassword] = useState<string>('');//비밀번호 상태 저장
+  const [nickname, setNickname] = useState<string>(''); //닉네임 상태 저장 
+  const [confirmPassword, setConfirmPassword] = useState<string>(''); //비밀번호 확인 상태 저장
   const [showPassword, setShowPassword] = useState(false); //비밀번호 텍스트 표시 상태 저장
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const server_api = process.env.REACT_APP_SERVER_API;
 
   const navigate = useNavigate();
 
+
+
   const join = async () => {
-    inputRef.current.focus();
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
     const isValidPassword = validatePassword(password);  // 패스워드 유효성 검사
 
     if (!isValidPassword) {
@@ -60,7 +64,7 @@ export default function Join() {
     }
   };
 
-  const validatePassword = (inputPassword) => {  // 패스워드 유효성 검사(6자 이상 & 특수문자 1개이상 포함)
+  const validatePassword = (inputPassword: string) => {  // 패스워드 유효성 검사(6자 이상 & 특수문자 1개이상 포함)
     if (inputPassword.length < 6) {
       alert("비밀번호는 최소 6자 이상이고 최소 1개이상의 특수문자가\n포함되어야 합니다.");
       return false;
@@ -75,7 +79,7 @@ export default function Join() {
     return true;
   };
 
-  const handleNicknameChange = (e) => {
+  const handleNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     const maxChars = 6; // 한글 기준으로 5글자 제한
   
