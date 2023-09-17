@@ -4,6 +4,7 @@
 <br>
 
 ### 팀프로젝트 공유 레포지토리 : https://github.com/GNU-SPORTS
+
 <br>
 
 ## 🌟 목차 🌟
@@ -29,7 +30,7 @@
 <br>
 
 <div align=center>
-	<h4>🚀 Distribute 🚀</h4>
+	<h4>🚀 Deploy 🚀</h4>
 </div>
 <div align=center>
 	<img src="https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white"/>
