@@ -1,6 +1,6 @@
 # GNU 스포츠 시설 예약 및 커뮤니티 플랫폼
 
-### 경상국립대학교 체육시설 예약과 커뮤니티 통합 웹 사이트 제작
+### 경상국립대학교 체육시설 예약과 커뮤니티 통합 웹 사이트 제작 (2023.03 ~ 2023.08)
 <br>
 
 ### 팀프로젝트 공유 레포지토리 : https://github.com/GNU-SPORTS
@@ -21,6 +21,7 @@
 <div align="center">
 	<img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB"/>
 	<img src="https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E"/>
+	<img src="https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white"/>
 	<img src="https://img.shields.io/badge/NPM-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white"/>
 	<img src="https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white"/>
 	<img src="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white"/>
