@@ -26,7 +26,7 @@ export default function Join() {
     const isValidPassword = validatePassword(password);  // 패스워드 유효성 검사
 
     if (!isValidPassword) {
-      return; // 유효성 검사에 실패한 경우 종료
+      return; // 유효성 검사에 실패한 경우 종료함
     }
 
     if (password !== confirmPassword) {
