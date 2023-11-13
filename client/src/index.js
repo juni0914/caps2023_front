@@ -5,12 +5,9 @@ import '../src/components/map.css';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-// import setToken from './components/controller/setToken';
 import { CookiesProvider } from 'react-cookie';
 import { BrowserRouter } from 'react-router-dom';
-// import dotenv from 'dotenv';
 
-// dotenv.config();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

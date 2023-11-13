@@ -1,8 +1,7 @@
-import Main from "./Main";
-import { Route, Routes, useNavigate, Link } from 'react-router-dom';
+import {  Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Modal, Form, Container, Col, Row } from 'react-bootstrap';
+import { Button, Modal, Form, Container } from 'react-bootstrap';
 import Spinner from 'react-bootstrap/Spinner';
 import {IoPersonCircle} from 'react-icons/io5'
 import gnuhan from "../images/gnuhan.png"
@@ -58,8 +57,6 @@ function SidePanel() {
 
   const openMyInfoModal = () => {   // 유저 모달 창 열기 함수
     setMyInfo(true);
-    // getMyCommentPost();
-    // fetchMyPosts();
   };
 
   const handleCloseModal = () => { //예약모달창 닫기 버튼함수
@@ -248,7 +245,6 @@ const PointCharge = () => {                  //포인트 충전하기
             setExpiredReserveData(ExpiredReservedData) //예약이 만료된 예약정보 저장
             setExpiredReserveId(ExpiredReservedData.map((item) => item.reservationId))//예약이 만료된 예약정보 ID 저장
             setExpiredReservecenterId(ExpiredReservedData.map((item) => item.centerId))//예약이 만료된 예약정보 센터ID 저장
-            // console.log(expiredReservedData)
           }
         })
         .catch((error) => {
@@ -300,7 +296,6 @@ const PointCharge = () => {                  //포인트 충전하기
         .then((res) => {
           setReservationInfo(res.data);
           console.log(res.data);
-          // console.log(reservationInfo.reservingDate)
         })
         .catch((error) => {
           console.log(error);
@@ -329,7 +324,6 @@ const PointCharge = () => {                  //포인트 충전하기
         .then((res) => {
           setExpiredReservationInfo(res.data);
           console.log(res.data);
-          // console.log(reservationInfo.reservingDate)
         })
         .catch((error) => {
           console.log(error);

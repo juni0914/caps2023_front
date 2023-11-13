@@ -1,7 +1,7 @@
-import { Route, Routes, useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Modal, Form, Dropdown, Col, Row } from 'react-bootstrap';
+import { Button, Modal, Form, Dropdown } from 'react-bootstrap';
 import InputGroup from 'react-bootstrap/InputGroup';
 import gnuhan from "../images/gnuhan.png"
 import "./communi.css";
@@ -74,7 +74,6 @@ function Communi() {
           if (res.data) {
             setIsLogin(true);
             setUser(res.data);
-            // console.log(res.data)
           }
         })
         .catch((error) => {

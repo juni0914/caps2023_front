@@ -174,7 +174,6 @@ export default function Join() {
         </div>
         <button onClick={join} type="button" style={{marginTop: "10px"}}>Join</button>
         <Link style={{ color: '#50BDCF', textDecoration: 'none', fontWeight: '800'}} to="/login">로그인 하러가기  </Link>
-{/*         <p>{props.data}</p> */}
           </form>
     </div>
 </div>

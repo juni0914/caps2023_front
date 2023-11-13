@@ -115,12 +115,7 @@ function Map() {
           if (res.data) {
             // console.log(res.data);
             const maparray = res.data.content;
-            // const markerIcon = {
-            //   url: '../images/gnumarker.png',
-            //   size: new naver.maps.Size(50, 52),
-            //   origin: new naver.maps.Point(0, 0),
-            //   anchor: new naver.maps.Point(25, 26)
-            // };
+
             for (let i = 0; i < maparray.length; i++) {    // 마커관련 함수
               naver.maps.Event.addListener(map, "click", ClickMap(i));
               
@@ -135,7 +130,6 @@ function Map() {
 
               });
 
-              // otherMarkers.setIcon(markerIcon);
                 
               const content = (  // 마커 클릭시 infoWindow 내용
                 <div className="markerinfo_div" 

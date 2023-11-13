@@ -6,8 +6,6 @@ import { Link } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import ginu300 from '../images/ginu300.gif';
 
-// import { cookies, setCookie, useCookies } from "react-cookie"
-// import { setCookie, getCookie,removeCookie } from "./cookie";
 
 
 export default function Login() {
@@ -61,8 +59,6 @@ export default function Login() {
       })
         .then((res) => {
           if (res.data) {
-            // setIsLogin(true);
-            // setUser(res.data);
             console.log(res.data)
             console.log(token);
           }
