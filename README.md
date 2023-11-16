@@ -13,6 +13,10 @@
 - 실행화면
 <br>
 
+## 🗂️ System Architecture
+
+![KakaoTalk_20230808_164819868](https://github.com/GNU-SPORTS/.github/assets/100845256/434cc0e9-2248-48e7-b0d8-e150d23f657f)
+
 ## 📚 Tech Stack 📚
 <br>
 <div align=center>
